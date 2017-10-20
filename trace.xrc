@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resource version="2.3.0.1" xmlns="http://www.wxwidgets.org/wxxrc">
+    <object class="wxFrame" name="MainFrame">
+        <style>wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL</style>
+        <size>848,600</size>
+        <title>Head Line Traceability</title>
+        <object class="wxPanel" name="DemoPanel">
+            <style>wxTAB_TRAVERSAL</style>
+            <object class="wxBoxSizer">
+                <orient>wxVERTICAL</orient>
+                <object class="sizeritem">
+                    <flag>wxGROW|wxALL</flag>
+                    <border>5</border>
+                    <option>1</option>
+                    <object class="wxNotebook" name="tabs">
+                        <object class="notebookpage">
+                            <label>Main</label>
+                            <object class="wxPanel" name="logTab">
+                                <style>wxTAB_TRAVERSAL</style>
+                                <object class="wxFlexGridSizer">
+                                    <cols>2</cols>
+                                    <rows>0</rows>
+                                    <vgap>0</vgap>
+                                    <hgap>0</hgap>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+                                        <border>5</border>
+                                        <object class="wxStaticText" name="mainName0">
+                                            <label></label>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+                                        <border>5</border>
+                                        <object class="wxStaticText" name="mainValue0">
+                                            <label>HLTrace Overview</label>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+                                        <border>5</border>
+                                        <object class="wxStaticText" name="labelMainStatus">
+                                            <label>Controllers</label>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+                                        <border>5</border>
+                                        <object class="wxStaticText" name="valueMainStatus">
+                                            <label></label>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+                                        <border>5</border>
+                                        <object class="wxStaticText" name="labelMainVerbosity">
+                                            <label>Verbosity</label>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+                                        <border>5</border>
+								        <object class="wxChoice" name="valueMainVerbosity">
+								            <content>
+								                <item>DEBUG</item>
+								                <item>INFO</item>
+								                <item>WARNING</item>
+								                <item>ERROR</item>
+								                <item>CRITICAL</item>
+								            </content>
+								            <selection>1</selection>
+								        </object>
+        							</object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+                                        <border>5</border>
+                                        <object class="wxStaticText" name="labelMainPopups">
+                                            <label>Allow Popups</label>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+                                        <border>5</border>
+								        <object class="wxChoice" name="valueMainPopups">
+								            <content>
+								                <item>Yes</item>
+								                <item>No</item>
+								            </content>
+								            <selection>0</selection>
+								        </object>
+        							</object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+                                        <border>5</border>
+                                        <object class="wxStaticText" name="labelMainBaseUrl">
+                                            <label>Base URL</label>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+                                        <border>5</border>
+                                        <object class="wxStaticText" name="valueMainBaseUrl">
+                                            <label>Base URL</label>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+                                        <border>5</border>
+                                        <object class="wxStaticText" name="labelMainPollSleep">
+                                            <label>Poll Sleep</label>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+                                        <border>5</border>
+                                        <object class="wxStaticText" name="valueMainPollSleep">
+                                            <label>Poll Sleep</label>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+                                        <border>5</border>
+                                        <object class="wxStaticText" name="labelMainPollDBSleep">
+                                            <label>Poll DB Sleep</label>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+                                        <border>5</border>
+                                        <object class="wxStaticText" name="valueMainPollDBSleep">
+                                            <label>Poll DB Sleep</label>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+                                        <border>5</border>
+                                        <object class="wxStaticText" name="labelMainVersion">
+                                            <label>ProdLineTrace Version</label>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+                                        <border>5</border>
+                                        <object class="wxStaticText" name="valueMainVersion">
+                                            <label>MyLabel</label>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+                                        <border>5</border>
+                                        <object class="wxStaticText" name="labelMainDBModelVersion">
+                                            <label>DB Model Version</label>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+                                        <border>5</border>
+                                        <object class="wxStaticText" name="valueMainDBModelVersion">
+                                            <label>MyLabel</label>
+                                        </object>
+                                    </object>
+
+
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+                                        <border>5</border>
+                                        <object class="wxStaticText" name="labelMainConfigFile">
+                                            <label>Config File</label>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+                                        <border>5</border>
+                                        <object class="wxStaticText" name="valueMainConfigFile">
+                                            <label>filename</label>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+                                        <border>5</border>
+                                        <object class="wxStaticText" name="labelMainLogFile">
+                                            <label>Log File</label>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+                                        <border>5</border>
+                                        <object class="wxStaticText" name="valueMainLogFile">
+                                            <label>file name</label>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+                                        <border>5</border>
+                                        <object class="wxStaticText" name="labelMainDBURI">
+                                            <label>SQLite DB File</label>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+                                        <border>5</border>
+                                        <object class="wxStaticText" name="valueMainDBURI">
+                                            <label>MyLabel</label>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+                                        <border>5</border>
+                                        <object class="wxStaticText" name="labelMainUptime">
+                                            <label>Up Time</label>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+                                        <border>5</border>
+                                        <object class="wxStaticText" name="valueMainUptime">
+                                            <label>MyLabel</label>
+                                        </object>
+                                    </object>
+                                </object>
+                            </object>
+                        </object>
+                        <object class="notebookpage">
+                            <label>Statistics</label>
+                            <object class="wxPanel" name="statisticsTab">
+                                <style>wxTAB_TRAVERSAL</style>
+                                <object class="wxStaticBoxSizer" name="wxID_ANY">
+                                    <orient>wxVERTICAL</orient>
+                                    <label>Statistics</label>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+                                        <border>5</border>
+		                                <object class="wxFlexGridSizer">
+		                                    <cols>2</cols>
+		                                    <rows>0</rows>
+		                                    <vgap>0</vgap>
+		                                    <hgap>0</hgap>
+		                                    <object class="sizeritem">
+		                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+		                                        <border>5</border>
+		                                        <object class="wxStaticText" name="labelMainControllerCount">
+		                                            <label>Controller Count</label>
+		                                        </object>
+		                                    </object>
+		                                    <object class="sizeritem">
+		                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+		                                        <border>5</border>
+		                                        <object class="wxStaticText" name="valueMainControllerCount">
+		                                            <label>MyLabel</label>
+		                                        </object>
+		                                    </object>
+		                                    <object class="sizeritem">
+		                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+		                                        <border>5</border>
+		                                        <object class="wxStaticText" name="labelMainMsgRead">
+		                                            <label>Runtime Status Msg Read Count</label>
+		                                        </object>
+		                                    </object>
+		                                    <object class="sizeritem">
+		                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+		                                        <border>5</border>
+		                                        <object class="wxStaticText" name="valueMainMsgRead">
+		                                            <label>Status Msg Count</label>
+		                                        </object>
+		                                    </object>
+		                                    <object class="sizeritem">
+		                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+		                                        <border>5</border>
+		                                        <object class="wxStaticText" name="labelMainMsgWrite">
+		                                            <label>Runtime Status Msg Write Count</label>
+		                                        </object>
+		                                    </object>
+		                                    <object class="sizeritem">
+		                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+		                                        <border>5</border>
+		                                        <object class="wxStaticText" name="valueMainMsgWrite">
+		                                            <label>Status Msg Count</label>
+		                                        </object>
+		                                    </object>
+		                                    <object class="sizeritem">
+		                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+		                                        <border>5</border>
+		                                        <object class="wxStaticText" name="labelMainOperWrite">
+		                                            <label>Runtime Operation Msg Write Count</label>
+		                                        </object>
+		                                    </object>
+		                                    <object class="sizeritem">
+		                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+		                                        <border>5</border>
+		                                        <object class="wxStaticText" name="valueMainOperWrite">
+		                                            <label>Operation Msg Count</label>
+		                                        </object>
+		                                    </object>
+		                                    <object class="sizeritem">
+		                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+		                                        <border>5</border>
+		                                        <object class="wxStaticText" name="labelMainDetailsDisplay">
+		                                            <label>Runtime Product Details Display Count</label>
+		                                        </object>
+		                                    </object>
+		                                    <object class="sizeritem">
+		                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+		                                        <border>5</border>
+		                                        <object class="wxStaticText" name="valueMainDetailsDisplay">
+		                                            <label>Product Details Display Count</label>
+		                                        </object>
+		                                    </object>
+		                                    <object class="sizeritem">
+		                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+		                                        <border>5</border>
+		                                        <object class="wxStaticText" name="labelMainUserRead">
+		                                            <label>Runtime User Details Read Count</label>
+		                                        </object>
+		                                    </object>
+		                                    <object class="sizeritem">
+		                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+		                                        <border>5</border>
+		                                        <object class="wxStaticText" name="valueMainUserRead">
+		                                            <label>Product User Details Read Count</label>
+		                                        </object>
+		                                    </object>
+
+		                                    <object class="sizeritem">
+		                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+		                                        <border>5</border>
+		                                        <object class="wxStaticText" name="labelMainDBOperationCount">
+		                                            <label>DB Operation Count</label>
+		                                        </object>
+		                                    </object>
+		                                    <object class="sizeritem">
+		                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+		                                        <border>5</border>
+		                                        <object class="wxStaticText" name="valueMainDBOperationCount">
+		                                            <label>DB Operation Count value</label>
+		                                        </object>
+		                                    </object>
+		                                    <object class="sizeritem">
+		                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+		                                        <border>5</border>
+		                                        <object class="wxStaticText" name="labelMainDBProdCount">
+		                                            <label>DB Product Count</label>
+		                                        </object>
+		                                    </object>
+		                                    <object class="sizeritem">
+		                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+		                                        <border>5</border>
+		                                        <object class="wxStaticText" name="valueMainDBProdCount">
+		                                            <label>DB Product Count value</label>
+		                                        </object>
+		                                    </object>
+		                                    <object class="sizeritem">
+		                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+		                                        <border>5</border>
+		                                        <object class="wxStaticText" name="labelMainDBStationCount">
+		                                            <label>DB Station Count</label>
+		                                        </object>
+		                                    </object>
+		                                    <object class="sizeritem">
+		                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+		                                        <border>5</border>
+		                                        <object class="wxStaticText" name="valueMainDBStationCount">
+		                                            <label>DB Station Count value</label>
+		                                        </object>
+		                                    </object>
+		                                    <object class="sizeritem">
+		                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+		                                        <border>5</border>
+		                                        <object class="wxStaticText" name="labelMainDBStatusCount">
+		                                            <label>DB Status Count</label>
+		                                        </object>
+		                                    </object>
+		                                    <object class="sizeritem">
+		                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+		                                        <border>5</border>
+		                                        <object class="wxStaticText" name="valueMainDBStatusCount">
+		                                            <label>DB Status Count value</label>
+		                                        </object>
+		                                    </object>
+		                                    <object class="sizeritem">
+		                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+		                                        <border>5</border>
+		                                        <object class="wxStaticText" name="labelMainDBOperationTypeCount">
+		                                            <label>DB OperationType Count</label>
+		                                        </object>
+		                                    </object>
+		                                    <object class="sizeritem">
+		                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+		                                        <border>5</border>
+		                                        <object class="wxStaticText" name="valueMainDBOperationTypeCount">
+		                                            <label>DB OperationType Count value</label>
+		                                        </object>
+		                                    </object>
+		                                    <object class="sizeritem">
+		                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+		                                        <border>5</border>
+		                                        <object class="wxStaticText" name="labelMainDBStatusTypeCount">
+		                                            <label>DB StatusType Count</label>
+		                                        </object>
+		                                    </object>
+		                                    <object class="sizeritem">
+		                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+		                                        <border>5</border>
+		                                        <object class="wxStaticText" name="valueMainDBStatusTypeCount">
+		                                            <label>DB StatusType Count value</label>
+		                                        </object>
+		                                    </object>
+		                                    <object class="sizeritem">
+		                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+		                                        <border>5</border>
+		                                        <object class="wxStaticText" name="labelMainDBCommentCount">
+		                                            <label>DB Comment Count</label>
+		                                        </object>
+		                                    </object>
+		                                    <object class="sizeritem">
+		                                        <flag>wxALIGN_LEFT|wxALIGN_TOP|wxALL</flag>
+		                                        <border>5</border>
+		                                        <object class="wxStaticText" name="valueMainDBCommentCount">
+		                                            <label>DB Comment Count value</label>
+		                                        </object>
+		                                    </object>
+                                		</object>
+                                	</object>
+                                </object>
+                            </object>
+                        </object>
+
+                        <object class="notebookpage">
+                            <label>Log</label>
+                            <object class="wxPanel" name="logTab">
+                                <style>wxTAB_TRAVERSAL</style>
+                                <object class="wxStaticBoxSizer" name="wxID_ANY">
+                                    <orient>wxVERTICAL</orient>
+                                    <label>Log Viewer</label>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_LEFT|wxALL</flag>
+                                        <border>5</border>
+                                        <object class="wxTextCtrl" name="valueLogTextArea">
+                                            <size>4000,2000</size>
+                                            <style>wxTE_MULTILINE|wxTE_RICH|wxHSCROLL</style>
+                                        </object>
+                                    </object>
+                                </object>
+                            </object>
+                        </object>
+                    </object>
+                </object>
+            </object>
+        </object>
+        <object class="wxStatusBar" name="m_statusBar1">
+            <style>wxST_SIZEGRIP|wxNO_BORDER</style>
+            <fields>1</fields>
+            <widths></widths>
+        </object>
+    </object>
+</resource>
