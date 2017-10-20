@@ -59,7 +59,7 @@ class MainWindow(wx.App):
 
         self.valueLogTextArea = xrc.XRCCTRL(frame, "valueLogTextArea")
         textAreaFont = wx.Font(10, wx.MODERN, wx.NORMAL, wx.NORMAL, False, u'Consolas')
-        self.valueLogTextArea .SetFont(textAreaFont)
+        self.valueLogTextArea.SetFont(textAreaFont)
 
         self.application = ProdLine(sys.argv)
         self._opts = self.application._opts
@@ -120,8 +120,8 @@ class MainWindow(wx.App):
             time.sleep(0.3)
             try:
                 for line in Pygtail(self.logfile):
-                    self.valueLogTextArea.write(line)
-            except ValueError, e:
+                    self.valueLogTextArea.WriteText(line)
+            except ValueError as e:
                 if os.path.exists(offset_file):
                     logger.error("Problem with reading offset file: {offset_file}. Trying to remove it. ".format(offset_file=offset_file))
                     time.sleep(1)
@@ -170,7 +170,7 @@ class MainWindow(wx.App):
                 self.valueMainDBCommentCount.SetLabelText(str(self.application.get_comment_count()))
 
                 time.sleep(0.31234)
-        except Exception, e:
+        except Exception as e:
             logger.critical("Exception: {exc}".format(exc=e))
             logger.critical("Traceback: {tb}".format(tb=traceback.format_exc()))
         logger.critical("Status Window updateter has ended unexpected: {error}".format(error=traceback.format_exc()))
@@ -181,7 +181,7 @@ class MainWindow(wx.App):
         """
         try:
             self.application.main()
-        except Exception, e:
+        except Exception as e:
             logger.critical("Exception: {exc}".format(exc=e))
             logger.critical("Traceback: {tb}".format(tb=traceback.format_exc()))
 
@@ -208,7 +208,7 @@ class MainWindow(wx.App):
         try:
             result = delayedResult.get()
             logger.critical("Unexpected result. One of the threads just returned with result: {result}".format(result=result))
-        except Exception, e:
+        except Exception as e:
             logger.critical("GUI Thread failed with following exception: {exc}".format(exc=e))
             logger.critical("Traceback: {tb}".format(tb=traceback.format_exc()))
 
@@ -241,7 +241,7 @@ if __name__ == "__main__":
                 thread._Thread__stop()
                 if thread.getName() != 'MainThread':
                     thread.join()
-            except Exception, e:
+            except Exception as e:
                 logger.error("Thread: {thread} could not be terminated. Exception: {exc} ".format(thread=str(thread.getName()), exc=e.__str__()))
                 logger.error("Traceback: {tb}".format(tb=traceback.format_exc()))
 

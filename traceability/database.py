@@ -89,11 +89,11 @@ class Database(object):
             db.session.add(new_operation)
             try:
                 db.session.commit()
-            except sqlalchemy.exc.IntegrityError, e:
+            except sqlalchemy.exc.IntegrityError as e:
                 logger.error("CON: {dbcon} {rep} : {err}".format(dbcon=self.name, rep=repr(e), err=e.__str__()))
             logger.info("CON: {dbcon} Adding new Operation to database: {operation}".format(dbcon=self.name, operation=new_operation))
 
-        except sqlalchemy.exc.OperationalError, e:
+        except sqlalchemy.exc.OperationalError as e:
             logger.error("CON: {dbcon} Database: {dbfile} is locked. Error: {err}".format(dbcon=self.name, dbfile=db.get_app().config['SQLALCHEMY_DATABASE_URI'], err=e.__str__()))
             return False
         return True
@@ -112,11 +112,11 @@ class Database(object):
             db.session.add(new_status)
             try:
                 db.session.commit()
-            except sqlalchemy.exc.IntegrityError, e:
+            except sqlalchemy.exc.IntegrityError as e:
                 logger.error("CON: {dbcon} {rep} : {err}".format(dbcon=self.name, rep=repr(e), err=e.__str__()))
             logger.info("CON: {dbcon} Adding new Status to database: {status}".format(dbcon=self.name, status=new_status))
 
-        except sqlalchemy.exc.OperationalError, e:
+        except sqlalchemy.exc.OperationalError as e:
             logger.error("CON: {dbcon} Database: {database} is locked. Error: {error}".format(dbcon=self.name, database=db.get_app().config['SQLALCHEMY_DATABASE_URI'], error=e.__str__()))
             return False
         return True
@@ -133,11 +133,11 @@ class Database(object):
                 db.session.add(new_prod)
                 try:
                     db.session.commit()
-                except sqlalchemy.exc.IntegrityError, e:
+                except sqlalchemy.exc.IntegrityError as e:
                     logger.error("CON: {dbcon} {rep} : {err}".format(dbcon=self.name, rep=repr(e), err=e.__str__()))
                 logger.info("CON: {dbcon} Adding new Product to database: {prod}".format(dbcon=self.name, prod=new_prod))
 
-        except sqlalchemy.exc.OperationalError, e:
+        except sqlalchemy.exc.OperationalError as e:
             logger.error("CON: {dbcon} Database: {dbfile} is locked. Error: {err}".format(dbcon=self.name, dbfile=db.get_app().config['SQLALCHEMY_DATABASE_URI'], err=e.__str__()))
             return False
         return True
@@ -151,11 +151,11 @@ class Database(object):
                 db.session.add(new_station)
                 try:
                     db.session.commit()
-                except sqlalchemy.exc.IntegrityError, e:
+                except sqlalchemy.exc.IntegrityError as e:
                     logger.error("CON: {dbcon} {rep} : {err}".format(dbcon=self.name, rep=repr(e), err=e.__str__()))
                 logger.info("CON: {dbcon} Adding new Station to database: {station}".format(dbcon=self.name, station=str(new_station)))
 
-        except sqlalchemy.exc.OperationalError, e:
+        except sqlalchemy.exc.OperationalError as e:
             logger.error("CON: {dbcon} Database: {dbfile} is locked. Error: {err}".format(dbcon=self.name, dbfile=db.get_app().config['SQLALCHEMY_DATABASE_URI'], err=e.__str__()))
             return False
         return True
@@ -170,11 +170,11 @@ class Database(object):
                 db.session.add(new_operation_type)
                 try:
                     db.session.commit()
-                except sqlalchemy.exc.IntegrityError, e:
+                except sqlalchemy.exc.IntegrityError as e:
                     logger.error("CON: {dbcon} {rep} : {err}".format(dbcon=self.name, rep=repr(e), err=e.__str__()))
                 logger.info("CON: {dbcon} Adding new Operation_Type to database: {operation}".format(dbcon=self.name, operation=str(new_operation_type)))
 
-        except sqlalchemy.exc.OperationalError, e:
+        except sqlalchemy.exc.OperationalError as e:
             logger.error("CON: {dbcon} Database: {dbfile} is locked. Error: {err}".format(dbcon=self.name, dbfile=db.get_app().config['SQLALCHEMY_DATABASE_URI'], err=e.__str__()))
             return False
         return True
@@ -189,11 +189,11 @@ class Database(object):
                 db.session.add(new_operation_status)
                 try:
                     db.session.commit()
-                except sqlalchemy.exc.IntegrityError, e:
+                except sqlalchemy.exc.IntegrityError as e:
                     logger.error("CON: {dbcon} {rep} : {err}".format(dbcon=self.name, rep=repr(e), err=e.__str__()))
                 logger.info("CON: {dbcon} Adding new Operation_Status to database: {operation_status}".format(dbcon=self.name, operation_status=str(new_operation_status)))
 
-        except sqlalchemy.exc.OperationalError, e:
+        except sqlalchemy.exc.OperationalError as e:
             logger.error("CON: {dbcon} Database: {dbfile} is locked. Error: {err}".format(dbcon=self.name, dbfile=db.get_app().config['SQLALCHEMY_DATABASE_URI'], err=e.__str__()))
             return False
         return True
@@ -207,11 +207,11 @@ class Database(object):
                 db.session.add(new_user)
                 try:
                     db.session.commit()
-                except sqlalchemy.exc.IntegrityError, e:
+                except sqlalchemy.exc.IntegrityError as e:
                     logger.error("CON: {dbcon} {rep} : {err}".format(dbcon=self.name, rep=repr(e), err=e.__str__()))
                 logger.info("CON: {dbcon} Adding new User (operator) to database: {user}".format(dbcon=self.name, user=str(user)))
 
-        except sqlalchemy.exc.OperationalError, e:
+        except sqlalchemy.exc.OperationalError as e:
             logger.error("CON: {dbcon} Database: {dbfile} is locked. Error: {err}".format(dbcon=self.name, dbfile=db.get_app().config['SQLALCHEMY_DATABASE_URI'], err=e.__str__()))
             return False
         return True
@@ -225,11 +225,11 @@ class Database(object):
                 db.session.add(new_program)
                 try:
                     db.session.commit()
-                except sqlalchemy.exc.IntegrityError, e:
+                except sqlalchemy.exc.IntegrityError as e:
                     logger.error("CON: {dbcon} {rep} : {err}".format(dbcon=self.name, rep=repr(e), err=e.__str__()))
                 logger.info("CON: {dbcon} Adding new Program to database: {program}".format(dbcon=self.name, program=str(program)))
 
-        except sqlalchemy.exc.OperationalError, e:
+        except sqlalchemy.exc.OperationalError as e:
             logger.error("CON: {dbcon} Database: {dbfile} is locked. Error: {err}".format(dbcon=self.name, dbfile=db.get_app().config['SQLALCHEMY_DATABASE_URI'], err=e.__str__()))
             return False
         return True
@@ -309,5 +309,5 @@ class Database(object):
 
         try:
             db.session.commit()
-        except sqlalchemy.exc.IntegrityError, e:
+        except sqlalchemy.exc.IntegrityError as e:
             logger.error("CON: {dbcon} {rep} : {err}".format(dbcon=self.name, rep=repr(e), err=e.__str__()))

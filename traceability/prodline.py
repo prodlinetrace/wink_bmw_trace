@@ -169,7 +169,7 @@ class ProdLineBase(object):
                     dbid = int(self._config[cblock]['id'][0])
                     datablocks.append(dbid)
                 else:
-                    logger.error("PLC: {plc} is configured to use DB: {db} but this DB is missing in configuration file (not defined).".format(plc=plc.id, db=cblock))
+                    logger.error("PLC: {plc} is configured to use DB: {db} but this DB is missing in configuration file (not defined).".format(plc=plc, db=cblock))
 
             if self._config[plc]['status'][0] != '1':
                 logger.warning("PLC: {plc} is in status: {status} (in configuration file). Skipped.".format(plc=plc, status=self._config[plc]['status']))
@@ -192,7 +192,7 @@ class ProdLine(ProdLineBase):
     def __init__(self, argv, loglevel=logging.INFO):
         ProdLineBase.__init__(self, argv, loglevel)
         self.database = Database(self.__class__.__name__)
-        from plc import PLC
+        from .plc import PLC
         self.set_plc_class(PLC)
 
     def get_status(self):
@@ -247,7 +247,7 @@ class ProdLine(ProdLineBase):
             logger.info("PLC: {plc} system time: {time}".format(plc=plc, time=plc.get_time()))
 
     def test_time_set(self):
-        dtime = datetime(2015, 04, 01, 22, 12, 13)
+        dtime = datetime(2015, 4, 1, 22, 12, 13)
         for plc in self.plcs:
             logger.info("PLC: {plc} set system time to: {dtime}".format(plc=plc, dtime=dtime))
             plc.set_time(dtime)

@@ -23,7 +23,7 @@ class ProdLineSimulator(ProdLineBase):
                 data = bytearray(open(_file, "rb").read())
                 ctrl.register_area(areaCode, db, data)
                 logger.info("Simulator: %s registered block: %s" % (ctrl, db))
-                print "Simulator: %s registered block: %s" % (ctrl, db)
+                print("Simulator: %s registered block: %s" % (ctrl, db))
 
     def run(self):
         # initialize plcs - list of active plcs will be available as self._controlers
@@ -35,7 +35,7 @@ class ProdLineSimulator(ProdLineBase):
         while j < 100:
             for _sim in self.plcs:
                 j += 1
-                print "XXXXXXXX", j, _sim
+                print("XXXXXXXX", j, _sim)
                 _sim.run()
             time.sleep(1)
 

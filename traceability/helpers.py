@@ -1,6 +1,10 @@
 import sys
 import os
-import ConfigParser
+import six
+try:
+    import configparser
+except:
+    from six.moves import configparser
 from optparse import OptionParser
 
 
@@ -28,17 +32,22 @@ def parse_args(argv=sys.argv):
 
 
 def parse_config(f):
-    config = ConfigParser.RawConfigParser()
+    config = configparser.RawConfigParser()
     config.read(f)
     c = {}
     for section in config.sections():
         c[section] = {}
         for option in config.options(section):
-            c[section][option] = map(str.strip, config.get(section, option).split(','))
+            #c[section][option] = map(str.strip, config.get(section, option).split(','))
+            value_list = config.get(section, option).split(',')
+            [x.strip() for x in value_list]  # strip values
+            c[section][option] = value_list
 
     # in case program is not installed correctly try create required paths
     for k in ['logfile']:
+        # print(c)
         path = c['main'][k][0]
+        # print("path", path, "xxx")
         if not os.path.exists(os.path.dirname(path)):  # in case base directory does not exists try to create it
             os.makedirs(os.path.dirname(path))
         c['main'][k][0] = path

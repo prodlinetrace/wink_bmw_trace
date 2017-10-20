@@ -72,7 +72,7 @@ class Simulator(PLCBase):
             if db.pc_ready_flag() == True:
                 break
             time.sleep(0.1)
-        print "I:", i
+        # print "I:", i
         if i == 30:
             logger.warning("PLC: {plc} DB: {db} SN: {sn} ST: {st} Timeout getting PC_READY flag".format(plc=self.get_id(), db=dbid, sn=serial_number, st=station))
             return False # timeout
@@ -98,7 +98,7 @@ class Simulator(PLCBase):
         if i == 30:
             logger.warning("PLC: {plc} DB: {db} SN: {sn} ST: {st} Timeout getting PLC_SAVE_FLAG flag".format(plc=self.get_id(), db=dbid, sn=serial_number, st=station))
             return False # timeout
-        #print "CAN SAVE NOW"
+        # print "CAN SAVE NOW"
         logger.debug("PLC: {plc} DB: {db} SN: {sn} ST: {st} got PLC_SAVE_FLAG".format(plc=self.get_id(), db=dbid, sn=serial_number, st=station))
 
         # get the status description
@@ -130,14 +130,14 @@ class Simulator(PLCBase):
             if db.pc_ready_flag() == True:
                 break
             time.sleep(0.1)
-        print "I:", i
+        # print "I:", i
         if i == 30:
             logger.warning("PLC: {plc} DB: {db} SN: {sn} ST: {st} Timeout on getting PC_READY flag".format(plc=self.get_id(), db=dbid, sn=serial_number, st=station))
-            return False # timeout
+            return False  # timeout
         logger.debug("PLC: {plc} DB: {db} SN: {sn} ST: {st} got PC_READY_FLAG".format(plc=self.get_id(), db=dbid, sn=serial_number, st=station))
 
         # write serial number to PLC memory before
-        #print "Storing: ", serial_number, "xx"
+        # print "Storing: ", serial_number, "xx"
         db.store_item(SERIAL_NUMBER, serial_number)
 
         db.store_item(STATION_STATUS, 9)  # reset station status to "waiting state"
@@ -166,9 +166,9 @@ class Simulator(PLCBase):
 
     def run(self):
         for dbid in self.get_active_dbs():
-            print dbid, "read"
+            # print dbid, "read"
             self.read_test(dbid)
-            print dbid, "save"
+            # print dbid, "save"
             self.save_test(dbid)
 
     def save_test(self, dbid):

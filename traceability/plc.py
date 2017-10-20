@@ -252,7 +252,7 @@ class PLCBase(object):
     def set_pollsleep(self, sleep=0):
         try:
             res = float(sleep)
-        except ValueError, e:
+        except ValueError as e:
             logger.error("PLC: {plc} Unable to set pollsleep value with '{val}' as input. Exception: {e}, TB: {tb}".format(plc=self.id, val=sleep, e=e, tb=traceback.format_exc()))
             res = 0
         logger.debug("PLC: {plc} Setting pollsleep to: {val}".format(plc=self.id, val=res))
@@ -264,7 +264,7 @@ class PLCBase(object):
     def set_polldbsleep(self, sleep=0):
         try:
             res = float(sleep)
-        except ValueError, e:
+        except ValueError as e:
             logger.error("PLC: {plc} Unable to set polldbsleep value with '{val}' as input. Exception: {e}, TB: {tb}".format(plc=self.id, val=sleep, e=e, tb=traceback.format_exc()))
             res = 0
         logger.debug("PLC: {plc} Setting polldbsleep to: {val}".format(plc=self.id, val=res))
@@ -276,7 +276,7 @@ class PLCBase(object):
     def set_pc_ready_flag_on_poll(self, val=True):
         try:
             res = int(val)
-        except ValueError, e:
+        except ValueError as e:
             logger.error("PLC: {plc} Unable to set pc_ready_flag_on_poll value with '{val}' as input. Exception: {e}, TB: {tb}".format(plc=self.id, val=val, e=e, tb=traceback.format_exc()))
             res = 0
         logger.debug("PLC: {plc} Setting pc_ready_flag_on_poll to: {val}".format(plc=self.id, val=res))
@@ -366,31 +366,31 @@ class PLC(PLCBase):
                 try:
                     data = block[PRODUCT_TYPE]
                     product_type = int(data)
-                except ValueError, e:
+                except ValueError as e:
                     logger.error("PLC: {plc} DB: {db} Data read error. Input: {data} Exception: {e}, TB: {tb}".format(plc=self.id, db=dbid, data=data, e=e, tb=traceback.format_exc()))
                     product_type = 0
                 try:
                     data = block[SERIAL_NUMBER]
                     serial_number = int(data)
-                except ValueError, e:
+                except ValueError as e:
                     logger.error("PLC: {plc} DB: {db} Data read error. Input: {data} Exception: {e}, TB: {tb}".format(plc=self.id, db=dbid, data=data, e=e, tb=traceback.format_exc()))
                     serial_number = 0
                 try:
                     data = block[STATION_ID]
                     station_id = int(data)
-                except ValueError, e:
+                except ValueError as e:
                     logger.error("PLC: {plc} DB: {db} Data read error. Input: {data} Exception: {e}, TB: {tb}".format(plc=self.id, db=dbid, data=data, e=e, tb=traceback.format_exc()))
                     station_id = 0
                 try:
                     data = block[STATION_NUMBER]
                     station_number = int(data)
-                except ValueError, e:
+                except ValueError as e:
                     logger.error("PLC: {plc} DB: {db} Data read error. Input: {data} Exception: {e}, TB: {tb}".format(plc=self.id, db=dbid, data=data, e=e, tb=traceback.format_exc()))
                     station_number = 0
                 try:
                     data = block[STATION_STATUS]
                     station_status_initial = int(data)
-                except ValueError, e:
+                except ValueError as e:
                     logger.error("PLC: {plc} DB: {db} Data read error. Input: {data} Exception: {e}, TB: {tb}".format(plc=self.id, db=dbid, data=data, e=e, tb=traceback.format_exc()))
                     station_status_initial = 0
 
@@ -399,7 +399,7 @@ class PLC(PLCBase):
 
                 try:
                     status = STATION_STATUS_CODES[station_status]['result']
-                except ValueError, e:
+                except ValueError as e:
                     logger.warning("PLC: {plc} DB: {db} wrong value for status, returning undefined. Exception: {e}".format(plc=self.id, db=block.get_db_number(), e=e))
                     status = STATION_STATUS_CODES[99]['result']
 
@@ -409,7 +409,7 @@ class PLC(PLCBase):
                 try:
                     data = block[STATION_STATUS]
                     station_status_stored = int(data)
-                except ValueError, e:
+                except ValueError as e:
                     logger.error("PLC: {plc} DB: {db} Data read error. Input: {data} Exception: {e}, TB: {tb}".format(plc=self.id, db=dbid, data=data, e=e, tb=traceback.format_exc()))
                     station_status_stored = 0
 
@@ -446,30 +446,30 @@ class PLC(PLCBase):
                 try:
                     data = block[PRODUCT_TYPE]
                     product_type = int(data)
-                except ValueError, e:
+                except ValueError as e:
                     logger.error("PLC: {plc} DB: {db} Data read error. Input: {data} Exception: {e}, TB: {tb}".format(plc=self.id, db=dbid, data=data, e=e, tb=traceback.format_exc()))
                     product_type = 0
                 try:
                     data = block[SERIAL_NUMBER]
                     serial_number = int(data)
-                except ValueError, e:
+                except ValueError as e:
                     logger.error("PLC: {plc} DB: {db} Data read error. Input: {data} Exception: {e}, TB: {tb}".format(plc=self.id, db=dbid, data=data, e=e, tb=traceback.format_exc()))
                     serial_number = 0
                 try:
                     data = block[STATION_ID]
                     station_id = int(data)
-                except ValueError, e:
+                except ValueError as e:
                     logger.error("PLC: {plc} DB: {db} Data read error. Input: {data} Exception: {e}, TB: {tb}".format(plc=self.id, db=dbid, data=data, e=e, tb=traceback.format_exc()))
                     station_id = 0
                 try:
                     data = block[STATION_STATUS]
                     station_status = int(data)
-                except ValueError, e:
+                except ValueError as e:
                     logger.error("PLC: {plc} DB: {db} Data read error. Input: {data} Exception: {e}, TB: {tb}".format(plc=self.id, db=dbid, data=data, e=e, tb=traceback.format_exc()))
                     station_status = 0
                 try:
                     status = STATION_STATUS_CODES[station_status]['result']
-                except ValueError, e:
+                except ValueError as e:
                     logger.warning("PLC: {plc} DB: {db} wrong value for status, returning undefined. Exception: {e}".format(plc=self.id, db=block.get_db_number(), e=e))
                     status = STATION_STATUS_CODES[99]['result']
 
@@ -479,13 +479,13 @@ class PLC(PLCBase):
                 try:
                     data = block[PROGRAM_NAME]
                     program_name = str(data)
-                except ValueError, e:
+                except ValueError as e:
                     logger.warning("PLC: {plc} DB: {db} wrong value for program name, returning 0. Exception: {e}".format(plc=self.id, db=block.get_db_number(), e=e))
                     program_name = 0
                 try:
                     data = block[DATE_TIME]
                     date_time = str(data)
-                except ValueError, e:
+                except ValueError as e:
                     logger.warning("PLC: {plc} DB: {db} wrong value for data, returning now(). Exception: {e}".format(plc=self.id, db=block.get_db_number(), e=e))
                     date_time = str(datetime.datetime.now())
 
@@ -494,7 +494,7 @@ class PLC(PLCBase):
                 try:
                     data = block[OPERATOR_NUMBER]
                     operator_number = int(data)
-                except ValueError, e:
+                except ValueError as e:
                     logger.error("PLC: {plc} DB: {db} Data read error. Input: {data} Exception: {e}, TB: {tb}".format(plc=self.id, db=dbid, data=data, e=e, tb=traceback.format_exc()))
                     operator_number = 0
 
@@ -545,25 +545,25 @@ class PLC(PLCBase):
                     try:
                         data = block[PRODUCT_TYPE]
                         product_type = int(data)
-                    except ValueError, e:
+                    except ValueError as e:
                         logger.error("PLC: {plc} DB: {db} Data read error. Input: {data} Exception: {e}, TB: {tb}".format(plc=self.id, db=dbid, data=data, e=e, tb=traceback.format_exc()))
                         product_type = 0
                     try:
                         data = block[SERIAL_NUMBER]
                         serial_number = int(data)
-                    except ValueError, e:
+                    except ValueError as e:
                         logger.error("PLC: {plc} DB: {db} Data read error. Input: {data} Exception: {e}, TB: {tb}".format(plc=self.id, db=dbid, data=data, e=e, tb=traceback.format_exc()))
                         serial_number = 0
                     try:
                         data = block[STATION_ID]
                         station_id = int(data)
-                    except ValueError, e:
+                    except ValueError as e:
                         logger.error("PLC: {plc} DB: {db} Data read error. Input: {data} Exception: {e}, TB: {tb}".format(plc=self.id, db=dbid, data=data, e=e, tb=traceback.format_exc()))
                         station_id = 0
                     try:
                         data = block[program_id_name]
                         program_id = str(data)
-                    except ValueError, e:
+                    except ValueError as e:
                         logger.warning("PLC: {plc} DB: {db} wrong value for program name, returning 0. Exception: {e}".format(plc=self.id, db=block.get_db_number(), e=e))
                         program_id = 0
 
@@ -600,19 +600,19 @@ class PLC(PLCBase):
                 try:
                     data = block[PRODUCT_TYPE]
                     product_type = int(data)
-                except ValueError, e:
+                except ValueError as e:
                     logger.error("PLC: {plc} DB: {db} Data read error. Input: {data} Exception: {e}, TB: {tb}".format(plc=self.id, db=dbid, data=data, e=e, tb=traceback.format_exc()))
                     product_type = 0
                 try:
                     data = block[SERIAL_NUMBER]
                     serial_number = int(data)
-                except ValueError, e:
+                except ValueError as e:
                     logger.error("PLC: {plc} DB: {db} Data read error. Input: {data} Exception: {e}, TB: {tb}".format(plc=self.id, db=dbid, data=data, e=e, tb=traceback.format_exc()))
                     serial_number = 0
                 try:
                     data = block[STATION_ID]
                     station_id = int(data)
-                except ValueError, e:
+                except ValueError as e:
                     logger.error("PLC: {plc} DB: {db} Data read error. Input: {data} Exception: {e}, TB: {tb}".format(plc=self.id, db=dbid, data=data, e=e, tb=traceback.format_exc()))
                     station_id = 0
                 logger.info("PLC: {plc} ST: {station} PT: {type} SN: {serial} browser opening request - show product details.".format(plc=self.get_id(), station=station_id, type=product_type, serial=serial_number))
@@ -660,19 +660,19 @@ class PLC(PLCBase):
                 try:
                     data = block[STATION_ID]
                     station_id = int(data)
-                except ValueError, e:
+                except ValueError as e:
                     logger.error("PLC: {plc} DB: {db} Data read error. Input: {data} Exception: {e}, TB: {tb}".format(plc=self.id, db=dbid, data=data, e=e, tb=traceback.format_exc()))
                     station_id = 0
                 try:
                     data = block[OPERATOR_NUMBER]
                     operator_number = int(data)
-                except ValueError, e:
+                except ValueError as e:
                     logger.error("PLC: {plc} DB: {db} Data read error. Input: {data} Exception: {e}, TB: {tb}".format(plc=self.id, db=dbid, data=data, e=e, tb=traceback.format_exc()))
                     operator_number = 0
                 try:
                     data = block[OPERATOR_STATUS]
                     operator_status_initial = int(data)
-                except ValueError, e:
+                except ValueError as e:
                     logger.error("PLC: {plc} DB: {db} Data read error. Input: {data} Exception: {e}, TB: {tb}".format(plc=self.id, db=dbid, data=data, e=e, tb=traceback.format_exc()))
                     operator_status_initial = 0
 
@@ -685,7 +685,7 @@ class PLC(PLCBase):
                 try:
                     data = block[OPERATOR_STATUS]
                     operator_status_stored = int(data)
-                except ValueError, e:
+                except ValueError as e:
                     logger.error("PLC: {plc} DB: {db} Data read error. Input: {data} Exception: {e}, TB: {tb}".format(plc=self.id, db=dbid, data=data, e=e, tb=traceback.format_exc()))
                     operator_status_stored = 0
 

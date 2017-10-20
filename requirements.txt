@@ -1,16 +1,18 @@
-Flask==0.10.1
-Flask-SQLAlchemy==2.0
-Flask-Script==2.0.5
-Flask-RESTful==0.3.2
-Flask-Login==0.2.10
-Flask-Autodoc==0.1.1
+Flask==0.12.2
+Flask-SQLAlchemy==2.3.2
+Flask-Script==2.0.6
+Flask-RESTful==0.3.6
+Flask-Login==0.4.0
+Flask-Autodoc==0.1.2
 
-SQLAlchemy==0.9.9
-Markdown==2.6.1
-bleach==1.4.1
-pygtail==0.6.0
-cx_Freeze==4.3.4
-futures==3.0.3
+SQLAlchemy==1.1.9
+Markdown==2.6.8
+bleach==2.0.0
+pygtail==0.7.0
+cx_Freeze==5.0.2
+futures==3.1.1
+ConfigParser==3.5.0
+wxPython==4.0.0b2
 
 ipython
 pyreadline

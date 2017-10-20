@@ -72,7 +72,7 @@ class DB(object):
         try:
             assert key in self._specification
             index, _type = self._specification[key]
-        except AssertionError, e:
+        except AssertionError as e:
             logger.error("PLC: {plc} DB: {db} unable to read key: {key}".format(plc=self.plc.get_id(), db=self.db_name, key=key))
             logger.warning("PLC: {plc} DB: {db} specification: {spec}".format(plc=self.plc.get_id(), db=self.db_name, spec=self._specification))
             if TRC_TMPL_COUNT in self._specification:
@@ -169,7 +169,7 @@ class DB(object):
             max_size = int(max_size)
             try:
                 ret = snap7.util.set_string(_bytearray, byte_index, value, max_size)
-            except ValueError, e:
+            except ValueError as e:
                 import traceback
                 logger.warning("PLC: {plc} DB: {db} Unable to set string type. Exception: {exc}, TB: {tb}".format(plc=self.get_plc(), db=self.db_number, exc=e, tb=traceback.format_exc()))
                 return False
