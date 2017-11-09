@@ -23,7 +23,7 @@ def parse_args(argv=sys.argv):
     bn = fn.split('.')[:-1]
     conf_file = os.path.join(cd, ".".join(bn + ['conf']))
 
-    parser.add_option("-c", "--config", help="location of config file, default: %s " % conf_file, default=conf_file)
+    parser.add_option("-c", "--config", help="location of config file, default: %s" % conf_file, default=conf_file)
     parser.add_option("-q", "--quiet", action="store_true", default=False, help="don't print status messages to stdout")
     parser.add_option("-v", "--verbose", action="store_true", default=False, help="verbose mode")
 

@@ -1,29 +1,50 @@
-STATION_ID              = 'head.station_id'      # byte
-SERIAL_NUMBER           = 'head.serial_number'   # string(8) - 6 digits
-PRODUCT_TYPE            = 'head.product_type'    # string(12) - 10 digits
-PROGRAM_NUMBER          = 'head.program_number'  # integer
-PROGRAM_NAME            = 'head.program_name'    # string(20)
+# operator section
+OPERATOR_LOGIN          = 'operator.login'
+OPERATOR_PASSWORD       = 'operator.password'
 
 # operator section
-OPERATOR_QUERY_FLAG     = 'operator.operator_Query'
-OPERATOR_SAVE_FLAG      = 'operator.operator_Save'
-OPERATOR_NUMBER         = 'operator.operator_number'  # dint
-OPERATOR_STATUS         = 'operator.operator_status'  # byte
+OPERATOR_STATUS         = 'operator.operator_status'  # int
+OPERATOR_DO_LOGIN       = 'operator.operator_do_login'
+OPERATOR_DO_LOGOUT      = 'operator.operator_do_logout'
+OPERATOR_IS_LOGIN       = 'operator.operator_is_login'
+OPERATOR_DATE_TIME      = 'operator.operator_datetime'
 
+
+
+# head section
+HEAD_STATION_ID         = 'head.station_id'
+HEAD_PROGRAM_NUMBER     = 'head_program_number'
+HEAD_NEST_NUMBER        = 'head.nest_number'
+HEAD_DETAIL_ID          = 'head.detail_id'
+#SERIAL_NUMBER           = 'head.serial_number'   # string(8) - 6 digits
+#PRODUCT_TYPE            = 'head.product_type'    # string(12) - 10 digits
+#PROGRAM_NUMBER          = 'head.program_number'  # integer
+#PROGRAM_NAME            = 'head.program_name'    # string(20)
+
+
+# status section
 PC_HEARTBEAT_FLAG       = 'ctrl.PC_live'
 PLC_HEARTBEAT_FLAG      = 'ctrl.PLC_live'
 PLC_TRC_ON              = 'ctrl.PLC_trc_on'
 CHECKSUM                = 'ctrl.checksum'
+STATUS_SAVE_ONLY_MODE_FLAG = 'status_save_only_mode'
+STATUS_NO_ID_SCANNING_FLAG = 'status_no_id_scanning'
+STATUS_NO_TYPE_VERIFY_FLAG = 'status_no_type_verify'
+STATUS_NO_SCANNING_FLAG = 'status_no_scanning' 
 
 PC_READY_FLAG           = 'status.PC_Ready'
 PLC_QUERY_FLAG          = 'status.PLC_Query'
 PLC_SAVE_FLAG           = 'status.PLC_Save'
-DB_BUSY_FLAG            = 'status.DB_Busy'
-PC_OPEN_BROWSER_FLAG    = 'status.PC_OpenBrowser'
-STATION_NUMBER          = 'status.station_number'  # byte
-STATION_STATUS          = 'status.station_status'  # byte
-DATE_TIME               = 'status.date_time'       # 8 bytes
+ID_QUERY_FLAG           = 'status.flag_id_query' 
+ID_READY_FLAG           = 'status.flag_id_ready'
 
+STATUS_DATE_TIME        = 'status.date_time'       # 8 bytes
+
+#STATION_NUMBER          = 'status.station_number'  # byte
+#STATION_STATUS          = 'status.station_status'  # byte
+
+
+# trc templates
 TRC_TMPL_COUNT          = 'body.trc.template_count'
 TRC_TMPL_SAVE_FLAG      = 'body.trc.tmpl.__no__.PLC_Save'
 TRC_TMPL_PROGRAM_ID     = 'body.trc.tmpl.__no__.program_id'

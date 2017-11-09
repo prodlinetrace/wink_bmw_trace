@@ -2,7 +2,8 @@ import snap7
 import logging
 from .layouts import db_specs
 import re
-from .constants import PC_READY_FLAG, PLC_QUERY_FLAG, PLC_SAVE_FLAG, TRC_TMPL_COUNT, PC_OPEN_BROWSER_FLAG, OPERATOR_QUERY_FLAG, OPERATOR_SAVE_FLAG
+#from .constants import PC_READY_FLAG, PLC_QUERY_FLAG, PLC_SAVE_FLAG, TRC_TMPL_COUNT, PC_OPEN_BROWSER_FLAG, OPERATOR_QUERY_FLAG, OPERATOR_SAVE_FLAG
+from .constants import *
 
 logger = logging.getLogger(__name__)
 
