@@ -286,7 +286,7 @@ Kreismarkierer = """
 """
 
 Durchflusspruefung = """
-# Durchflusspruefung Begin                                               # DB8.DBX656.7; Durchflussprüfung - Tego chyba nie ma na tej stacji
+# Durchflusspruefung Begin                                               # DB8.DBX656.7; Durchflusspruefung - Tego chyba nie ma na tej stacji
 0.0    Durchflusspruefung.done                               INT         # 0 - NO, 1 - YES
 2.0    Durchflusspruefung.res_d1                             DINT        # reserve
 """ + offset_spec_block(UDT81.replace("__UDT81_prefix__", "Durchflusspruefung"), 6) + """
@@ -294,7 +294,7 @@ Durchflusspruefung = """
 """
 
 DrucksensorNachPruefling = """
-# DrucksensorNachPruefling Begin                                         # DB8.DBX656.4; Drucksensor nach Prüfling
+# DrucksensorNachPruefling Begin                                         # DB8.DBX656.4; Drucksensor nach Pruefling
 0.0    DrucksensorNachPruefling.done                         INT         # 0 - NO, 1 - YES
 2.0    DrucksensorNachPruefling.res_d1                       DINT        # reserve # DB8.DBX656.5
 """ + offset_spec_block(UDT81.replace("__UDT81_prefix__", "DrucksensorNachPruefling"), 6) + """
@@ -307,7 +307,7 @@ SchemaParams = """
 4.0    PresetParams.P_He_Versorgung_REAL                     REAL        # DB475.DBD448; [bar] HMI_IW.Anlage.P_He_Versorgung_REAL 
 8.0    PresetParams.P_Vac_PT_REAL                            REAL        # DB475.DBD20; [mbar] HMI_IW.Kammer1.P_Vac_PT_REAL
 12.0   PresetParams.P_He_nach_PT_REAL                        REAL        # DB475.DBD14; [bar] HMI_IW.Kammer1.P_He_nach_PT_REAL 
-16.0   PresetParams.Leckrate                                 REAL        # DB9.DBD10; [mbar l/s] Prüf-Erg.Glocke.Kammer1.Leckrate 
+16.0   PresetParams.Leckrate                                 REAL        # DB9.DBD10; [mbar l/s] Pruef-Erg.Glocke.Kammer1.Leckrate 
 20.0   PresetParams.P_Glocke_REAL                            REAL        # DB475.DBD2; [mbar] HMI_IW.Kammer1.P_Glocke_REAL 
 24.0   PresetParams.Roh_Mittel_Mul_Faktor                    REAL        # DB20.DBD608; [mbar l/s] INFICON-DB.Leckratenscalierung .Roh_Mittel_Mul_Faktor
 28.0   PresetParams.res_r1                                   REAL        # reserve
@@ -322,18 +322,18 @@ PresetParams = """
 # PresetParams Begin                                         # Parametry z nastaw
 0.0    PresetParams.GloVacGrob_Soll                          REAL        # DB8.DBD4; [bar] Glockenvakuum GROB 
 4.0    PresetParams.GloVacFein_Soll                          REAL        # DB8.DBD16; [bar] Glockenvakuum FEIN
-8.0    PresetParams.GloVacGrob                               REAL        # DB8.DBD160; [s] Überwachungszeit Glockenvakuum GROB
-12.0   PresetParams.GloVacFein                               REAL        # DB8.DBD164; [s] Überwachungszeit Glockenvakuum FEIN
-16.0   PresetParams.PtVac_Atmos_Soll_1                       REAL        # DB8.DBD28; [mbar] Prüfteil-Vakkum ATMOSPHÄRE
-20.0   PresetParams.PtVac_He_Soll_1                          REAL        # DB8.DBD56; [mbar] Prüfteil-Vakkum HELIUM
-24.0   PresetParams.PT_evakuieren_Atmos                      REAL        # DB8.DBD172; [s] Überwachungszeit Prüfteil evakuieren ATMOSPHÄRE
-28.0   PresetParams.PT_evakuieren_Helium                     REAL        # DB8.DBD176; [s] Überwachungszeit Prüfteil evakuieren HELIUM
-32.0   PresetParams.PT_fluten_1                              REAL        # DB8.DBD180; [s] Prüfteil mit Atmosphäre fluten
-36.0   PresetParams.Helium_Min_1                             REAL        # DB8.DBD44; [bar] Helium -Fülldruck MIN
-40.0   PresetParams.Helium_Soll_1                            REAL        # DB8.DBD40; [bar] Helium -Fülldruck SOLL
-44.0   PresetParams.HeliumFuellen                            REAL        # DB8.DBD184; [s] Überwachungszeit Prüfteil mit Helium füllen
-48.0   PresetParams.Helium_entspannen_HD                     REAL        # DB8.DBD168; [s] Überwachungszeit Helium entspannen
-52.0   PresetParams.FrgHeliumEvakuieren                      REAL        # DB8.DBD48; [bar] Freigabe Prüfteil evakuieren ab
+8.0    PresetParams.GloVacGrob                               REAL        # DB8.DBD160; [s] Ueberwachungszeit Glockenvakuum GROB
+12.0   PresetParams.GloVacFein                               REAL        # DB8.DBD164; [s] Ueberwachungszeit Glockenvakuum FEIN
+16.0   PresetParams.PtVac_Atmos_Soll_1                       REAL        # DB8.DBD28; [mbar] Pruefteil-Vakkum ATMOSPHAERE
+20.0   PresetParams.PtVac_He_Soll_1                          REAL        # DB8.DBD56; [mbar] Pruefteil-Vakkum HELIUM
+24.0   PresetParams.PT_evakuieren_Atmos                      REAL        # DB8.DBD172; [s] Ueberwachungszeit Pruefteil evakuieren ATMOSPHAERE
+28.0   PresetParams.PT_evakuieren_Helium                     REAL        # DB8.DBD176; [s] Ueberwachungszeit Pruefteil evakuieren HELIUM
+32.0   PresetParams.PT_fluten_1                              REAL        # DB8.DBD180; [s] Pruefteil mit Atmosphaere fluten
+36.0   PresetParams.Helium_Min_1                             REAL        # DB8.DBD44; [bar] Helium -Fuelldruck MIN
+40.0   PresetParams.Helium_Soll_1                            REAL        # DB8.DBD40; [bar] Helium -Fuelldruck SOLL
+44.0   PresetParams.HeliumFuellen                            REAL        # DB8.DBD184; [s] Ueberwachungszeit Pruefteil mit Helium fuellen
+48.0   PresetParams.Helium_entspannen_HD                     REAL        # DB8.DBD168; [s] Ueberwachungszeit Helium entspannen
+52.0   PresetParams.FrgHeliumEvakuieren                      REAL        # DB8.DBD48; [bar] Freigabe Pruefteil evakuieren ab
 56.0   PresetParams.res_r1                                   REAL        # reserve
 60.0   PresetParams.res_r2                                   REAL        # reserve
 64.0   PresetParams.res_r3                                   REAL        # reserve
@@ -347,7 +347,7 @@ PresetParams = """
 """
 
 UeberwachGroblBeGlocEvak = """
-# UeberwachGroblBeGlocEvak Begin                                         # DB9.DBX3.2; FB310; Überwachung Grobleck beim Glocke ev akuieren
+# UeberwachGroblBeGlocEvak Begin                                         # DB9.DBX3.2; FB310; Ueberwachung Grobleck beim Glocke ev akuieren
 0.0    UeberwachGroblBeGlocEvak.done                         INT         # 0 - NO, 1 - YES
 2.0    UeberwachGroblBeGlocEvak.res_d1                       DINT        # reserve
 """ + offset_spec_block(UDT81.replace("__UDT81_prefix__", "UeberwachGroblBeGlocEvak"), 6) + """
@@ -355,7 +355,7 @@ UeberwachGroblBeGlocEvak = """
 """
 
 UeberwachGroblBeHeliumfu = """
-# UeberwachGroblBeHeliumfu Begin                                         # DB9.DBX3.3; FB310; Überwachung Grobleck beim Heliumfül len
+# UeberwachGroblBeHeliumfu Begin                                         # DB9.DBX3.3; FB310; Ueberwachung Grobleck beim Heliumfuel len
 0.0    UeberwachGroblBeHeliumfu.done                         INT         # 0 - NO, 1 - YES
 2.0    UeberwachGroblBeHeliumfu.res_d1                       DINT        # reserve # DB8.DBX656.5
 """ + offset_spec_block(UDT81.replace("__UDT81_prefix__", "UeberwachGroblBeHeliumfu"), 6) + """
@@ -366,12 +366,12 @@ Leckrate = """
 # Leckrate Begin                                                         # DB9.DBX1.1; FB310; Wyciek
 0.0    Leckrate.leak_result                                  REAL        # DB9.DBD10; [mbar l/s]
 4.0    Leckrate.leak_max                                     REAL        # DB8.DBD328; [mbar l/s] Maximale Leckrate
-8.0    Leckrate.leak_Max_Mantisse_REZ                        REAL        # DB8.DBD320; Maximal zulässige Leckrate Mantisse
-12.0   Leckrate.leak_Max_Exponent_REZ                        REAL        # DB8.DBD324; Maximal zulässige Leckrate Exponent
+8.0    Leckrate.leak_Max_Mantisse_REZ                        REAL        # DB8.DBD320; Maximal zulaessige Leckrate Mantisse
+12.0   Leckrate.leak_Max_Exponent_REZ                        REAL        # DB8.DBD324; Maximal zulaessige Leckrate Exponent
 16.0   Leckrate.leak_Grobleck                                REAL        # DB8.DBD340; [mbar l/s] Leckrate Grobleckerkennung
-20.0   Leckrate.leak_Mantisse_Grob_REZ                       REAL        # DB8.DBD332; Maximal zulässige Leckrate Mantisse
-24.0   Leckrate.leak_Exponent_Grob_REZ                       REAL        # DB8.DBD336; Maximal zulässige Leckrate Exponent
-28.0   Leckrate.leak_UebernahmeLeckrate                      REAL        # DB8.DBD188; [s] Übernahme Leckrate nach
+20.0   Leckrate.leak_Mantisse_Grob_REZ                       REAL        # DB8.DBD332; Maximal zulaessige Leckrate Mantisse
+24.0   Leckrate.leak_Exponent_Grob_REZ                       REAL        # DB8.DBD336; Maximal zulaessige Leckrate Exponent
+28.0   Leckrate.leak_UebernahmeLeckrate                      REAL        # DB8.DBD188; [s] uebernahme Leckrate nach
 32.0   Leckrate.res_d1                                       DINT        # reserve
 36.0   Leckrate.res_d2                                       DINT        # reserve
 40.0   Leckrate.res_d3                                       DINT        # reserve
@@ -382,7 +382,7 @@ Leckrate = """
 
 UDT85 = """
 # Tracedb_12706 BEGIN
-""" + db8xxHeader + \
+""" + db8xxHeader \
 + offset_spec_block(ReadID, 122) \
 + offset_spec_block(Teilabfrage, 122+56) \
 + offset_spec_block(Nadelpruefung, 122+56+26) \
@@ -394,8 +394,7 @@ UDT85 = """
 + offset_spec_block(PresetParams, 122+56+26+26+26+32+26+26+64) \
 + offset_spec_block(UeberwachGroblBeGlocEvak, 122+56+26+26+26+32+26+26+64+104) \
 + offset_spec_block(UeberwachGroblBeHeliumfu, 122+56+26+26+26+32+26+26+64+104+26) \
-+ offset_spec_block(Leckrate, 122+56+26+26+26+32+26+26+64+104+26+26) \
-+ """
++ offset_spec_block(Leckrate, 122+56+26+26+26+32+26+26+64+104+26+26) + """
 # Tracedb_12706 END - size of 628 bytes
 """ 
 
