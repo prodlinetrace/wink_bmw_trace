@@ -7,7 +7,7 @@ Define layouts of DB blocks on PLC.
 """
 
 UDT80 = """
-# Tracedb_Logowanie
+# Tracedb_Logowanie - Begin
 0.0     {operator_login}             STRING[8]   # set by PLC
 10.0    {operator_password}          STRING[16]  # set by PLC
 28.0    operator.res_d1              DINT        # reserve
@@ -31,12 +31,12 @@ UDT80 = """
 39.7    operator.res2_b7             BOOL        # reserve
 40.0    operator.res_d3              DINT        # reserve
 44.0    {operator_date_time}         DATETIME    # date and time from PLC. size is 8 bytes.
-# total size of 52 bytes
+# Tracedb_Logowanie - END - size of 52 bytes
 """.format(operator_login=OPERATOR_LOGIN, operator_password=OPERATOR_PASSWORD, operator_status=OPERATOR_STATUS, operator_do_login=OPERATOR_DO_LOGIN, \
            operator_do_logout=OPERATOR_DO_LOGIN, operator_is_login=OPERATOR_IS_LOGIN, operator_date_time=OPERATOR_DATE_TIME)
 
 UDT81 = """
-# Tracedb_Status_lokalny
+# Tracedb_Status_lokalny - Begin
 0.0    __UDT81_prefix__.Status.res_d1               DINT            # reserve
 4.0    __UDT81_prefix__.Status.OperationActive      BOOL            # 0 - Not Active, 1 - Switched ON
 4.1    __UDT81_prefix__.Status.res1_b1              BOOL            # reserve
@@ -58,11 +58,12 @@ UDT81 = """
 8.0    __UDT81_prefix__.Status.date_time            DATETIME        # date and time
 16.0   __UDT81_prefix__.Status.result               INT             # 1 - OK 2 - NOK
 18.0   __UDT81_prefix__.Status.res_i2               INT             # reserve
-# size of 20 bytes.   
+# # Tracedb_Status_lokalny - END - size of 20 bytes.   
 """.format(status_datetime=STATUS_DATE_TIME)
 
 
-db8xxHead = """
+GlobalHead = """
+# Tracedb_Global_Head - Begin
 0.0    {head_station_id}           INT         # station ID
 2.0    {head_program_number}       INT         # program number
 4.0    {head_nest_number}          INT         # nest number
@@ -71,11 +72,11 @@ db8xxHead = """
 40.0   head.res_i2                 INT         # reserve
 42.0   head.res_d3                 DINT        # reserve
 46.0   head.res_d4                 DINT        # reserve
-# size of 50 bytes.
+# Tracedb_Global_Head - END - size of 50 bytes.
 """.format(head_station_id=HEAD_STATION_ID, head_program_number=HEAD_PROGRAM_NUMBER, head_nest_number=HEAD_NEST_NUMBER, head_detail_id=HEAD_DETAIL_ID)
 
 UDT82 = """
-# Tracedb_Status_Globalny
+# Tracedb_Status_Globalny - Begin
 0.0   status.res_d1                DINT        # reserve
 4.0   {status_plc_trc_on}          BOOL        # traceability flag. used by PLC to indicate if tracaebility should be switched on.
 4.1   {status_plc_live}            BOOL        # Controlled by PLC. blinks every 300[ms]. Indicates that PLC is alive
@@ -97,13 +98,13 @@ UDT82 = """
 8.0   {status_datetime}            DATETIME    # date and time
 16.0   status.station_result       INT         # wynik ze stanowiska
 18.0   status.database_result      INT         # wynik z bazy danych
-# size of 20 bytes. 
+# Tracedb_Status_Globalny - END - size of 20 bytes. 
 """.format(status_plc_live=PLC_HEARTBEAT_FLAG, status_pc_live=PC_HEARTBEAT_FLAG, status_plc_trc_on=PLC_TRC_ON, status_datetime=STATUS_DATE_TIME, \
     status_save_only_mode=STATUS_SAVE_ONLY_MODE_FLAG, status_no_id_scanning=STATUS_NO_ID_SCANNING_FLAG,  status_no_type_verify=STATUS_NO_TYPE_VERIFY_FLAG, status_no_scanning=STATUS_NO_SCANNING_FLAG, \
     flag_pc_ready=PC_READY_FLAG, flag_plc_query=PLC_QUERY_FLAG, flag_plc_save=PLC_SAVE_FLAG, flag_id_query=ID_QUERY_FLAG, flag_id_ready=ID_READY_FLAG)
 
 db8xxHeader = """# db8xxHeader BEGIN
-""" + UDT80 +  offset_spec_block(db8xxHead, 52) + offset_spec_block(UDT82, 52+50)  + """
+""" + UDT80 +  offset_spec_block(GlobalHead, 52) + offset_spec_block(UDT82, 52+50)  + """
 # db8xxHeader END - size of 122
 """  
 
@@ -183,14 +184,41 @@ AutomaticSensorMounting = """
 # AutomaticSensorMounting END - size of 58 bytes
 """
 
-# TODO: implement ME
-FlowTest = """
+FlowTestHeader = """
 # FlowTest Begin
-0.0     FlowTest.done                                        INT      # 0 - NO, 1 - YES
-2.0     FlowTest.res_d1                                      DINT     # reserve
-""" + offset_spec_block(UDT81.replace("__UDT81_prefix__", "FlowTest"), 6) + """
+0.0     FlowTest.type                                        INT      # Test type 1 - Cycle, 2 - Dummy, 3 - Calibration 
+2.0     FlowTest.dummy1                                      INT      # DummyiKalibrGodzZmaiana1
+4.0     FlowTest.dummy2                                      INT      # DummyiKalibrGodzZmaiana2
+6.0     FlowTest.dummy3                                      INT      # DummyiKalibrGodzZmaiana3
+8.0     FlowTest.res_d1                                      DINT     # reserve
+12.0    FlowTest.res_d2                                      DINT     # reserve
+# FlowTestHeader size is 16 bytes
+"""
+
+FlowTestFooter = """
 # FlowTest END - size of 400 bytes
 """
+
+FlowTestTemplate = """
+# FlowTestTemplate {number} - Begin
+0.0    FlowTest.{number}.FlowResult                          REAL     # [ln/min] 
+4.0    FlowTest.{number}.FlowMax                             REAL     # [ln/min]
+8.0    FlowTest.{number}.FlowMin                             REAL     # [ln/min]
+12.0   FlowTest.{number}.res_r1                              REAL     # reserve
+16.0   FlowTest.{number}.res_r2                              REAL     # reserve
+20.0   FlowTest.{number}.TimeElapsed                         REAL     # [s]
+24.0   FlowTest.{number}.res_d3                              DINT     # reserve
+""" + offset_spec_block(UDT81, 28).replace("__UDT81_prefix__", "FlowTest.{number}") + """
+# FlowTestTemplate {number} - END template size is 48
+"""
+
+FlowTest = FlowTestHeader
+for i in range(0, 7):  # append eight templates
+    header_size = 16
+    template_size = 48
+    offset = header_size + template_size * i
+    FlowTest += offset_spec_block(FlowTestTemplate, offset).replace("{number}", str(i))
+FlowTest += FlowTestFooter
 
 Marking = """
 # Marking Begin
@@ -209,62 +237,220 @@ UDT84 = """
 # Tracedb_12705 END - size of 900 bytes
 """ 
 
+Teilabfrage = """
+# Teilabfrage Begin                                                   # ; FC1 NW12
+0.0    Teilabfrage.done                                      INT      # 0 - NO, 1 - YES
+2.0    Teilabfrage.res_d1                                    DINT     # reserve # DB8.DBX  656.2 
+""" + offset_spec_block(UDT81.replace("__UDT81_prefix__", "Teilabfrage"), 6) + """
+# Teilabfrage END - size of 26 bytes
+"""
+
+Nadelpruefung = """
+# Nadelpruefung Begin                                                 # ; FC1 NW12
+0.0    Nadelpruefung.done                                    INT      # 0 - NO, 1 - YES
+2.0    Nadelpruefung.res_d1                                  DINT     # reserve # DB8.DBX656.6
+""" + offset_spec_block(UDT81.replace("__UDT81_prefix__", "Nadelpruefung"), 6) + """
+# Nadelpruefung END - size of 26 bytes
+"""
+
+Mutternabfrage = """
+# Mutternabfrage Begin                                                 # DB9.DBX3.7; FB310
+0.0    Mutternabfrage.done                                   INT       # 0 - NO, 1 - YES
+2.0    Mutternabfrage.res_d1                                 DINT      # reserve # DB8.DBX656.5
+""" + offset_spec_block(UDT81.replace("__UDT81_prefix__", "Mutternabfrage"), 6) + """
+# Mutternabfrage END - size of 26 bytes
+"""
+
+Kreismarkierer = """
+# Kreismarkierer Begin                                                 # DB9.DBX3.4; FB312; Znakowanie
+0.0    Kreismarkierer.done                                   INT       # 0 - NO, 1 - YES
+2.0    Kreismarkierer.servomotor_number                      INT       # numer silownika # DB8.DBW658
+4.0    Kreismarkierer.marking_time                           REAL      # czas znakowania 
+8.0    Kreismarkierer.res_d1                                 DINT      # reserve # DB8.DBX656.3
+""" + offset_spec_block(UDT81.replace("__UDT81_prefix__", "Kreismarkierer"), 12) + """
+# Kreismarkierer END - size of 32 bytes
+"""
+
+Durchflusspruefung = """
+# Durchflusspruefung Begin                                             # DB8.DBX656.7; Durchflussprüfung - Tego chyba nie ma na tej stacji
+0.0    Durchflusspruefung.done                               INT       # 0 - NO, 1 - YES
+2.0    Durchflusspruefung.res_d1                             DINT      # reserve
+""" + offset_spec_block(UDT81.replace("__UDT81_prefix__", "Durchflusspruefung"), 6) + """
+# Durchflusspruefung END - size of 26 bytes
+"""
+
+DrucksensorNachPruefling = """
+# DrucksensorNachPruefling Begin                                       # DB8.DBX656.4; Drucksensor nach Prüfling
+0.0    DrucksensorNachPruefling.done                         INT       # 0 - NO, 1 - YES
+2.0    DrucksensorNachPruefling.res_d1                       DINT      # reserve # DB8.DBX656.5
+""" + offset_spec_block(UDT81.replace("__UDT81_prefix__", "DrucksensorNachPruefling"), 6) + """
+# DrucksensorNachPruefling END - size of 26 bytes
+"""
+
+SchemaParams = """
+# PresetParams Begin                                         # Parametry z nastaw
+0.0    PresetParams.P_He_vor_PT_REAL                         REAL      # DB475.DBD8; [bar] HMI_IW.Kammer1.P_He_vor_PT_REAL 
+4.0    PresetParams.P_He_Versorgung_REAL                     REAL      # DB475.DBD448; [bar] HMI_IW.Anlage.P_He_Versorgung_REAL 
+8.0    PresetParams.P_Vac_PT_REAL                            REAL      # DB475.DBD20; [mbar] HMI_IW.Kammer1.P_Vac_PT_REAL
+12.0   PresetParams.P_He_nach_PT_REAL                        REAL      # DB475.DBD14; [bar] HMI_IW.Kammer1.P_He_nach_PT_REAL 
+16.0   PresetParams.Leckrate                                 REAL      # DB9.DBD10; [mbar l/s] Prüf-Erg.Glocke.Kammer1.Leckrate 
+20.0   PresetParams.P_Glocke_REAL                            REAL      # DB475.DBD2; [mbar] HMI_IW.Kammer1.P_Glocke_REAL 
+24.0   PresetParams.Roh_Mittel_Mul_Faktor                    REAL      # DB20.DBD608; [mbar l/s] INFICON-DB.Leckratenscalierung .Roh_Mittel_Mul_Faktor
+28.0   PresetParams.res_r1                                   REAL      # reserve
+32.0   PresetParams.res_r2                                   REAL      # reserve
+36.0   PresetParams.res_r3                                   REAL      # reserve
+40.0   PresetParams.res_d4                                   DINT      # reserve
+""" + offset_spec_block(UDT81.replace("__UDT81_prefix__", "SchemaParams"), 44) + """
+# SchemaParams END - size of 64 bytes
+"""
+
+PresetParams = """
+# PresetParams Begin                                         # Parametry z nastaw
+0.0    PresetParams.GloVacGrob_Soll                          REAL      # DB8.DBD4; [bar] Glockenvakuum GROB 
+4.0    PresetParams.GloVacFein_Soll                          REAL      # DB8.DBD16; [bar] Glockenvakuum FEIN
+8.0    PresetParams.GloVacGrob                               REAL      # DB8.DBD160; [s] Überwachungszeit Glockenvakuum GROB
+12.0   PresetParams.GloVacFein                               REAL      # DB8.DBD164; [s] Überwachungszeit Glockenvakuum FEIN
+16.0   PresetParams.PtVac_Atmos_Soll_1                       REAL      # DB8.DBD28; [mbar] Prüfteil-Vakkum ATMOSPHÄRE
+20.0   PresetParams.PtVac_He_Soll_1                          REAL      # DB8.DBD56; [mbar] Prüfteil-Vakkum HELIUM
+24.0   PresetParams.PT_evakuieren_Atmos                      REAL      # DB8.DBD172; [s] Überwachungszeit Prüfteil evakuieren ATMOSPHÄRE
+28.0   PresetParams.PT_evakuieren_Helium                     REAL      # DB8.DBD176; [s] Überwachungszeit Prüfteil evakuieren HELIUM
+32.0   PresetParams.PT_fluten_1                              REAL      # DB8.DBD180; [s] Prüfteil mit Atmosphäre fluten
+36.0   PresetParams.Helium_Min_1                             REAL      # DB8.DBD44; [bar] Helium -Fülldruck MIN
+40.0   PresetParams.Helium_Soll_1                            REAL      # DB8.DBD40; [bar] Helium -Fülldruck SOLL
+44.0   PresetParams.HeliumFuellen                            REAL      # DB8.DBD184; [s] Überwachungszeit Prüfteil mit Helium füllen
+48.0   PresetParams.Helium_entspannen_HD                     REAL      # DB8.DBD168; [s] Überwachungszeit Helium entspannen
+52.0   PresetParams.FrgHeliumEvakuieren                      REAL      # DB8.DBD48; [bar] Freigabe Prüfteil evakuieren ab
+56.0   PresetParams.res_r1                                   REAL      # reserve
+60.0   PresetParams.res_r2                                   REAL      # reserve
+64.0   PresetParams.res_r3                                   REAL      # reserve
+68.0   PresetParams.res_r4                                   REAL      # reserve
+72.0   PresetParams.Prueffreigabe                            INT       # DB8.DBW480; 1-Tylko komora 1, 2-Tylko komora 2, 3-Obie komory
+74.0   PresetParams.Doppel_WT                                INT       # DB8.DBX656.1; Doppel-WT; 0-NIE; 1-TAK
+76.0   PresetParams.res_d1                                   DINT      # reserve
+80.0   PresetParams.res_d2                                   DINT      # reserve
+""" + offset_spec_block(UDT81.replace("__UDT81_prefix__", "PresetParams"), 84) + """
+# PresetParams END - size of 104 bytes
+"""
+
+UeberwachGroblBeGlocEvak = """
+# UeberwachGroblBeGlocEvak Begin                                       # DB9.DBX3.2; FB310; Überwachung Grobleck beim Glocke ev akuieren
+0.0    UeberwachGroblBeGlocEvak.done                         INT       # 0 - NO, 1 - YES
+2.0    UeberwachGroblBeGlocEvak.res_d1                       DINT      # reserve
+""" + offset_spec_block(UDT81.replace("__UDT81_prefix__", "UeberwachGroblBeGlocEvak"), 6) + """
+# UeberwachGroblBeGlocEvak END - size of 26 bytes
+"""
+
+UeberwachGroblBeHeliumfu = """
+# UeberwachGroblBeHeliumfu Begin                                       # DB9.DBX3.3; FB310; Überwachung Grobleck beim Heliumfül len
+0.0    UeberwachGroblBeHeliumfu.done                         INT       # 0 - NO, 1 - YES
+2.0    UeberwachGroblBeHeliumfu.res_d1                       DINT      # reserve # DB8.DBX656.5
+""" + offset_spec_block(UDT81.replace("__UDT81_prefix__", "UeberwachGroblBeHeliumfu"), 6) + """
+# UeberwachGroblBeHeliumfu END - size of 26 bytes
+"""
+
+Leckrate = """
+# Leckrate Begin                                                       # DB9.DBX1.1; FB310; Wyciek
+0.0    Leckrate.leak_result                                  REAL      # DB9.DBD10; [mbar l/s]
+4.0    Leckrate.leak_max                                     REAL      # DB8.DBD328; [mbar l/s] Maximale Leckrate
+8.0    Leckrate.leak_Max_Mantisse_REZ                        REAL      # DB8.DBD320; Maximal zulässige Leckrate Mantisse
+12.0   Leckrate.leak_Max_Exponent_REZ                        REAL      # DB8.DBD324; Maximal zulässige Leckrate Exponent
+16.0   Leckrate.leak_Grobleck                                REAL      # DB8.DBD340; [mbar l/s] Leckrate Grobleckerkennung
+20.0   Leckrate.leak_Mantisse_Grob_REZ                       REAL      # DB8.DBD332; Maximal zulässige Leckrate Mantisse
+24.0   Leckrate.leak_Exponent_Grob_REZ                       REAL      # DB8.DBD336; Maximal zulässige Leckrate Exponent
+28.0   Leckrate.leak_UebernahmeLeckrate                      REAL      # DB8.DBD188; [s] Übernahme Leckrate nach
+32.0   Leckrate.res_d1                                       DINT      # reserve
+36.0   Leckrate.res_d2                                       DINT      # reserve
+40.0   Leckrate.res_d3                                       DINT      # reserve
+44.0   Leckrate.res_d4                                       DINT      # reserve
+""" + offset_spec_block(UDT81.replace("__UDT81_prefix__", "Leckrate"), 48) + """
+# Leckrate END - size of 68 bytes
+"""
+
 
 UDT85 = """
 # Tracedb_12706 BEGIN
-""" + db8xxHeader + offset_spec_block(ReadID, 122) + """
+""" + db8xxHeader + \
++ offset_spec_block(ReadID, 122) + offset_spec_block(Teilabfrage, 122+56) \
+
+ReadID, 122
+Teilabfrage, 122+56
+Nadelpruefung, 122+56+26
+Mutternabfrage, 122+56+26+26
+Kreismarkierer, 122+56+26+26+26
+Durchflusspruefung, 122+56+26+26+26+32
+DrucksensorNachPruefling, 122+56+26+26+26+32+26
+SchemaParams, 122+56+26+26+26+32+26+26
+PresetParams, 122+56+26+26+26+32+26+26+64
+UeberwachGroblBeGlocEvak, 122+56+26+26+26+32+26+26+64+104
+UeberwachGroblBeHeliumfu, 122+56+26+26+26+32+26+26+64+104+26
+Leckrate, 122+56+26+26+26+32+26+26+64+104+26+26
++ """
 # Tracedb_12706 END - size of 628 bytes
 """ 
+
+Tool = """
+# Tool Begin
+0.0     Tool.name                                            STRING[30]      # DB554.DBW2; np. TU1 : WP10D00-D
+32.0    Tool.res_d1                                          DINT            # reserve
+""" + offset_spec_block(UDT81.replace("__UDT81_prefix__", "Tool"), 36) + """
+# Tool END - size of 56 bytes
+"""
+
+Detection = """
+# Detection Begin
+0.0     Detection.name                                       STRING[20]      # DB553.DBW6; np. BRAK lub MODEL 1
+22.0    Detection.res_d1                                     DINT            # reserve
+""" + offset_spec_block(UDT81.replace("__UDT81_prefix__", "Detection"), 26) + """
+# Detection END - size of 46 bytes
+"""
+
+VendorDMCCodeMarking = """
+# VendorDMCCodeMarking Begin
+0.0     VendorDMCCodeMarking.program_name                    STRING[20]      # DB553.DBW2; np. BMW403DM
+22.0    VendorDMCCodeMarking.res_d1                          DINT            # reserve
+""" + offset_spec_block(UDT81.replace("__UDT81_prefix__", "VendorDMCCodeMarking"), 26) + """
+# VendorDMCCodeMarking END - size of 46 bytes
+"""
+
+VendorDMCCodeRead = """
+# VendorDMCCodeRead Begin
+0.0     VendorDMCCodeRead.vendor_dmc                         STRING[60]      # DB559.DBB24; np. 
+62.0    VendorDMCCodeRead.dmc_position                       STRING[20]      # DB553.DBW2; np. BMW403DM
+84.0    VendorDMCCodeRead.res_d1                             DINT            # reserve
+88.0    VendorDMCCodeRead.res_d2                             DINT            # reserve # Blad odczytu. DB559.DBX0.1; 1-OK; 2-NOK 
+""" + offset_spec_block(UDT81.replace("__UDT81_prefix__", "VendorDMCCodeRead"), 92) + """
+# VendorDMCCodeRead END - size of 112 bytes
+"""
+
+VendorDMCCodeClass = """
+# VendorDMCCodeRead Begin
+0.0     VendorDMCCodeClass.CodeClass                         STRING[2]      # DB559.DBB17; np. A  
+4.0     VendorDMCCodeClass.Modulation                        STRING[2]      # DB559.DBB8; np. A
+8.0     VendorDMCCodeClass.FixedPatternDamage                STRING[2]      # DB559.DBB9; np. A
+12.0    VendorDMCCodeClass.SymbolContrast                    STRING[2]      # DB559.DBB11; np. A
+16.0    VendorDMCCodeClass.AxialNonUniformity                STRING[2]      # DB559.DBB12; np. A
+20.0    VendorDMCCodeClass.UnusedErrorCorrection             STRING[2]      # DB559.DBB13; np. A
+24.0    VendorDMCCodeClass.GridNonUniformity                 STRING[2]      # DB559.DBB15; np. A
+28.0    VendorDMCCodeClass.Class_3_res                       STRING[2]      # DB559.DBB10; np. A
+32.0    VendorDMCCodeClass.Class_7_res                       STRING[2]      # DB559.DBB14; np. A
+36.0    VendorDMCCodeClass.Class_9_res                       STRING[2]      # DB559.DBB16; np. A
+40.0    VendorDMCCodeClass.MinimalClass_res                  STRING[2]      # DB559.DBB18; np. A
+44.0    VendorDMCCodeClass.AcceptableClass                   STRING[2]      # DB559.DBW22; np. A
+48.0    VendorDMCCodeClass.CurrentClass                      STRING[2]      # DB559.DBW20; np. A 
+52.0    VendorDMCCodeClass.res_d1                            DINT           # reserve
+56.0    VendorDMCCodeClass.res_d2                            DINT           # reserve # Jakosc odczytu. DB559.DBW4; 1-OK; 2-NOK
+""" + offset_spec_block(UDT81.replace("__UDT81_prefix__", "VendorDMCCodeClass"), 60) + """
+# VendorDMCCodeClass END - size of 80 bytes
+"""
 
 
 UDT88 = """
 # Tracedb_12707 BEGIN
-""" + db8xxHeader + offset_spec_block(ReadID, 122) + """
+""" + db8xxHeader + offset_spec_block(ReadID, 122) + offset_spec_block(Tool, 122+56) + offset_spec_block(Detection, 122+56+56) + offset_spec_block(VendorDMCCodeMarking, 122+56+56+46) \
++ offset_spec_block(VendorDMCCodeRead, 122+56+56+46+46) + offset_spec_block(VendorDMCCodeClass, 122+56+56+46+46+112) + """
 # Tracedb_12707 END - size of 518 bytes
 """ 
 
-
-
-
-db8xxTrcHeader = """
-0.0    {trc_template_count}         BYTE        # number of traceability template blocks in message body.
-1.0    body.reserve_1               BYTE
-""".format(trc_template_count=TRC_TMPL_COUNT)
-
-db8xxTrcTail = """
-
-"""
-
-db8xxTrcTemplate = """
-0.0    body.trc.tmpl.{number}.PC_Ready           BOOL        # PC_Ready bit - currently ignored
-0.1    body.trc.tmpl.{number}.res_1              BOOL
-0.2    body.trc.tmpl.{number}.PLC_Save           BOOL        # PLC_Save bit - monitored by PC. PC start block processing if set to True. Once PC finishes it sets it to False.
-0.3    body.trc.tmpl.{number}.res_2              BOOL
-0.4    body.trc.tmpl.{number}.res_3              BOOL
-0.5    body.trc.tmpl.{number}.res_4              BOOL
-0.6    body.trc.tmpl.{number}.res_5              BOOL
-0.7    body.trc.tmpl.{number}.res_6              BOOL
-1.0    body.trc.tmpl.{number}.res_byte           BYTE
-2.0    body.trc.tmpl.{number}.operation_status   BYTE        # overall operation status. 1 - OK, 2 - NOK, 4 - Not present in this variant,  5 - next one OK, 6 - next one NOK
-3.0    body.trc.tmpl.{number}.res_byte_0         BYTE
-4.0    body.trc.tmpl.{number}.operation_type     INT         # individual operation type
-6.0    body.trc.tmpl.{number}.program_id         INT         # individual program id
-
-8.0    body.trc.tmpl.{number}.1.result           REAL        # operation #1 - measured result.
-12.0   body.trc.tmpl.{number}.1.result_max       REAL        # operation #1 - maximum value
-16.0   body.trc.tmpl.{number}.1.result_min       REAL        # operation #1 - minimum value
-20.0   body.trc.tmpl.{number}.1.result_status    INT         # operation #1 - status
-22.0   body.trc.tmpl.{number}.1.word_res         INT         # not used - TODO: could be used as indication flag
-
-24.0   body.trc.tmpl.{number}.2.result           REAL        # operation #2 - measured result.
-28.0   body.trc.tmpl.{number}.2.result_max       REAL        # operation #2 - maximum value
-32.0   body.trc.tmpl.{number}.2.result_min       REAL        # operation #2 - minimum value
-36.0   body.trc.tmpl.{number}.2.result_status    INT         # operation #2 - status
-38.0   body.trc.tmpl.{number}.2.word_res         INT
-
-40.0   body.trc.tmpl.{number}.date_time          DATETIME    # date and time - size is 8 bytes
-# traceability template size is 48
-"""
 
 # create db map for given controller.
 # controller id from config file should be used as key. currently controller id's are hardcoded
@@ -274,16 +460,6 @@ db_specs = {
     'c3': {},
 }
 
-def generate_db_spec(trcTemplateNumber=1):
-    tmp_db = db8xxHeader
-    tmp_db += offset_spec_block(db8xxTrcHeader, 122)
-    for i in range(0, trcTemplateNumber):  # append py templates.
-        base_offset = 124
-        block_size = 48
-        offset = base_offset + block_size * i
-        tmp_db += offset_spec_block(db8xxTrcTemplate, offset).replace("{number}", str(i))
-
-    return tmp_db
 
 #############################################################################################
 # St 12705 - Stacja Lasera
