@@ -6,66 +6,154 @@ from .util import offset_spec_block
 Define layouts of DB blocks on PLC.
 """
 
-db8xxHeader = """
+UDT80 = """
+# Tracedb_Logowanie
 0.0     {operator_login}             STRING[8]   # set by PLC
 10.0    {operator_password}          STRING[16]  # set by PLC
-28.0    operator.rez_d1              DINT        # reserve
-32.0    operator.rez_d2              DINT        # reserve
+28.0    operator.res_d1              DINT        # reserve
+32.0    operator.res_d2              DINT        # reserve
 36.0    {operator_status}            INT         # PC: 0 - not defined, 1 - logged in, 2 - logged out, 3 - blocked, 4 - wrong password
 38.0    {operator_do_login}          BOOL        # set by: PLC - flag used to login. PC - switches off flag once login is ready.
 38.1    {operator_do_logout}         BOOL        # set by: PLC - flag used to logout. PC - switches off flag once logout is ready.
 38.2    {operator_is_login}          BOOL        # set by: PLC - flag used to check status. constantly set by PLC. Have value 1 when {operator_status} is 1. Otherwise have value of 0. 
-38.3    operator.rez1_b3             BOOL        # reserve
-38.4    operator.rez1_b4             BOOL        # reserve
-38.5    operator.rez1_b5             BOOL        # reserve 
-38.6    operator.rez1_b6             BOOL        # reserve
-38.7    operator.rez1_b7             BOOL        # reserve
-39.0    operator.rez1_b3             BOOL        # reserve
-39.1    operator.rez1_b4             BOOL        # reserve
-39.2    operator.rez1_b5             BOOL        # reserve 
-39.3    operator.rez1_b3             BOOL        # reserve
-39.4    operator.rez1_b4             BOOL        # reserve
-39.5    operator.rez1_b5             BOOL        # reserve 
-39.6    operator.rez1_b6             BOOL        # reserve
-39.7    operator.rez1_b7             BOOL        # reserve
-40.0    operator.rez_d3              DINT        # reserve
+38.3    operator.res1_b3             BOOL        # reserve
+38.4    operator.res1_b4             BOOL        # reserve
+38.5    operator.res1_b5             BOOL        # reserve 
+38.6    operator.res1_b6             BOOL        # reserve
+38.7    operator.res1_b7             BOOL        # reserve
+39.0    operator.res2_b3             BOOL        # reserve
+39.1    operator.res2_b4             BOOL        # reserve
+39.2    operator.res2_b5             BOOL        # reserve 
+39.3    operator.res2_b3             BOOL        # reserve
+39.4    operator.res2_b4             BOOL        # reserve
+39.5    operator.res2_b5             BOOL        # reserve 
+39.6    operator.res2_b6             BOOL        # reserve
+39.7    operator.res2_b7             BOOL        # reserve
+40.0    operator.res_d3              DINT        # reserve
 44.0    {operator_date_time}         DATETIME    # date and time from PLC. size is 8 bytes.
+# total size of 52 bytes
+""".format(operator_login=OPERATOR_LOGIN, operator_password=OPERATOR_PASSWORD, operator_status=OPERATOR_STATUS, operator_do_login=OPERATOR_DO_LOGIN, \
+           operator_do_logout=OPERATOR_DO_LOGIN, operator_is_login=OPERATOR_IS_LOGIN, operator_date_time=OPERATOR_DATE_TIME)
 
-52.0    {head_station_id}            INT         # station ID
-54.0    {head_program_number}        INT         # program number
-56.0    {head_nest_number}           INT         # nest number
-58.0    {head_detail_id}             STRING[30]  # detail ID
-90.0    head.rez_i1                  INT         # reserve
-92.0    head.rez_i2                  INT         # reserve
-94.0    head.rez_d3                  DINT        # reserve
-98.0    head.rez_d4                  DINT        # reserve
+UDT81 = """
+# Tracedb_Status_lokalny
+0.0    __UDT81_prefix__.Status.res_d1               DINT            # reserve
+4.0    __UDT81_prefix__.Status.OperationActive      BOOL            # 0 - Not Active, 1 - Switched ON
+4.1    __UDT81_prefix__.Status.res1_b1              BOOL            # reserve
+4.2    __UDT81_prefix__.Status.res1_b2              BOOL            # reserve
+4.3    __UDT81_prefix__.Status.res1_b3              BOOL            # reserve
+4.4    __UDT81_prefix__.Status.res1_b4              BOOL            # reserve
+4.5    __UDT81_prefix__.Status.res1_b5              BOOL            # reserve
+4.6    __UDT81_prefix__.Status.res1_b6              BOOL            # reserve
+4.7    __UDT81_prefix__.Status.res1_b7              BOOL            # reserve
+5.0    __UDT81_prefix__.Status.DatabaseSave         BOOL            # TODO: check if it's used?
+5.1    __UDT81_prefix__.Status.res2_b1              BOOL            # reserve
+5.2    __UDT81_prefix__.Status.res2_b2              BOOL            # reserve
+5.3    __UDT81_prefix__.Status.res2_b3              BOOL            # reserve
+5.4    __UDT81_prefix__.Status.res2_b4              BOOL            # reserve
+5.5    __UDT81_prefix__.Status.res2_b5              BOOL            # reserve
+5.6    __UDT81_prefix__.Status.res2_b6              BOOL            # reserve
+5.7    __UDT81_prefix__.Status.res2_b7              BOOL            # reserve
+6.0    __UDT81_prefix__.Status.res_i1               INT             # reserve TODO: change to int in DOC.
+8.0    __UDT81_prefix__.Status.date_time            DATETIME        # date and time
+16.0   __UDT81_prefix__.Status.result               INT             # 1 - OK 2 - NOK
+18.0   __UDT81_prefix__.Status.res_i2               INT             # reserve
+# size of 20 bytes.   
+""".format(status_datetime=STATUS_DATE_TIME)
 
-102.0   status.rez_d1                DINT        # reserve
-106.0   {status_plc_trc_on}          BOOL        # traceability flag. used by PLC to indicate if tracaebility should be switched on.
-106.1   {status_plc_live}            BOOL        # Controlled by PLC. blinks every 300[ms]. Indicates that PLC is alive
-106.3   {status_save_only_mode}      BOOL        # 1 - baza zapisuje wyniki ale PLC nie sprawdza czy z poprzedniej stacji OK
-106.4   {status_no_id_scanning}      BOOL        # 1 - praca bez skanowania ID detalu.
-106.2   {status_pc_live}             BOOL        # Watched by PLC. PC should blink this bit every 300[ms] to notify that application is connected.
-106.5   {status_no_type_verify}      BOOL        # 1 - praca bez weryfikacji typu / rezerwa
-106.6   {status_no_scanning}         BOOL        # 1 - wariant bez skanowania (mimo ze praca ze skanowaniem id detalu)
-106.7   status_rez_b7                BOOL        # reserve
-107.0   {flag_plc_save}              BOOL        # PLC_Save bit - monitored by PC, set by PLC. PC saves status if set to True. Once PC finishes it sets it back to False.
-107.1   {flag_plc_query}             BOOL        # PLC_Query bit - monitored by PC, set by PLC. PC reads status from database if set to True. Once PC finishes it sets it back to False.
-107.2   {flag_id_query}              BOOL        # ID_Query bit - PLC asks PC to set detail_id
-107.3   {flag_pc_ready}              BOOL        # PC_Ready bit. Monitored by PLC. PCL waits for True. PC sets to False when it starts processing. PC sets back to True once processing is finished.
-107.4   {flag_id_ready}              BOOL        # ID_Ready bit - PC indicates that detail_id is already set. 
-107.5   status.rez_b5                BOOL        # reserve
-107.6   status.rez_b6                BOOL        # reserve
-107.7   status.rez_b7                BOOL        # reserve
-108.0   status.res_i1                INT         # date and time - TODO: report (is set to BOOL in pdf)
-110.0   {status_datetime}            DATETIME    # date and time
-118.0   status.station_result        INT         # wynik ze stanowiska
-120.0   status.database_result       INT         # wynik z bazy danych
-""".format(operator_login=OPERATOR_LOGIN, operator_password=OPERATOR_PASSWORD, operator_status=OPERATOR_STATUS, operator_do_login=OPERATOR_DO_LOGIN, operator_do_logout=OPERATOR_DO_LOGIN, operator_is_login=OPERATOR_IS_LOGIN, operator_date_time=OPERATOR_DATE_TIME, \
-    head_station_id=HEAD_STATION_ID, head_program_number=HEAD_PROGRAM_NUMBER, head_nest_number=HEAD_NEST_NUMBER, head_detail_id=HEAD_DETAIL_ID, \
-    status_plc_live=PLC_HEARTBEAT_FLAG, status_pc_live=PC_HEARTBEAT_FLAG, status_plc_trc_on=PLC_TRC_ON, status_datetime=STATUS_DATE_TIME, \
+
+db8xxHead = """
+0.0    {head_station_id}            INT         # station ID
+2.0    {head_program_number}        INT         # program number
+4.0    {head_nest_number}           INT         # nest number
+6.0    {head_detail_id}             STRING[30]  # detail ID
+38.0   head.res_i1                  INT         # reserve
+40.0   head.res_i2                  INT         # reserve
+42.0   head.res_d3                  DINT        # reserve
+46.0   head.res_d4                  DINT        # reserve
+# size of 50 bytes.
+""".format(head_station_id=HEAD_STATION_ID, head_program_number=HEAD_PROGRAM_NUMBER, head_nest_number=HEAD_NEST_NUMBER, head_detail_id=HEAD_DETAIL_ID)
+
+UDT82 = """
+# Tracedb_Status_Globalny
+0.0   status.res_d1                DINT        # reserve
+4.0   {status_plc_trc_on}          BOOL        # traceability flag. used by PLC to indicate if tracaebility should be switched on.
+4.1   {status_plc_live}            BOOL        # Controlled by PLC. blinks every 300[ms]. Indicates that PLC is alive
+4.2   {status_pc_live}             BOOL        # Watched by PLC. PC should blink this bit every 300[ms] to notify that application is connected.
+4.3   {status_save_only_mode}      BOOL        # 1 - baza zapisuje wyniki ale PLC nie sprawdza czy z poprzedniej stacji OK
+4.4   {status_no_id_scanning}      BOOL        # 1 - praca bez skanowania ID detalu.
+4.5   {status_no_type_verify}      BOOL        # 1 - praca bez weryfikacji typu / rezerwa
+4.6   {status_no_scanning}         BOOL        # 1 - wariant bez skanowania (mimo ze praca ze skanowaniem id detalu)
+4.7   status_rez_b7                BOOL        # reserve
+5.0   {flag_plc_save}              BOOL        # PLC_Save bit - monitored by PC, set by PLC. PC saves status if set to True. Once PC finishes it sets it back to False.
+5.1   {flag_plc_query}             BOOL        # PLC_Query bit - monitored by PC, set by PLC. PC reads status from database if set to True. Once PC finishes it sets it back to False.
+5.2   {flag_id_query}              BOOL        # ID_Query bit - PLC asks PC to set detail_id
+5.3   {flag_pc_ready}              BOOL        # PC_Ready bit. Monitored by PLC. PCL waits for True. PC sets to False when it starts processing. PC sets back to True once processing is finished.
+5.4   {flag_id_ready}              BOOL        # ID_Ready bit - PC indicates that detail_id is already set. 
+5.5   status.res_b5                BOOL        # reserve
+5.6   status.res_b6                BOOL        # reserve
+5.7   status.res_b7                BOOL        # reserve
+6.0   status.res_i1                INT         # reserve
+8.0   {status_datetime}            DATETIME    # date and time
+16.0   status.station_result        INT         # wynik ze stanowiska
+18.0   status.database_result       INT         # wynik z bazy danych
+# size of 20 bytes. 
+""".format(status_plc_live=PLC_HEARTBEAT_FLAG, status_pc_live=PC_HEARTBEAT_FLAG, status_plc_trc_on=PLC_TRC_ON, status_datetime=STATUS_DATE_TIME, \
     status_save_only_mode=STATUS_SAVE_ONLY_MODE_FLAG, status_no_id_scanning=STATUS_NO_ID_SCANNING_FLAG,  status_no_type_verify=STATUS_NO_TYPE_VERIFY_FLAG, status_no_scanning=STATUS_NO_SCANNING_FLAG, \
     flag_pc_ready=PC_READY_FLAG, flag_plc_query=PLC_QUERY_FLAG, flag_plc_save=PLC_SAVE_FLAG, flag_id_query=ID_QUERY_FLAG, flag_id_ready=ID_READY_FLAG)
+
+db8xxHeader = """# db8xxHeader BEGIN
+""" + UDT80 +  offset_spec_block(db8xxHead, 52) + offset_spec_block(UDT82, 52+50)  + """
+# db8xxHeader END - size of 122
+"""  
+
+db800LaserMarking = """
+# LaserMarking Begin
+0.0     LaserMarking.LaserProgramName                        STRING[20]      # Nazwa Programu Lasera
+22.0    LaserMarking.id                                      STRING[30]      # Wypalane id
+54.0    LaserMarking.res1                                    DINT            # reserve
+""" + offset_spec_block(UDT81.replace("__UDT81_prefix__", "LaserMarking"), 58) + """
+# LaserMarking END - size of 78 bytes
+"""
+
+db800LaserMarkingVerification = """
+# LaserMarkingVerification Begin
+0.0     LaserMarkingVerification.read_id                     STRING[30]      # Wypalane id
+32.0    LaserMarkingVerification.res1                        DINT            # reserve
+""" + offset_spec_block(UDT81.replace("__UDT81_prefix__", "LaserMarkingVerification"), 36) + """
+# LaserMarkingVerification END - size of 56 bytes
+"""
+
+
+UDT83 = """
+# Tracedb_laser BEGIN
+""" + db8xxHeader + offset_spec_block(db800LaserMarking, 122) + offset_spec_block(db800LaserMarkingVerification, 122+78) + """
+# Tracedb_laser END - size of 256 bytes
+""" 
+
+
+UDT84 = """
+# Tracedb_12705 BEGIN
+""" + db8xxHeader + """
+# Tracedb_12705 END - size of 900 bytes
+""" 
+
+
+UDT85 = """
+# Tracedb_12706 BEGIN
+""" + db8xxHeader + """
+# Tracedb_12706 END - size of 628 bytes
+""" 
+
+
+UDT88 = """
+# Tracedb_12707 BEGIN
+""" + db8xxHeader + """
+# Tracedb_12707 END - size of 518 bytes
+""" 
+
+
+
 
 db8xxTrcHeader = """
 0.0    {trc_template_count}         BYTE        # number of traceability template blocks in message body.
@@ -113,9 +201,6 @@ db_specs = {
     'c1': {},
     'c2': {},
     'c3': {},
-    'c4': {},
-    'c5': {},
-    'c6': {},
 }
 
 def generate_db_spec(trcTemplateNumber=1):
@@ -130,48 +215,23 @@ def generate_db_spec(trcTemplateNumber=1):
     return tmp_db
 
 #############################################################################################
-# St1x
+# St 12705 - Stacja Lasera
 #############################################################################################
-db_specs['c1']['db301'] = generate_db_spec(1)
-db_specs['c1']['db302'] = generate_db_spec(1)
-db_specs['c1']['db303'] = generate_db_spec(4)
-db_specs['c1']['db304'] = generate_db_spec(2)
-db_specs['c1']['db305'] = generate_db_spec(15)
+db_specs['c1']['db500'] = UDT83
+db_specs['c1']['db501'] = UDT84
+db_specs['c1']['db502'] = UDT84
 
 #############################################################################################
-# St2x
+# St 12706 - Stacja Testu przeplywu
 #############################################################################################
-db_specs['c2']['db301'] = generate_db_spec(3)
-db_specs['c2']['db302'] = generate_db_spec(1)
-db_specs['c2']['db303'] = generate_db_spec(4)
-db_specs['c2']['db304'] = generate_db_spec(5)
+db_specs['c2']['db503'] = UDT85
+db_specs['c2']['db504'] = UDT85
 
 #############################################################################################
-# St3x
+# St 12707 - Stacja Znakowanie BMW
 #############################################################################################
-db_specs['c3']['db301'] = generate_db_spec(1)
-db_specs['c3']['db302'] = generate_db_spec(3)
-db_specs['c3']['db303'] = generate_db_spec(3)
-
-#############################################################################################
-# St4x
-#############################################################################################
-db_specs['c4']['db301'] = generate_db_spec(4)
-db_specs['c4']['db302'] = generate_db_spec(13)
-
-#############################################################################################
-# St5x
-#############################################################################################
-db_specs['c5']['db301'] = generate_db_spec(1)
-db_specs['c5']['db302'] = generate_db_spec(1)
-db_specs['c5']['db303'] = generate_db_spec(1)
-db_specs['c5']['db304'] = generate_db_spec(1)
-db_specs['c5']['db305'] = generate_db_spec(2)
-
-#############################################################################################
-# St6x
-#############################################################################################
-db_specs['c6']['db301'] = generate_db_spec(1)
+db_specs['c3']['db505'] = UDT88  # lewa
+db_specs['c3']['db506'] = UDT88  # prawa
 
 # special cases hacking...
 db100 = ""
