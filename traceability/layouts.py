@@ -63,14 +63,14 @@ UDT81 = """
 
 
 db8xxHead = """
-0.0    {head_station_id}            INT         # station ID
-2.0    {head_program_number}        INT         # program number
-4.0    {head_nest_number}           INT         # nest number
-6.0    {head_detail_id}             STRING[30]  # detail ID
-38.0   head.res_i1                  INT         # reserve
-40.0   head.res_i2                  INT         # reserve
-42.0   head.res_d3                  DINT        # reserve
-46.0   head.res_d4                  DINT        # reserve
+0.0    {head_station_id}           INT         # station ID
+2.0    {head_program_number}       INT         # program number
+4.0    {head_nest_number}          INT         # nest number
+6.0    {head_detail_id}            STRING[30]  # detail ID
+38.0   head.res_i1                 INT         # reserve
+40.0   head.res_i2                 INT         # reserve
+42.0   head.res_d3                 DINT        # reserve
+46.0   head.res_d4                 DINT        # reserve
 # size of 50 bytes.
 """.format(head_station_id=HEAD_STATION_ID, head_program_number=HEAD_PROGRAM_NUMBER, head_nest_number=HEAD_NEST_NUMBER, head_detail_id=HEAD_DETAIL_ID)
 
@@ -95,8 +95,8 @@ UDT82 = """
 5.7   status.res_b7                BOOL        # reserve
 6.0   status.res_i1                INT         # reserve
 8.0   {status_datetime}            DATETIME    # date and time
-16.0   status.station_result        INT         # wynik ze stanowiska
-18.0   status.database_result       INT         # wynik z bazy danych
+16.0   status.station_result       INT         # wynik ze stanowiska
+18.0   status.database_result      INT         # wynik z bazy danych
 # size of 20 bytes. 
 """.format(status_plc_live=PLC_HEARTBEAT_FLAG, status_pc_live=PC_HEARTBEAT_FLAG, status_plc_trc_on=PLC_TRC_ON, status_datetime=STATUS_DATE_TIME, \
     status_save_only_mode=STATUS_SAVE_ONLY_MODE_FLAG, status_no_id_scanning=STATUS_NO_ID_SCANNING_FLAG,  status_no_type_verify=STATUS_NO_TYPE_VERIFY_FLAG, status_no_scanning=STATUS_NO_SCANNING_FLAG, \
@@ -107,7 +107,7 @@ db8xxHeader = """# db8xxHeader BEGIN
 # db8xxHeader END - size of 122
 """  
 
-db800LaserMarking = """
+LaserMarking = """
 # LaserMarking Begin
 0.0     LaserMarking.LaserProgramName                        STRING[20]      # Nazwa Programu Lasera
 22.0    LaserMarking.id                                      STRING[30]      # Wypalane id
@@ -116,39 +116,110 @@ db800LaserMarking = """
 # LaserMarking END - size of 78 bytes
 """
 
-db800LaserMarkingVerification = """
+LaserMarkingVerification = """
 # LaserMarkingVerification Begin
-0.0     LaserMarkingVerification.read_id                     STRING[30]      # Wypalane id
+0.0     LaserMarkingVerification.read_id                     STRING[30]      # Odczytane id ze skanera DMC
 32.0    LaserMarkingVerification.res1                        DINT            # reserve
 """ + offset_spec_block(UDT81.replace("__UDT81_prefix__", "LaserMarkingVerification"), 36) + """
 # LaserMarkingVerification END - size of 56 bytes
 """
 
-
 UDT83 = """
 # Tracedb_laser BEGIN
-""" + db8xxHeader + offset_spec_block(db800LaserMarking, 122) + offset_spec_block(db800LaserMarkingVerification, 122+78) + """
+""" + db8xxHeader + offset_spec_block(LaserMarking, 122) + offset_spec_block(LaserMarkingVerification, 122+78) + """
 # Tracedb_laser END - size of 256 bytes
 """ 
+
+ReadID = """
+# ReadID Begin
+0.0     ReadID.id                                            STRING[30]      # Odczytane id ze skanera DMC
+32.0    ReadID.res_d1                                        DINT            # reserve
+""" + offset_spec_block(UDT81.replace("__UDT81_prefix__", "ReadID"), 36) + """
+# ReadID END - size of 56 bytes
+"""
+
+SensorOiling = """
+# SensorOiling Begin
+0.0     SensorOiling.done                                    INT      # 0 - NO, 1 - YES
+2.0     SensorOiling.res_d1                                  DINT     # reserve
+""" + offset_spec_block(UDT81.replace("__UDT81_prefix__", "SensorOiling"), 6) + """
+# SensorOiling END - size of 26 bytes
+"""
+
+ManualSensorMounting = """
+# ManualSensorMounting Begin
+0.0     ManualSensorMounting.done                            INT      # 0 - NO, 1 - YES
+2.0     ManualSensorMounting.res_d1                          DINT     # reserve
+""" + offset_spec_block(UDT81.replace("__UDT81_prefix__", "ManualSensorMounting"), 6) + """
+# ManualSensorMounting END - size of 26 bytes
+"""
+
+SensorDMC = """
+# SensorDMC Begin
+0.0     SensorDMC.reference                                  STRING[50]      # 
+52.0    SensorDMC.read                                       STRING[50]      # 
+104.0   SensorDMC.compare                                    STRING[50]      # 
+156.0   SensorDMC.from_string_sign                           INT
+158.0   SensorDMC.string_length                              INT
+160.0   SensorDMC.sensor_type                                INT
+162.0   SensorDMC.res_d1                                     DINT
+""" + offset_spec_block(UDT81.replace("__UDT81_prefix__", "SensorDMC"), 166) + """
+# SensorDMC END - size of 186 bytes
+"""
+
+AutomaticSensorMounting = """
+# AutomaticSensorMounting Begin
+0.0     AutomaticSensorMounting.screwdriver_program_number   INT 
+2.0     AutomaticSensorMounting.torque                       REAL
+6.0     AutomaticSensorMounting.angle                        REAL
+10.0    AutomaticSensorMounting.res_d1                       DINT
+14.0    AutomaticSensorMounting.torque_max                   REAL
+18.0    AutomaticSensorMounting.torque_min                   REAL
+22.0    AutomaticSensorMounting.angle_max                    REAL
+26.0    AutomaticSensorMounting.angle_min                    REAL
+30.0    AutomaticSensorMounting.res_r2                       REAL
+34.0    AutomaticSensorMounting.res_r3                       REAL
+""" + offset_spec_block(UDT81.replace("__UDT81_prefix__", "AutomaticSensorMounting"), 38) + """
+# AutomaticSensorMounting END - size of 58 bytes
+"""
+
+# TODO: implement ME
+FlowTest = """
+# FlowTest Begin
+0.0     FlowTest.done                                        INT      # 0 - NO, 1 - YES
+2.0     FlowTest.res_d1                                      DINT     # reserve
+""" + offset_spec_block(UDT81.replace("__UDT81_prefix__", "FlowTest"), 6) + """
+# FlowTest END - size of 400 bytes
+"""
+
+Marking = """
+# Marking Begin
+0.0     Marking.done                                         INT      # 0 - NO, 1 - YES
+2.0     Marking.res_d1                                       DINT     # reserve
+""" + offset_spec_block(UDT81.replace("__UDT81_prefix__", "Marking"), 6) + """
+# Marking END - size of 26 bytes
+"""
 
 
 UDT84 = """
 # Tracedb_12705 BEGIN
-""" + db8xxHeader + """
+""" + db8xxHeader + offset_spec_block(ReadID, 122) + offset_spec_block(SensorOiling, 122+56) + offset_spec_block(ManualSensorMounting, 122+56+26) \
++ offset_spec_block(SensorDMC, 122+56+26+26) + offset_spec_block(AutomaticSensorMounting, 122+56+26+26+186) + offset_spec_block(FlowTest, 122+56+26+26+186+58) \
++ offset_spec_block(Marking, 122+56+26+26+186+58+400) + """
 # Tracedb_12705 END - size of 900 bytes
 """ 
 
 
 UDT85 = """
 # Tracedb_12706 BEGIN
-""" + db8xxHeader + """
+""" + db8xxHeader + offset_spec_block(ReadID, 122) + """
 # Tracedb_12706 END - size of 628 bytes
 """ 
 
 
 UDT88 = """
 # Tracedb_12707 BEGIN
-""" + db8xxHeader + """
+""" + db8xxHeader + offset_spec_block(ReadID, 122) + """
 # Tracedb_12707 END - size of 518 bytes
 """ 
 
