@@ -11,7 +11,7 @@ PROJECT_NAME = traceability.NAME
 PROJECT_AUTHORS = traceability.AUTHOR
 # Please see readme.rst for a complete list of contributors
 PROJECT_EMAILS = traceability.EMAIL
-PROJECT_URL = "https://bitbucket.org/wilkpio/hltrace"
+PROJECT_URL = "https://github.com/prodlinetrace/wink_bmw_trace"
 SHORT_DESCRIPTION = 'Traceability application for PLC based production line.'
 ICON = "trace.ico"
 
@@ -178,8 +178,12 @@ build_exe_options = {
 }
 
 # http://msdn.microsoft.com/en-us/library/windows/desktop/aa371847(v=vs.85).aspx
+with open(ICON, 'rb') as f:
+  ICON_content = f.read()
+
 icon_table = [
-    (ICON, open(ICON, 'rb').read()),
+    (ICON, ICON_content),
+    
 ]
 
 shortcut_table = [(
@@ -200,7 +204,7 @@ shortcut_table = [(
 msi_data = {"Shortcut": shortcut_table}
 bdist_msi_options = {
     'data': msi_data,
-    'initial_target_dir': r'D:\\%s' % PROJECT_NAME,
+    'initial_target_dir': r'C:\\%s' % PROJECT_NAME,
     'add_to_path': True,
 }
 # GUI applications require a different base on Windows (the default is for a
@@ -222,12 +226,12 @@ setup(
     },
     executables=[
         Executable(
-            script="trace.py",
+            script='trace.py',
             base=base,
             icon=ICON,
         ),
         Executable(
-            script="traceCLI.py",
+            script='traceCLI.py',
             base=base,
             icon=ICON,
         )
