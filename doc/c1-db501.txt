@@ -1,0 +1,473 @@
+
+# Tracedb_12705 BEGIN
+# db8xxHeader BEGIN
+# Tracedb_Logowanie - Begin
+0.0        operator.login                                                 STRING[8]  # set by PLC
+10.0       operator.password                                              STRING[16] # set by PLC
+28.0       operator.res_r1                                                REAL       # reserve
+32.0       operator.res_r2                                                REAL       # reserve
+36.0       operator.operator_status                                       INT        # PC: 0 - not defined, 1 - logged in, 2 - logged out, 3 - blocked, 4 - wrong password
+38.0       operator.operator_do_login                                     BOOL       # set by: PLC - flag used to login. PC - switches off flag once login is ready.
+38.1       operator.operator_do_login                                     BOOL       # set by: PLC - flag used to logout. PC - switches off flag once logout is ready.
+38.2       operator.operator_is_login                                     BOOL       # set by: PLC - flag used to check status. constantly set by PLC. Have value 1 when operator.operator_status is 1. Otherwise have value of 0.
+38.3       operator.res1_b3                                               BOOL       # reserve
+38.4       operator.res1_b4                                               BOOL       # reserve
+38.5       operator.res1_b5                                               BOOL       # reserve
+38.6       operator.res1_b6                                               BOOL       # reserve
+38.7       operator.res1_b7                                               BOOL       # reserve
+39.0       operator.res2_b3                                               BOOL       # reserve
+39.1       operator.res2_b4                                               BOOL       # reserve
+39.2       operator.res2_b5                                               BOOL       # reserve
+39.3       operator.res2_b3                                               BOOL       # reserve
+39.4       operator.res2_b4                                               BOOL       # reserve
+39.5       operator.res2_b5                                               BOOL       # reserve
+39.6       operator.res2_b6                                               BOOL       # reserve
+39.7       operator.res2_b7                                               BOOL       # reserve
+40.0       operator.res_r3                                                REAL       # reserve
+44.0       operator.operator_datetime                                     DATETIME   # date and time from PLC. size is 8 bytes.
+# Tracedb_Logowanie - END - size of 52 bytes
+# Tracedb_Global_Head - Begin
+52.0       head.station_id                                                INT        # station ID
+54.0       head_program_number                                            INT        # program number
+56.0       head.nest_number                                               INT        # nest number
+58.0       head.detail_id                                                 STRING[30] # detail ID
+90.0       head.res_i1                                                    INT        # reserve
+92.0       head.res_i2                                                    INT        # reserve
+94.0       head.res_r3                                                    REAL       # reserve
+98.0       head.res_r4                                                    REAL       # reserve
+# Tracedb_Global_Head - END - size of 50 bytes.
+# Tracedb_Status_Globalny - Begin
+102.0      status.res_r1                                                  REAL       # reserve
+106.0      ctrl.PLC_trc_on                                                BOOL       # traceability flag. used by PLC to indicate if tracaebility should be switched on.
+106.1      ctrl.PLC_live                                                  BOOL       # Controlled by PLC. blinks every 300[ms]. Indicates that PLC is alive
+106.2      ctrl.PC_live                                                   BOOL       # Watched by PLC. PC should blink this bit every 300[ms] to notify that application is connected.
+106.3      status_save_only_mode                                          BOOL       # 1 - baza zapisuje wyniki ale PLC nie sprawdza czy z poprzedniej stacji OK
+106.4      status_no_id_scanning                                          BOOL       # 1 - praca bez skanowania ID detalu.
+106.5      status_no_type_verify                                          BOOL       # 1 - praca bez weryfikacji typu / rezerwa
+106.6      status_no_scanning                                             BOOL       # 1 - wariant bez skanowania (mimo ze praca ze skanowaniem id detalu)
+106.7      status_rez_b7                                                  BOOL       # reserve
+107.0      status.PLC_Save                                                BOOL       # PLC_Save bit - monitored by PC, set by PLC. PC saves status if set to True. Once PC finishes it sets it back to False.
+107.1      status.PLC_Query                                               BOOL       # PLC_Query bit - monitored by PC, set by PLC. PC reads status from database if set to True. Once PC finishes it sets it back to False.
+107.2      status.flag_id_query                                           BOOL       # ID_Query bit - PLC asks PC to set detail_id
+107.3      status.PC_Ready                                                BOOL       # PC_Ready bit. Monitored by PLC. PCL waits for True. PC sets to False when it starts processing. PC sets back to True once processing is finished.
+107.4      status.flag_id_ready                                           BOOL       # ID_Ready bit - PC indicates that detail_id is already set.
+107.5      status.res_b5                                                  BOOL       # reserve
+107.6      status.res_b6                                                  BOOL       # reserve
+107.7      status.res_b7                                                  BOOL       # reserve
+108.0      status.res_i1                                                  INT        # reserve
+110.0      status.date_time                                               DATETIME   # date and time
+118.0      status.station_result                                          INT        # wynik ze stanowiska
+120.0      status.database_result                                         INT        # wynik z bazy danych
+# Tracedb_Status_Globalny - END - size of 20 bytes. 
+
+# db8xxHeader END - size of 122
+# ReadID Begin
+122.0      ReadID.id                                                      STRING[30] # Odczytane id ze skanera DMC
+154.0      ReadID.res_r1                                                  REAL       # reserve
+# # Tracedb_Status_lokalny - Begin
+158.0      ReadID.Status.res_r1                                           REAL       # reserve
+162.0      ReadID.Status.OperationActive                                  BOOL       # 0 - Not Active, 1 - Switched ON
+162.1      ReadID.Status.res1_b1                                          BOOL       # reserve
+162.2      ReadID.Status.res1_b2                                          BOOL       # reserve
+162.3      ReadID.Status.res1_b3                                          BOOL       # reserve
+162.4      ReadID.Status.res1_b4                                          BOOL       # reserve
+162.5      ReadID.Status.res1_b5                                          BOOL       # reserve
+162.6      ReadID.Status.res1_b6                                          BOOL       # reserve
+162.7      ReadID.Status.res1_b7                                          BOOL       # reserve
+163.0      ReadID.Status.DatabaseSave                                     BOOL       # TODO: check if it's used?
+163.1      ReadID.Status.res2_b1                                          BOOL       # reserve
+163.2      ReadID.Status.res2_b2                                          BOOL       # reserve
+163.3      ReadID.Status.res2_b3                                          BOOL       # reserve
+163.4      ReadID.Status.res2_b4                                          BOOL       # reserve
+163.5      ReadID.Status.res2_b5                                          BOOL       # reserve
+163.6      ReadID.Status.res2_b6                                          BOOL       # reserve
+163.7      ReadID.Status.res2_b7                                          BOOL       # reserve
+164.0      ReadID.Status.res_i1                                           INT        # reserve
+166.0      ReadID.Status.date_time                                        DATETIME   # date and time
+174.0      ReadID.Status.result                                           INT        # 1 - OK 2 - NOK
+176.0      ReadID.Status.res_i2                                           INT        # reserve
+# # Tracedb_Status_lokalny - END - size of 20 bytes.   
+# ReadID END - size of 56 bytes
+# SensorOiling Begin
+178.0      SensorOiling.done                                              INT        # 0 - NO, 1 - YES
+180.0      SensorOiling.res_r1                                            REAL       # reserve
+# # Tracedb_Status_lokalny - Begin
+184.0      SensorOiling.Status.res_r1                                     REAL       # reserve
+188.0      SensorOiling.Status.OperationActive                            BOOL       # 0 - Not Active, 1 - Switched ON
+188.1      SensorOiling.Status.res1_b1                                    BOOL       # reserve
+188.2      SensorOiling.Status.res1_b2                                    BOOL       # reserve
+188.3      SensorOiling.Status.res1_b3                                    BOOL       # reserve
+188.4      SensorOiling.Status.res1_b4                                    BOOL       # reserve
+188.5      SensorOiling.Status.res1_b5                                    BOOL       # reserve
+188.6      SensorOiling.Status.res1_b6                                    BOOL       # reserve
+188.7      SensorOiling.Status.res1_b7                                    BOOL       # reserve
+189.0      SensorOiling.Status.DatabaseSave                               BOOL       # TODO: check if it's used?
+189.1      SensorOiling.Status.res2_b1                                    BOOL       # reserve
+189.2      SensorOiling.Status.res2_b2                                    BOOL       # reserve
+189.3      SensorOiling.Status.res2_b3                                    BOOL       # reserve
+189.4      SensorOiling.Status.res2_b4                                    BOOL       # reserve
+189.5      SensorOiling.Status.res2_b5                                    BOOL       # reserve
+189.6      SensorOiling.Status.res2_b6                                    BOOL       # reserve
+189.7      SensorOiling.Status.res2_b7                                    BOOL       # reserve
+190.0      SensorOiling.Status.res_i1                                     INT        # reserve
+192.0      SensorOiling.Status.date_time                                  DATETIME   # date and time
+200.0      SensorOiling.Status.result                                     INT        # 1 - OK 2 - NOK
+202.0      SensorOiling.Status.res_i2                                     INT        # reserve
+# # Tracedb_Status_lokalny - END - size of 20 bytes.   
+# SensorOiling END - size of 26 bytes
+# ManualSensorMounting Begin
+204.0      ManualSensorMounting.done                                      INT        # 0 - NO, 1 - YES
+206.0      ManualSensorMounting.res_r1                                    REAL       # reserve
+# # Tracedb_Status_lokalny - Begin
+210.0      ManualSensorMounting.Status.res_r1                             REAL       # reserve
+214.0      ManualSensorMounting.Status.OperationActive                    BOOL       # 0 - Not Active, 1 - Switched ON
+214.1      ManualSensorMounting.Status.res1_b1                            BOOL       # reserve
+214.2      ManualSensorMounting.Status.res1_b2                            BOOL       # reserve
+214.3      ManualSensorMounting.Status.res1_b3                            BOOL       # reserve
+214.4      ManualSensorMounting.Status.res1_b4                            BOOL       # reserve
+214.5      ManualSensorMounting.Status.res1_b5                            BOOL       # reserve
+214.6      ManualSensorMounting.Status.res1_b6                            BOOL       # reserve
+214.7      ManualSensorMounting.Status.res1_b7                            BOOL       # reserve
+215.0      ManualSensorMounting.Status.DatabaseSave                       BOOL       # TODO: check if it's used?
+215.1      ManualSensorMounting.Status.res2_b1                            BOOL       # reserve
+215.2      ManualSensorMounting.Status.res2_b2                            BOOL       # reserve
+215.3      ManualSensorMounting.Status.res2_b3                            BOOL       # reserve
+215.4      ManualSensorMounting.Status.res2_b4                            BOOL       # reserve
+215.5      ManualSensorMounting.Status.res2_b5                            BOOL       # reserve
+215.6      ManualSensorMounting.Status.res2_b6                            BOOL       # reserve
+215.7      ManualSensorMounting.Status.res2_b7                            BOOL       # reserve
+216.0      ManualSensorMounting.Status.res_i1                             INT        # reserve
+218.0      ManualSensorMounting.Status.date_time                          DATETIME   # date and time
+226.0      ManualSensorMounting.Status.result                             INT        # 1 - OK 2 - NOK
+228.0      ManualSensorMounting.Status.res_i2                             INT        # reserve
+# # Tracedb_Status_lokalny - END - size of 20 bytes.   
+# ManualSensorMounting END - size of 26 bytes
+# SensorDMC Begin
+230.0      SensorDMC.reference                                            STRING[50] # 
+282.0      SensorDMC.read                                                 STRING[50] # 
+334.0      SensorDMC.compare                                              STRING[50] # 
+386.0      SensorDMC.from_string_sign                                     INT        # 
+388.0      SensorDMC.string_length                                        INT        # 
+390.0      SensorDMC.sensor_type                                          INT        # 
+392.0      SensorDMC.res_r1                                               DINT       # 
+# # Tracedb_Status_lokalny - Begin
+396.0      SensorDMC.Status.res_r1                                        REAL       # reserve
+400.0      SensorDMC.Status.OperationActive                               BOOL       # 0 - Not Active, 1 - Switched ON
+400.1      SensorDMC.Status.res1_b1                                       BOOL       # reserve
+400.2      SensorDMC.Status.res1_b2                                       BOOL       # reserve
+400.3      SensorDMC.Status.res1_b3                                       BOOL       # reserve
+400.4      SensorDMC.Status.res1_b4                                       BOOL       # reserve
+400.5      SensorDMC.Status.res1_b5                                       BOOL       # reserve
+400.6      SensorDMC.Status.res1_b6                                       BOOL       # reserve
+400.7      SensorDMC.Status.res1_b7                                       BOOL       # reserve
+401.0      SensorDMC.Status.DatabaseSave                                  BOOL       # TODO: check if it's used?
+401.1      SensorDMC.Status.res2_b1                                       BOOL       # reserve
+401.2      SensorDMC.Status.res2_b2                                       BOOL       # reserve
+401.3      SensorDMC.Status.res2_b3                                       BOOL       # reserve
+401.4      SensorDMC.Status.res2_b4                                       BOOL       # reserve
+401.5      SensorDMC.Status.res2_b5                                       BOOL       # reserve
+401.6      SensorDMC.Status.res2_b6                                       BOOL       # reserve
+401.7      SensorDMC.Status.res2_b7                                       BOOL       # reserve
+402.0      SensorDMC.Status.res_i1                                        INT        # reserve
+404.0      SensorDMC.Status.date_time                                     DATETIME   # date and time
+412.0      SensorDMC.Status.result                                        INT        # 1 - OK 2 - NOK
+414.0      SensorDMC.Status.res_i2                                        INT        # reserve
+# # Tracedb_Status_lokalny - END - size of 20 bytes.   
+# SensorDMC END - size of 186 bytes
+# AutomaticSensorMounting Begin
+416.0      AutomaticSensorMounting.screwdriver_program_number             INT        # 
+418.0      AutomaticSensorMounting.torque                                 REAL       # 
+422.0      AutomaticSensorMounting.angle                                  REAL       # 
+426.0      AutomaticSensorMounting.res_r1                                 DINT       # 
+430.0      AutomaticSensorMounting.torque_max                             REAL       # 
+434.0      AutomaticSensorMounting.torque_min                             REAL       # 
+438.0      AutomaticSensorMounting.angle_max                              REAL       # 
+442.0      AutomaticSensorMounting.angle_min                              REAL       # 
+446.0      AutomaticSensorMounting.res_r2                                 REAL       # 
+450.0      AutomaticSensorMounting.res_r3                                 REAL       # 
+# # Tracedb_Status_lokalny - Begin
+454.0      AutomaticSensorMounting.Status.res_r1                          REAL       # reserve
+458.0      AutomaticSensorMounting.Status.OperationActive                 BOOL       # 0 - Not Active, 1 - Switched ON
+458.1      AutomaticSensorMounting.Status.res1_b1                         BOOL       # reserve
+458.2      AutomaticSensorMounting.Status.res1_b2                         BOOL       # reserve
+458.3      AutomaticSensorMounting.Status.res1_b3                         BOOL       # reserve
+458.4      AutomaticSensorMounting.Status.res1_b4                         BOOL       # reserve
+458.5      AutomaticSensorMounting.Status.res1_b5                         BOOL       # reserve
+458.6      AutomaticSensorMounting.Status.res1_b6                         BOOL       # reserve
+458.7      AutomaticSensorMounting.Status.res1_b7                         BOOL       # reserve
+459.0      AutomaticSensorMounting.Status.DatabaseSave                    BOOL       # TODO: check if it's used?
+459.1      AutomaticSensorMounting.Status.res2_b1                         BOOL       # reserve
+459.2      AutomaticSensorMounting.Status.res2_b2                         BOOL       # reserve
+459.3      AutomaticSensorMounting.Status.res2_b3                         BOOL       # reserve
+459.4      AutomaticSensorMounting.Status.res2_b4                         BOOL       # reserve
+459.5      AutomaticSensorMounting.Status.res2_b5                         BOOL       # reserve
+459.6      AutomaticSensorMounting.Status.res2_b6                         BOOL       # reserve
+459.7      AutomaticSensorMounting.Status.res2_b7                         BOOL       # reserve
+460.0      AutomaticSensorMounting.Status.res_i1                          INT        # reserve
+462.0      AutomaticSensorMounting.Status.date_time                       DATETIME   # date and time
+470.0      AutomaticSensorMounting.Status.result                          INT        # 1 - OK 2 - NOK
+472.0      AutomaticSensorMounting.Status.res_i2                          INT        # reserve
+# # Tracedb_Status_lokalny - END - size of 20 bytes.   
+# AutomaticSensorMounting END - size of 58 bytes
+# FlowTest Begin
+474.0      FlowTest.type                                                  INT        # Test type 1 - Cycle, 2 - Dummy, 3 - Calibration
+476.0      FlowTest.dummy1                                                INT        # DummyiKalibrGodzZmaiana1
+478.0      FlowTest.dummy2                                                INT        # DummyiKalibrGodzZmaiana2
+480.0      FlowTest.dummy3                                                INT        # DummyiKalibrGodzZmaiana3
+482.0      FlowTest.res_r1                                                REAL       # reserve
+486.0      FlowTest.res_r2                                                REAL       # reserve
+# FlowTestHeader size is 16 bytes
+# FlowTestTemplate 0 - Begin
+490.0      FlowTest.0.FlowResult                                          REAL       # [ln/min]
+494.0      FlowTest.0.FlowMax                                             REAL       # [ln/min]
+498.0      FlowTest.0.FlowMin                                             REAL       # [ln/min]
+502.0      FlowTest.0.res_r1                                              REAL       # reserve
+506.0      FlowTest.0.res_r2                                              REAL       # reserve
+510.0      FlowTest.0.TimeElapsed                                         REAL       # [s]
+514.0      FlowTest.0.res_r3                                              REAL       # reserve
+# # Tracedb_Status_lokalny - Begin
+518.0      FlowTest.0.Status.res_r1                                       REAL       # reserve
+522.0      FlowTest.0.Status.OperationActive                              BOOL       # 0 - Not Active, 1 - Switched ON
+522.1      FlowTest.0.Status.res1_b1                                      BOOL       # reserve
+522.2      FlowTest.0.Status.res1_b2                                      BOOL       # reserve
+522.3      FlowTest.0.Status.res1_b3                                      BOOL       # reserve
+522.4      FlowTest.0.Status.res1_b4                                      BOOL       # reserve
+522.5      FlowTest.0.Status.res1_b5                                      BOOL       # reserve
+522.6      FlowTest.0.Status.res1_b6                                      BOOL       # reserve
+522.7      FlowTest.0.Status.res1_b7                                      BOOL       # reserve
+523.0      FlowTest.0.Status.DatabaseSave                                 BOOL       # TODO: check if it's used?
+523.1      FlowTest.0.Status.res2_b1                                      BOOL       # reserve
+523.2      FlowTest.0.Status.res2_b2                                      BOOL       # reserve
+523.3      FlowTest.0.Status.res2_b3                                      BOOL       # reserve
+523.4      FlowTest.0.Status.res2_b4                                      BOOL       # reserve
+523.5      FlowTest.0.Status.res2_b5                                      BOOL       # reserve
+523.6      FlowTest.0.Status.res2_b6                                      BOOL       # reserve
+523.7      FlowTest.0.Status.res2_b7                                      BOOL       # reserve
+524.0      FlowTest.0.Status.res_i1                                       INT        # reserve
+526.0      FlowTest.0.Status.date_time                                    DATETIME   # date and time
+534.0      FlowTest.0.Status.result                                       INT        # 1 - OK 2 - NOK
+536.0      FlowTest.0.Status.res_i2                                       INT        # reserve
+# # Tracedb_Status_lokalny - END - size of 20 bytes.   
+# FlowTestTemplate 0 - END template size is 48
+# FlowTestTemplate 1 - Begin
+538.0      FlowTest.1.FlowResult                                          REAL       # [ln/min]
+542.0      FlowTest.1.FlowMax                                             REAL       # [ln/min]
+546.0      FlowTest.1.FlowMin                                             REAL       # [ln/min]
+550.0      FlowTest.1.res_r1                                              REAL       # reserve
+554.0      FlowTest.1.res_r2                                              REAL       # reserve
+558.0      FlowTest.1.TimeElapsed                                         REAL       # [s]
+562.0      FlowTest.1.res_r3                                              REAL       # reserve
+# # Tracedb_Status_lokalny - Begin
+566.0      FlowTest.1.Status.res_r1                                       REAL       # reserve
+570.0      FlowTest.1.Status.OperationActive                              BOOL       # 0 - Not Active, 1 - Switched ON
+570.1      FlowTest.1.Status.res1_b1                                      BOOL       # reserve
+570.2      FlowTest.1.Status.res1_b2                                      BOOL       # reserve
+570.3      FlowTest.1.Status.res1_b3                                      BOOL       # reserve
+570.4      FlowTest.1.Status.res1_b4                                      BOOL       # reserve
+570.5      FlowTest.1.Status.res1_b5                                      BOOL       # reserve
+570.6      FlowTest.1.Status.res1_b6                                      BOOL       # reserve
+570.7      FlowTest.1.Status.res1_b7                                      BOOL       # reserve
+571.0      FlowTest.1.Status.DatabaseSave                                 BOOL       # TODO: check if it's used?
+571.1      FlowTest.1.Status.res2_b1                                      BOOL       # reserve
+571.2      FlowTest.1.Status.res2_b2                                      BOOL       # reserve
+571.3      FlowTest.1.Status.res2_b3                                      BOOL       # reserve
+571.4      FlowTest.1.Status.res2_b4                                      BOOL       # reserve
+571.5      FlowTest.1.Status.res2_b5                                      BOOL       # reserve
+571.6      FlowTest.1.Status.res2_b6                                      BOOL       # reserve
+571.7      FlowTest.1.Status.res2_b7                                      BOOL       # reserve
+572.0      FlowTest.1.Status.res_i1                                       INT        # reserve
+574.0      FlowTest.1.Status.date_time                                    DATETIME   # date and time
+582.0      FlowTest.1.Status.result                                       INT        # 1 - OK 2 - NOK
+584.0      FlowTest.1.Status.res_i2                                       INT        # reserve
+# # Tracedb_Status_lokalny - END - size of 20 bytes.   
+# FlowTestTemplate 1 - END template size is 48
+# FlowTestTemplate 2 - Begin
+586.0      FlowTest.2.FlowResult                                          REAL       # [ln/min]
+590.0      FlowTest.2.FlowMax                                             REAL       # [ln/min]
+594.0      FlowTest.2.FlowMin                                             REAL       # [ln/min]
+598.0      FlowTest.2.res_r1                                              REAL       # reserve
+602.0      FlowTest.2.res_r2                                              REAL       # reserve
+606.0      FlowTest.2.TimeElapsed                                         REAL       # [s]
+610.0      FlowTest.2.res_r3                                              REAL       # reserve
+# # Tracedb_Status_lokalny - Begin
+614.0      FlowTest.2.Status.res_r1                                       REAL       # reserve
+618.0      FlowTest.2.Status.OperationActive                              BOOL       # 0 - Not Active, 1 - Switched ON
+618.1      FlowTest.2.Status.res1_b1                                      BOOL       # reserve
+618.2      FlowTest.2.Status.res1_b2                                      BOOL       # reserve
+618.3      FlowTest.2.Status.res1_b3                                      BOOL       # reserve
+618.4      FlowTest.2.Status.res1_b4                                      BOOL       # reserve
+618.5      FlowTest.2.Status.res1_b5                                      BOOL       # reserve
+618.6      FlowTest.2.Status.res1_b6                                      BOOL       # reserve
+618.7      FlowTest.2.Status.res1_b7                                      BOOL       # reserve
+619.0      FlowTest.2.Status.DatabaseSave                                 BOOL       # TODO: check if it's used?
+619.1      FlowTest.2.Status.res2_b1                                      BOOL       # reserve
+619.2      FlowTest.2.Status.res2_b2                                      BOOL       # reserve
+619.3      FlowTest.2.Status.res2_b3                                      BOOL       # reserve
+619.4      FlowTest.2.Status.res2_b4                                      BOOL       # reserve
+619.5      FlowTest.2.Status.res2_b5                                      BOOL       # reserve
+619.6      FlowTest.2.Status.res2_b6                                      BOOL       # reserve
+619.7      FlowTest.2.Status.res2_b7                                      BOOL       # reserve
+620.0      FlowTest.2.Status.res_i1                                       INT        # reserve
+622.0      FlowTest.2.Status.date_time                                    DATETIME   # date and time
+630.0      FlowTest.2.Status.result                                       INT        # 1 - OK 2 - NOK
+632.0      FlowTest.2.Status.res_i2                                       INT        # reserve
+# # Tracedb_Status_lokalny - END - size of 20 bytes.   
+# FlowTestTemplate 2 - END template size is 48
+# FlowTestTemplate 3 - Begin
+634.0      FlowTest.3.FlowResult                                          REAL       # [ln/min]
+638.0      FlowTest.3.FlowMax                                             REAL       # [ln/min]
+642.0      FlowTest.3.FlowMin                                             REAL       # [ln/min]
+646.0      FlowTest.3.res_r1                                              REAL       # reserve
+650.0      FlowTest.3.res_r2                                              REAL       # reserve
+654.0      FlowTest.3.TimeElapsed                                         REAL       # [s]
+658.0      FlowTest.3.res_r3                                              REAL       # reserve
+# # Tracedb_Status_lokalny - Begin
+662.0      FlowTest.3.Status.res_r1                                       REAL       # reserve
+666.0      FlowTest.3.Status.OperationActive                              BOOL       # 0 - Not Active, 1 - Switched ON
+666.1      FlowTest.3.Status.res1_b1                                      BOOL       # reserve
+666.2      FlowTest.3.Status.res1_b2                                      BOOL       # reserve
+666.3      FlowTest.3.Status.res1_b3                                      BOOL       # reserve
+666.4      FlowTest.3.Status.res1_b4                                      BOOL       # reserve
+666.5      FlowTest.3.Status.res1_b5                                      BOOL       # reserve
+666.6      FlowTest.3.Status.res1_b6                                      BOOL       # reserve
+666.7      FlowTest.3.Status.res1_b7                                      BOOL       # reserve
+667.0      FlowTest.3.Status.DatabaseSave                                 BOOL       # TODO: check if it's used?
+667.1      FlowTest.3.Status.res2_b1                                      BOOL       # reserve
+667.2      FlowTest.3.Status.res2_b2                                      BOOL       # reserve
+667.3      FlowTest.3.Status.res2_b3                                      BOOL       # reserve
+667.4      FlowTest.3.Status.res2_b4                                      BOOL       # reserve
+667.5      FlowTest.3.Status.res2_b5                                      BOOL       # reserve
+667.6      FlowTest.3.Status.res2_b6                                      BOOL       # reserve
+667.7      FlowTest.3.Status.res2_b7                                      BOOL       # reserve
+668.0      FlowTest.3.Status.res_i1                                       INT        # reserve
+670.0      FlowTest.3.Status.date_time                                    DATETIME   # date and time
+678.0      FlowTest.3.Status.result                                       INT        # 1 - OK 2 - NOK
+680.0      FlowTest.3.Status.res_i2                                       INT        # reserve
+# # Tracedb_Status_lokalny - END - size of 20 bytes.   
+# FlowTestTemplate 3 - END template size is 48
+# FlowTestTemplate 4 - Begin
+682.0      FlowTest.4.FlowResult                                          REAL       # [ln/min]
+686.0      FlowTest.4.FlowMax                                             REAL       # [ln/min]
+690.0      FlowTest.4.FlowMin                                             REAL       # [ln/min]
+694.0      FlowTest.4.res_r1                                              REAL       # reserve
+698.0      FlowTest.4.res_r2                                              REAL       # reserve
+702.0      FlowTest.4.TimeElapsed                                         REAL       # [s]
+706.0      FlowTest.4.res_r3                                              REAL       # reserve
+# # Tracedb_Status_lokalny - Begin
+710.0      FlowTest.4.Status.res_r1                                       REAL       # reserve
+714.0      FlowTest.4.Status.OperationActive                              BOOL       # 0 - Not Active, 1 - Switched ON
+714.1      FlowTest.4.Status.res1_b1                                      BOOL       # reserve
+714.2      FlowTest.4.Status.res1_b2                                      BOOL       # reserve
+714.3      FlowTest.4.Status.res1_b3                                      BOOL       # reserve
+714.4      FlowTest.4.Status.res1_b4                                      BOOL       # reserve
+714.5      FlowTest.4.Status.res1_b5                                      BOOL       # reserve
+714.6      FlowTest.4.Status.res1_b6                                      BOOL       # reserve
+714.7      FlowTest.4.Status.res1_b7                                      BOOL       # reserve
+715.0      FlowTest.4.Status.DatabaseSave                                 BOOL       # TODO: check if it's used?
+715.1      FlowTest.4.Status.res2_b1                                      BOOL       # reserve
+715.2      FlowTest.4.Status.res2_b2                                      BOOL       # reserve
+715.3      FlowTest.4.Status.res2_b3                                      BOOL       # reserve
+715.4      FlowTest.4.Status.res2_b4                                      BOOL       # reserve
+715.5      FlowTest.4.Status.res2_b5                                      BOOL       # reserve
+715.6      FlowTest.4.Status.res2_b6                                      BOOL       # reserve
+715.7      FlowTest.4.Status.res2_b7                                      BOOL       # reserve
+716.0      FlowTest.4.Status.res_i1                                       INT        # reserve
+718.0      FlowTest.4.Status.date_time                                    DATETIME   # date and time
+726.0      FlowTest.4.Status.result                                       INT        # 1 - OK 2 - NOK
+728.0      FlowTest.4.Status.res_i2                                       INT        # reserve
+# # Tracedb_Status_lokalny - END - size of 20 bytes.   
+# FlowTestTemplate 4 - END template size is 48
+# FlowTestTemplate 5 - Begin
+730.0      FlowTest.5.FlowResult                                          REAL       # [ln/min]
+734.0      FlowTest.5.FlowMax                                             REAL       # [ln/min]
+738.0      FlowTest.5.FlowMin                                             REAL       # [ln/min]
+742.0      FlowTest.5.res_r1                                              REAL       # reserve
+746.0      FlowTest.5.res_r2                                              REAL       # reserve
+750.0      FlowTest.5.TimeElapsed                                         REAL       # [s]
+754.0      FlowTest.5.res_r3                                              REAL       # reserve
+# # Tracedb_Status_lokalny - Begin
+758.0      FlowTest.5.Status.res_r1                                       REAL       # reserve
+762.0      FlowTest.5.Status.OperationActive                              BOOL       # 0 - Not Active, 1 - Switched ON
+762.1      FlowTest.5.Status.res1_b1                                      BOOL       # reserve
+762.2      FlowTest.5.Status.res1_b2                                      BOOL       # reserve
+762.3      FlowTest.5.Status.res1_b3                                      BOOL       # reserve
+762.4      FlowTest.5.Status.res1_b4                                      BOOL       # reserve
+762.5      FlowTest.5.Status.res1_b5                                      BOOL       # reserve
+762.6      FlowTest.5.Status.res1_b6                                      BOOL       # reserve
+762.7      FlowTest.5.Status.res1_b7                                      BOOL       # reserve
+763.0      FlowTest.5.Status.DatabaseSave                                 BOOL       # TODO: check if it's used?
+763.1      FlowTest.5.Status.res2_b1                                      BOOL       # reserve
+763.2      FlowTest.5.Status.res2_b2                                      BOOL       # reserve
+763.3      FlowTest.5.Status.res2_b3                                      BOOL       # reserve
+763.4      FlowTest.5.Status.res2_b4                                      BOOL       # reserve
+763.5      FlowTest.5.Status.res2_b5                                      BOOL       # reserve
+763.6      FlowTest.5.Status.res2_b6                                      BOOL       # reserve
+763.7      FlowTest.5.Status.res2_b7                                      BOOL       # reserve
+764.0      FlowTest.5.Status.res_i1                                       INT        # reserve
+766.0      FlowTest.5.Status.date_time                                    DATETIME   # date and time
+774.0      FlowTest.5.Status.result                                       INT        # 1 - OK 2 - NOK
+776.0      FlowTest.5.Status.res_i2                                       INT        # reserve
+# # Tracedb_Status_lokalny - END - size of 20 bytes.   
+# FlowTestTemplate 5 - END template size is 48
+# FlowTestTemplate 6 - Begin
+778.0      FlowTest.6.FlowResult                                          REAL       # [ln/min]
+782.0      FlowTest.6.FlowMax                                             REAL       # [ln/min]
+786.0      FlowTest.6.FlowMin                                             REAL       # [ln/min]
+790.0      FlowTest.6.res_r1                                              REAL       # reserve
+794.0      FlowTest.6.res_r2                                              REAL       # reserve
+798.0      FlowTest.6.TimeElapsed                                         REAL       # [s]
+802.0      FlowTest.6.res_r3                                              REAL       # reserve
+# # Tracedb_Status_lokalny - Begin
+806.0      FlowTest.6.Status.res_r1                                       REAL       # reserve
+810.0      FlowTest.6.Status.OperationActive                              BOOL       # 0 - Not Active, 1 - Switched ON
+810.1      FlowTest.6.Status.res1_b1                                      BOOL       # reserve
+810.2      FlowTest.6.Status.res1_b2                                      BOOL       # reserve
+810.3      FlowTest.6.Status.res1_b3                                      BOOL       # reserve
+810.4      FlowTest.6.Status.res1_b4                                      BOOL       # reserve
+810.5      FlowTest.6.Status.res1_b5                                      BOOL       # reserve
+810.6      FlowTest.6.Status.res1_b6                                      BOOL       # reserve
+810.7      FlowTest.6.Status.res1_b7                                      BOOL       # reserve
+811.0      FlowTest.6.Status.DatabaseSave                                 BOOL       # TODO: check if it's used?
+811.1      FlowTest.6.Status.res2_b1                                      BOOL       # reserve
+811.2      FlowTest.6.Status.res2_b2                                      BOOL       # reserve
+811.3      FlowTest.6.Status.res2_b3                                      BOOL       # reserve
+811.4      FlowTest.6.Status.res2_b4                                      BOOL       # reserve
+811.5      FlowTest.6.Status.res2_b5                                      BOOL       # reserve
+811.6      FlowTest.6.Status.res2_b6                                      BOOL       # reserve
+811.7      FlowTest.6.Status.res2_b7                                      BOOL       # reserve
+812.0      FlowTest.6.Status.res_i1                                       INT        # reserve
+814.0      FlowTest.6.Status.date_time                                    DATETIME   # date and time
+822.0      FlowTest.6.Status.result                                       INT        # 1 - OK 2 - NOK
+824.0      FlowTest.6.Status.res_i2                                       INT        # reserve
+# # Tracedb_Status_lokalny - END - size of 20 bytes.   
+# FlowTestTemplate 6 - END template size is 48
+# FlowTest END - size of 400 bytes
+# Marking Begin
+874.0      Marking.done                                                   INT        # 0 - NO, 1 - YES
+876.0      Marking.res_r1                                                 REAL       # reserve
+# # Tracedb_Status_lokalny - Begin
+880.0      Marking.Status.res_r1                                          REAL       # reserve
+884.0      Marking.Status.OperationActive                                 BOOL       # 0 - Not Active, 1 - Switched ON
+884.1      Marking.Status.res1_b1                                         BOOL       # reserve
+884.2      Marking.Status.res1_b2                                         BOOL       # reserve
+884.3      Marking.Status.res1_b3                                         BOOL       # reserve
+884.4      Marking.Status.res1_b4                                         BOOL       # reserve
+884.5      Marking.Status.res1_b5                                         BOOL       # reserve
+884.6      Marking.Status.res1_b6                                         BOOL       # reserve
+884.7      Marking.Status.res1_b7                                         BOOL       # reserve
+885.0      Marking.Status.DatabaseSave                                    BOOL       # TODO: check if it's used?
+885.1      Marking.Status.res2_b1                                         BOOL       # reserve
+885.2      Marking.Status.res2_b2                                         BOOL       # reserve
+885.3      Marking.Status.res2_b3                                         BOOL       # reserve
+885.4      Marking.Status.res2_b4                                         BOOL       # reserve
+885.5      Marking.Status.res2_b5                                         BOOL       # reserve
+885.6      Marking.Status.res2_b6                                         BOOL       # reserve
+885.7      Marking.Status.res2_b7                                         BOOL       # reserve
+886.0      Marking.Status.res_i1                                          INT        # reserve
+888.0      Marking.Status.date_time                                       DATETIME   # date and time
+896.0      Marking.Status.result                                          INT        # 1 - OK 2 - NOK
+898.0      Marking.Status.res_i2                                          INT        # reserve
+# # Tracedb_Status_lokalny - END - size of 20 bytes.   
+# Marking END - size of 26 bytes
+
+# Tracedb_12705 END - size of 900 bytes

@@ -1,0 +1,430 @@
+
+# Tracedb_12706 BEGIN
+# db8xxHeader BEGIN
+# Tracedb_Logowanie - Begin
+0.0        operator.login                                                 STRING[8]  # set by PLC
+10.0       operator.password                                              STRING[16] # set by PLC
+28.0       operator.res_r1                                                REAL       # reserve
+32.0       operator.res_r2                                                REAL       # reserve
+36.0       operator.operator_status                                       INT        # PC: 0 - not defined, 1 - logged in, 2 - logged out, 3 - blocked, 4 - wrong password
+38.0       operator.operator_do_login                                     BOOL       # set by: PLC - flag used to login. PC - switches off flag once login is ready.
+38.1       operator.operator_do_login                                     BOOL       # set by: PLC - flag used to logout. PC - switches off flag once logout is ready.
+38.2       operator.operator_is_login                                     BOOL       # set by: PLC - flag used to check status. constantly set by PLC. Have value 1 when operator.operator_status is 1. Otherwise have value of 0.
+38.3       operator.res1_b3                                               BOOL       # reserve
+38.4       operator.res1_b4                                               BOOL       # reserve
+38.5       operator.res1_b5                                               BOOL       # reserve
+38.6       operator.res1_b6                                               BOOL       # reserve
+38.7       operator.res1_b7                                               BOOL       # reserve
+39.0       operator.res2_b3                                               BOOL       # reserve
+39.1       operator.res2_b4                                               BOOL       # reserve
+39.2       operator.res2_b5                                               BOOL       # reserve
+39.3       operator.res2_b3                                               BOOL       # reserve
+39.4       operator.res2_b4                                               BOOL       # reserve
+39.5       operator.res2_b5                                               BOOL       # reserve
+39.6       operator.res2_b6                                               BOOL       # reserve
+39.7       operator.res2_b7                                               BOOL       # reserve
+40.0       operator.res_r3                                                REAL       # reserve
+44.0       operator.operator_datetime                                     DATETIME   # date and time from PLC. size is 8 bytes.
+# Tracedb_Logowanie - END - size of 52 bytes
+# Tracedb_Global_Head - Begin
+52.0       head.station_id                                                INT        # station ID
+54.0       head_program_number                                            INT        # program number
+56.0       head.nest_number                                               INT        # nest number
+58.0       head.detail_id                                                 STRING[30] # detail ID
+90.0       head.res_i1                                                    INT        # reserve
+92.0       head.res_i2                                                    INT        # reserve
+94.0       head.res_r3                                                    REAL       # reserve
+98.0       head.res_r4                                                    REAL       # reserve
+# Tracedb_Global_Head - END - size of 50 bytes.
+# Tracedb_Status_Globalny - Begin
+102.0      status.res_r1                                                  REAL       # reserve
+106.0      ctrl.PLC_trc_on                                                BOOL       # traceability flag. used by PLC to indicate if tracaebility should be switched on.
+106.1      ctrl.PLC_live                                                  BOOL       # Controlled by PLC. blinks every 300[ms]. Indicates that PLC is alive
+106.2      ctrl.PC_live                                                   BOOL       # Watched by PLC. PC should blink this bit every 300[ms] to notify that application is connected.
+106.3      status_save_only_mode                                          BOOL       # 1 - baza zapisuje wyniki ale PLC nie sprawdza czy z poprzedniej stacji OK
+106.4      status_no_id_scanning                                          BOOL       # 1 - praca bez skanowania ID detalu.
+106.5      status_no_type_verify                                          BOOL       # 1 - praca bez weryfikacji typu / rezerwa
+106.6      status_no_scanning                                             BOOL       # 1 - wariant bez skanowania (mimo ze praca ze skanowaniem id detalu)
+106.7      status_rez_b7                                                  BOOL       # reserve
+107.0      status.PLC_Save                                                BOOL       # PLC_Save bit - monitored by PC, set by PLC. PC saves status if set to True. Once PC finishes it sets it back to False.
+107.1      status.PLC_Query                                               BOOL       # PLC_Query bit - monitored by PC, set by PLC. PC reads status from database if set to True. Once PC finishes it sets it back to False.
+107.2      status.flag_id_query                                           BOOL       # ID_Query bit - PLC asks PC to set detail_id
+107.3      status.PC_Ready                                                BOOL       # PC_Ready bit. Monitored by PLC. PCL waits for True. PC sets to False when it starts processing. PC sets back to True once processing is finished.
+107.4      status.flag_id_ready                                           BOOL       # ID_Ready bit - PC indicates that detail_id is already set.
+107.5      status.res_b5                                                  BOOL       # reserve
+107.6      status.res_b6                                                  BOOL       # reserve
+107.7      status.res_b7                                                  BOOL       # reserve
+108.0      status.res_i1                                                  INT        # reserve
+110.0      status.date_time                                               DATETIME   # date and time
+118.0      status.station_result                                          INT        # wynik ze stanowiska
+120.0      status.database_result                                         INT        # wynik z bazy danych
+# Tracedb_Status_Globalny - END - size of 20 bytes. 
+
+# db8xxHeader END - size of 122
+# ReadID Begin
+122.0      ReadID.id                                                      STRING[30] # Odczytane id ze skanera DMC
+154.0      ReadID.res_r1                                                  REAL       # reserve
+# # Tracedb_Status_lokalny - Begin
+158.0      ReadID.Status.res_r1                                           REAL       # reserve
+162.0      ReadID.Status.OperationActive                                  BOOL       # 0 - Not Active, 1 - Switched ON
+162.1      ReadID.Status.res1_b1                                          BOOL       # reserve
+162.2      ReadID.Status.res1_b2                                          BOOL       # reserve
+162.3      ReadID.Status.res1_b3                                          BOOL       # reserve
+162.4      ReadID.Status.res1_b4                                          BOOL       # reserve
+162.5      ReadID.Status.res1_b5                                          BOOL       # reserve
+162.6      ReadID.Status.res1_b6                                          BOOL       # reserve
+162.7      ReadID.Status.res1_b7                                          BOOL       # reserve
+163.0      ReadID.Status.DatabaseSave                                     BOOL       # TODO: check if it's used?
+163.1      ReadID.Status.res2_b1                                          BOOL       # reserve
+163.2      ReadID.Status.res2_b2                                          BOOL       # reserve
+163.3      ReadID.Status.res2_b3                                          BOOL       # reserve
+163.4      ReadID.Status.res2_b4                                          BOOL       # reserve
+163.5      ReadID.Status.res2_b5                                          BOOL       # reserve
+163.6      ReadID.Status.res2_b6                                          BOOL       # reserve
+163.7      ReadID.Status.res2_b7                                          BOOL       # reserve
+164.0      ReadID.Status.res_i1                                           INT        # reserve
+166.0      ReadID.Status.date_time                                        DATETIME   # date and time
+174.0      ReadID.Status.result                                           INT        # 1 - OK 2 - NOK
+176.0      ReadID.Status.res_i2                                           INT        # reserve
+# # Tracedb_Status_lokalny - END - size of 20 bytes.   
+# ReadID END - size of 56 bytes
+# Teilabfrage Begin                                                      # ; FC1 NW12
+178.0      Teilabfrage.done                                               INT        # 0 - NO, 1 - YES
+180.0      Teilabfrage.res_r1                                             REAL       # reserve # DB8.DBX  656.2
+# # Tracedb_Status_lokalny - Begin
+184.0      Teilabfrage.Status.res_r1                                      REAL       # reserve
+188.0      Teilabfrage.Status.OperationActive                             BOOL       # 0 - Not Active, 1 - Switched ON
+188.1      Teilabfrage.Status.res1_b1                                     BOOL       # reserve
+188.2      Teilabfrage.Status.res1_b2                                     BOOL       # reserve
+188.3      Teilabfrage.Status.res1_b3                                     BOOL       # reserve
+188.4      Teilabfrage.Status.res1_b4                                     BOOL       # reserve
+188.5      Teilabfrage.Status.res1_b5                                     BOOL       # reserve
+188.6      Teilabfrage.Status.res1_b6                                     BOOL       # reserve
+188.7      Teilabfrage.Status.res1_b7                                     BOOL       # reserve
+189.0      Teilabfrage.Status.DatabaseSave                                BOOL       # TODO: check if it's used?
+189.1      Teilabfrage.Status.res2_b1                                     BOOL       # reserve
+189.2      Teilabfrage.Status.res2_b2                                     BOOL       # reserve
+189.3      Teilabfrage.Status.res2_b3                                     BOOL       # reserve
+189.4      Teilabfrage.Status.res2_b4                                     BOOL       # reserve
+189.5      Teilabfrage.Status.res2_b5                                     BOOL       # reserve
+189.6      Teilabfrage.Status.res2_b6                                     BOOL       # reserve
+189.7      Teilabfrage.Status.res2_b7                                     BOOL       # reserve
+190.0      Teilabfrage.Status.res_i1                                      INT        # reserve
+192.0      Teilabfrage.Status.date_time                                   DATETIME   # date and time
+200.0      Teilabfrage.Status.result                                      INT        # 1 - OK 2 - NOK
+202.0      Teilabfrage.Status.res_i2                                      INT        # reserve
+# # Tracedb_Status_lokalny - END - size of 20 bytes.   
+# Teilabfrage END - size of 26 bytes
+# Nadelpruefung Begin                                                    # ; FC1 NW12
+204.0      Nadelpruefung.done                                             INT        # 0 - NO, 1 - YES
+206.0      Nadelpruefung.res_r1                                           REAL       # reserve # DB8.DBX656.6
+# # Tracedb_Status_lokalny - Begin
+210.0      Nadelpruefung.Status.res_r1                                    REAL       # reserve
+214.0      Nadelpruefung.Status.OperationActive                           BOOL       # 0 - Not Active, 1 - Switched ON
+214.1      Nadelpruefung.Status.res1_b1                                   BOOL       # reserve
+214.2      Nadelpruefung.Status.res1_b2                                   BOOL       # reserve
+214.3      Nadelpruefung.Status.res1_b3                                   BOOL       # reserve
+214.4      Nadelpruefung.Status.res1_b4                                   BOOL       # reserve
+214.5      Nadelpruefung.Status.res1_b5                                   BOOL       # reserve
+214.6      Nadelpruefung.Status.res1_b6                                   BOOL       # reserve
+214.7      Nadelpruefung.Status.res1_b7                                   BOOL       # reserve
+215.0      Nadelpruefung.Status.DatabaseSave                              BOOL       # TODO: check if it's used?
+215.1      Nadelpruefung.Status.res2_b1                                   BOOL       # reserve
+215.2      Nadelpruefung.Status.res2_b2                                   BOOL       # reserve
+215.3      Nadelpruefung.Status.res2_b3                                   BOOL       # reserve
+215.4      Nadelpruefung.Status.res2_b4                                   BOOL       # reserve
+215.5      Nadelpruefung.Status.res2_b5                                   BOOL       # reserve
+215.6      Nadelpruefung.Status.res2_b6                                   BOOL       # reserve
+215.7      Nadelpruefung.Status.res2_b7                                   BOOL       # reserve
+216.0      Nadelpruefung.Status.res_i1                                    INT        # reserve
+218.0      Nadelpruefung.Status.date_time                                 DATETIME   # date and time
+226.0      Nadelpruefung.Status.result                                    INT        # 1 - OK 2 - NOK
+228.0      Nadelpruefung.Status.res_i2                                    INT        # reserve
+# # Tracedb_Status_lokalny - END - size of 20 bytes.   
+# Nadelpruefung END - size of 26 bytes
+# Mutternabfrage Begin                                                   # DB9.DBX3.7; FB310
+230.0      Mutternabfrage.done                                            INT        # 0 - NO, 1 - YES
+232.0      Mutternabfrage.res_r1                                          REAL       # reserve # DB8.DBX656.5
+# # Tracedb_Status_lokalny - Begin
+236.0      Mutternabfrage.Status.res_r1                                   REAL       # reserve
+240.0      Mutternabfrage.Status.OperationActive                          BOOL       # 0 - Not Active, 1 - Switched ON
+240.1      Mutternabfrage.Status.res1_b1                                  BOOL       # reserve
+240.2      Mutternabfrage.Status.res1_b2                                  BOOL       # reserve
+240.3      Mutternabfrage.Status.res1_b3                                  BOOL       # reserve
+240.4      Mutternabfrage.Status.res1_b4                                  BOOL       # reserve
+240.5      Mutternabfrage.Status.res1_b5                                  BOOL       # reserve
+240.6      Mutternabfrage.Status.res1_b6                                  BOOL       # reserve
+240.7      Mutternabfrage.Status.res1_b7                                  BOOL       # reserve
+241.0      Mutternabfrage.Status.DatabaseSave                             BOOL       # TODO: check if it's used?
+241.1      Mutternabfrage.Status.res2_b1                                  BOOL       # reserve
+241.2      Mutternabfrage.Status.res2_b2                                  BOOL       # reserve
+241.3      Mutternabfrage.Status.res2_b3                                  BOOL       # reserve
+241.4      Mutternabfrage.Status.res2_b4                                  BOOL       # reserve
+241.5      Mutternabfrage.Status.res2_b5                                  BOOL       # reserve
+241.6      Mutternabfrage.Status.res2_b6                                  BOOL       # reserve
+241.7      Mutternabfrage.Status.res2_b7                                  BOOL       # reserve
+242.0      Mutternabfrage.Status.res_i1                                   INT        # reserve
+244.0      Mutternabfrage.Status.date_time                                DATETIME   # date and time
+252.0      Mutternabfrage.Status.result                                   INT        # 1 - OK 2 - NOK
+254.0      Mutternabfrage.Status.res_i2                                   INT        # reserve
+# # Tracedb_Status_lokalny - END - size of 20 bytes.   
+# Mutternabfrage END - size of 26 bytes
+# Kreismarkierer Begin                                                   # DB9.DBX3.4; FB312; Znakowanie
+256.0      Kreismarkierer.done                                            INT        # 0 - NO, 1 - YES
+258.0      Kreismarkierer.servomotor_number                               INT        # numer silownika # DB8.DBW658
+260.0      Kreismarkierer.marking_time                                    REAL       # czas znakowania
+264.0      Kreismarkierer.res_r1                                          REAL       # reserve # DB8.DBX656.3
+# # Tracedb_Status_lokalny - Begin
+268.0      Kreismarkierer.Status.res_r1                                   REAL       # reserve
+272.0      Kreismarkierer.Status.OperationActive                          BOOL       # 0 - Not Active, 1 - Switched ON
+272.1      Kreismarkierer.Status.res1_b1                                  BOOL       # reserve
+272.2      Kreismarkierer.Status.res1_b2                                  BOOL       # reserve
+272.3      Kreismarkierer.Status.res1_b3                                  BOOL       # reserve
+272.4      Kreismarkierer.Status.res1_b4                                  BOOL       # reserve
+272.5      Kreismarkierer.Status.res1_b5                                  BOOL       # reserve
+272.6      Kreismarkierer.Status.res1_b6                                  BOOL       # reserve
+272.7      Kreismarkierer.Status.res1_b7                                  BOOL       # reserve
+273.0      Kreismarkierer.Status.DatabaseSave                             BOOL       # TODO: check if it's used?
+273.1      Kreismarkierer.Status.res2_b1                                  BOOL       # reserve
+273.2      Kreismarkierer.Status.res2_b2                                  BOOL       # reserve
+273.3      Kreismarkierer.Status.res2_b3                                  BOOL       # reserve
+273.4      Kreismarkierer.Status.res2_b4                                  BOOL       # reserve
+273.5      Kreismarkierer.Status.res2_b5                                  BOOL       # reserve
+273.6      Kreismarkierer.Status.res2_b6                                  BOOL       # reserve
+273.7      Kreismarkierer.Status.res2_b7                                  BOOL       # reserve
+274.0      Kreismarkierer.Status.res_i1                                   INT        # reserve
+276.0      Kreismarkierer.Status.date_time                                DATETIME   # date and time
+284.0      Kreismarkierer.Status.result                                   INT        # 1 - OK 2 - NOK
+286.0      Kreismarkierer.Status.res_i2                                   INT        # reserve
+# # Tracedb_Status_lokalny - END - size of 20 bytes.   
+# Kreismarkierer END - size of 32 bytes
+# Durchflusspruefung Begin                                               # DB8.DBX656.7; Durchflusspruefung - Tego chyba nie ma na tej stacji
+288.0      Durchflusspruefung.done                                        INT        # 0 - NO, 1 - YES
+290.0      Durchflusspruefung.res_r1                                      REAL       # reserve
+# # Tracedb_Status_lokalny - Begin
+294.0      Durchflusspruefung.Status.res_r1                               REAL       # reserve
+298.0      Durchflusspruefung.Status.OperationActive                      BOOL       # 0 - Not Active, 1 - Switched ON
+298.1      Durchflusspruefung.Status.res1_b1                              BOOL       # reserve
+298.2      Durchflusspruefung.Status.res1_b2                              BOOL       # reserve
+298.3      Durchflusspruefung.Status.res1_b3                              BOOL       # reserve
+298.4      Durchflusspruefung.Status.res1_b4                              BOOL       # reserve
+298.5      Durchflusspruefung.Status.res1_b5                              BOOL       # reserve
+298.6      Durchflusspruefung.Status.res1_b6                              BOOL       # reserve
+298.7      Durchflusspruefung.Status.res1_b7                              BOOL       # reserve
+299.0      Durchflusspruefung.Status.DatabaseSave                         BOOL       # TODO: check if it's used?
+299.1      Durchflusspruefung.Status.res2_b1                              BOOL       # reserve
+299.2      Durchflusspruefung.Status.res2_b2                              BOOL       # reserve
+299.3      Durchflusspruefung.Status.res2_b3                              BOOL       # reserve
+299.4      Durchflusspruefung.Status.res2_b4                              BOOL       # reserve
+299.5      Durchflusspruefung.Status.res2_b5                              BOOL       # reserve
+299.6      Durchflusspruefung.Status.res2_b6                              BOOL       # reserve
+299.7      Durchflusspruefung.Status.res2_b7                              BOOL       # reserve
+300.0      Durchflusspruefung.Status.res_i1                               INT        # reserve
+302.0      Durchflusspruefung.Status.date_time                            DATETIME   # date and time
+310.0      Durchflusspruefung.Status.result                               INT        # 1 - OK 2 - NOK
+312.0      Durchflusspruefung.Status.res_i2                               INT        # reserve
+# # Tracedb_Status_lokalny - END - size of 20 bytes.   
+# Durchflusspruefung END - size of 26 bytes
+# DrucksensorNachPruefling Begin                                         # DB8.DBX656.4; Drucksensor nach Pruefling
+314.0      DrucksensorNachPruefling.done                                  INT        # 0 - NO, 1 - YES
+316.0      DrucksensorNachPruefling.res_r1                                REAL       # reserve # DB8.DBX656.5
+# # Tracedb_Status_lokalny - Begin
+320.0      DrucksensorNachPruefling.Status.res_r1                         REAL       # reserve
+324.0      DrucksensorNachPruefling.Status.OperationActive                BOOL       # 0 - Not Active, 1 - Switched ON
+324.1      DrucksensorNachPruefling.Status.res1_b1                        BOOL       # reserve
+324.2      DrucksensorNachPruefling.Status.res1_b2                        BOOL       # reserve
+324.3      DrucksensorNachPruefling.Status.res1_b3                        BOOL       # reserve
+324.4      DrucksensorNachPruefling.Status.res1_b4                        BOOL       # reserve
+324.5      DrucksensorNachPruefling.Status.res1_b5                        BOOL       # reserve
+324.6      DrucksensorNachPruefling.Status.res1_b6                        BOOL       # reserve
+324.7      DrucksensorNachPruefling.Status.res1_b7                        BOOL       # reserve
+325.0      DrucksensorNachPruefling.Status.DatabaseSave                   BOOL       # TODO: check if it's used?
+325.1      DrucksensorNachPruefling.Status.res2_b1                        BOOL       # reserve
+325.2      DrucksensorNachPruefling.Status.res2_b2                        BOOL       # reserve
+325.3      DrucksensorNachPruefling.Status.res2_b3                        BOOL       # reserve
+325.4      DrucksensorNachPruefling.Status.res2_b4                        BOOL       # reserve
+325.5      DrucksensorNachPruefling.Status.res2_b5                        BOOL       # reserve
+325.6      DrucksensorNachPruefling.Status.res2_b6                        BOOL       # reserve
+325.7      DrucksensorNachPruefling.Status.res2_b7                        BOOL       # reserve
+326.0      DrucksensorNachPruefling.Status.res_i1                         INT        # reserve
+328.0      DrucksensorNachPruefling.Status.date_time                      DATETIME   # date and time
+336.0      DrucksensorNachPruefling.Status.result                         INT        # 1 - OK 2 - NOK
+338.0      DrucksensorNachPruefling.Status.res_i2                         INT        # reserve
+# # Tracedb_Status_lokalny - END - size of 20 bytes.   
+# DrucksensorNachPruefling END - size of 26 bytes
+# PresetParams Begin                                         # Parametry z nastaw
+340.0      PresetParams.P_He_vor_PT_REAL                                  REAL       # DB475.DBD8; [bar] HMI_IW.Kammer1.P_He_vor_PT_REAL
+344.0      PresetParams.P_He_Versorgung_REAL                              REAL       # DB475.DBD448; [bar] HMI_IW.Anlage.P_He_Versorgung_REAL
+348.0      PresetParams.P_Vac_PT_REAL                                     REAL       # DB475.DBD20; [mbar] HMI_IW.Kammer1.P_Vac_PT_REAL
+352.0      PresetParams.P_He_nach_PT_REAL                                 REAL       # DB475.DBD14; [bar] HMI_IW.Kammer1.P_He_nach_PT_REAL
+356.0      PresetParams.Leckrate                                          REAL       # DB9.DBD10; [mbar l/s] Pruef-Erg.Glocke.Kammer1.Leckrate
+360.0      PresetParams.P_Glocke_REAL                                     REAL       # DB475.DBD2; [mbar] HMI_IW.Kammer1.P_Glocke_REAL
+364.0      PresetParams.Roh_Mittel_Mul_Faktor                             REAL       # DB20.DBD608; [mbar l/s] INFICON-DB.Leckratenscalierung .Roh_Mittel_Mul_Faktor
+368.0      PresetParams.res_r1                                            REAL       # reserve
+372.0      PresetParams.res_r2                                            REAL       # reserve
+376.0      PresetParams.res_r3                                            REAL       # reserve
+380.0      PresetParams.res_r4                                            REAL       # reserve
+# # Tracedb_Status_lokalny - Begin
+384.0      SchemaParams.Status.res_r1                                     REAL       # reserve
+388.0      SchemaParams.Status.OperationActive                            BOOL       # 0 - Not Active, 1 - Switched ON
+388.1      SchemaParams.Status.res1_b1                                    BOOL       # reserve
+388.2      SchemaParams.Status.res1_b2                                    BOOL       # reserve
+388.3      SchemaParams.Status.res1_b3                                    BOOL       # reserve
+388.4      SchemaParams.Status.res1_b4                                    BOOL       # reserve
+388.5      SchemaParams.Status.res1_b5                                    BOOL       # reserve
+388.6      SchemaParams.Status.res1_b6                                    BOOL       # reserve
+388.7      SchemaParams.Status.res1_b7                                    BOOL       # reserve
+389.0      SchemaParams.Status.DatabaseSave                               BOOL       # TODO: check if it's used?
+389.1      SchemaParams.Status.res2_b1                                    BOOL       # reserve
+389.2      SchemaParams.Status.res2_b2                                    BOOL       # reserve
+389.3      SchemaParams.Status.res2_b3                                    BOOL       # reserve
+389.4      SchemaParams.Status.res2_b4                                    BOOL       # reserve
+389.5      SchemaParams.Status.res2_b5                                    BOOL       # reserve
+389.6      SchemaParams.Status.res2_b6                                    BOOL       # reserve
+389.7      SchemaParams.Status.res2_b7                                    BOOL       # reserve
+390.0      SchemaParams.Status.res_i1                                     INT        # reserve
+392.0      SchemaParams.Status.date_time                                  DATETIME   # date and time
+400.0      SchemaParams.Status.result                                     INT        # 1 - OK 2 - NOK
+402.0      SchemaParams.Status.res_i2                                     INT        # reserve
+# # Tracedb_Status_lokalny - END - size of 20 bytes.   
+# SchemaParams END - size of 64 bytes
+# PresetParams Begin                                         # Parametry z nastaw
+404.0      PresetParams.GloVacGrob_Soll                                   REAL       # DB8.DBD4; [bar] Glockenvakuum GROB
+408.0      PresetParams.GloVacFein_Soll                                   REAL       # DB8.DBD16; [bar] Glockenvakuum FEIN
+412.0      PresetParams.GloVacGrob                                        REAL       # DB8.DBD160; [s] Ueberwachungszeit Glockenvakuum GROB
+416.0      PresetParams.GloVacFein                                        REAL       # DB8.DBD164; [s] Ueberwachungszeit Glockenvakuum FEIN
+420.0      PresetParams.PtVac_Atmos_Soll_1                                REAL       # DB8.DBD28; [mbar] Pruefteil-Vakkum ATMOSPHAERE
+424.0      PresetParams.PtVac_He_Soll_1                                   REAL       # DB8.DBD56; [mbar] Pruefteil-Vakkum HELIUM
+428.0      PresetParams.PT_evakuieren_Atmos                               REAL       # DB8.DBD172; [s] Ueberwachungszeit Pruefteil evakuieren ATMOSPHAERE
+432.0      PresetParams.PT_evakuieren_Helium                              REAL       # DB8.DBD176; [s] Ueberwachungszeit Pruefteil evakuieren HELIUM
+436.0      PresetParams.PT_fluten_1                                       REAL       # DB8.DBD180; [s] Pruefteil mit Atmosphaere fluten
+440.0      PresetParams.Helium_Min_1                                      REAL       # DB8.DBD44; [bar] Helium -Fuelldruck MIN
+444.0      PresetParams.Helium_Soll_1                                     REAL       # DB8.DBD40; [bar] Helium -Fuelldruck SOLL
+448.0      PresetParams.HeliumFuellen                                     REAL       # DB8.DBD184; [s] Ueberwachungszeit Pruefteil mit Helium fuellen
+452.0      PresetParams.Helium_entspannen_HD                              REAL       # DB8.DBD168; [s] Ueberwachungszeit Helium entspannen
+456.0      PresetParams.FrgHeliumEvakuieren                               REAL       # DB8.DBD48; [bar] Freigabe Pruefteil evakuieren ab
+460.0      PresetParams.res_r1                                            REAL       # reserve
+464.0      PresetParams.res_r2                                            REAL       # reserve
+468.0      PresetParams.res_r3                                            REAL       # reserve
+472.0      PresetParams.res_r4                                            REAL       # reserve
+476.0      PresetParams.Prueffreigabe                                     INT        # DB8.DBW480; 1-Tylko komora 1, 2-Tylko komora 2, 3-Obie komory
+478.0      PresetParams.Doppel_WT                                         INT        # DB8.DBX656.1; Doppel-WT; 0-NIE; 1-TAK
+480.0      PresetParams.res_r1                                            REAL       # reserve
+484.0      PresetParams.res_r2                                            REAL       # reserve
+# # Tracedb_Status_lokalny - Begin
+488.0      PresetParams.Status.res_r1                                     REAL       # reserve
+492.0      PresetParams.Status.OperationActive                            BOOL       # 0 - Not Active, 1 - Switched ON
+492.1      PresetParams.Status.res1_b1                                    BOOL       # reserve
+492.2      PresetParams.Status.res1_b2                                    BOOL       # reserve
+492.3      PresetParams.Status.res1_b3                                    BOOL       # reserve
+492.4      PresetParams.Status.res1_b4                                    BOOL       # reserve
+492.5      PresetParams.Status.res1_b5                                    BOOL       # reserve
+492.6      PresetParams.Status.res1_b6                                    BOOL       # reserve
+492.7      PresetParams.Status.res1_b7                                    BOOL       # reserve
+493.0      PresetParams.Status.DatabaseSave                               BOOL       # TODO: check if it's used?
+493.1      PresetParams.Status.res2_b1                                    BOOL       # reserve
+493.2      PresetParams.Status.res2_b2                                    BOOL       # reserve
+493.3      PresetParams.Status.res2_b3                                    BOOL       # reserve
+493.4      PresetParams.Status.res2_b4                                    BOOL       # reserve
+493.5      PresetParams.Status.res2_b5                                    BOOL       # reserve
+493.6      PresetParams.Status.res2_b6                                    BOOL       # reserve
+493.7      PresetParams.Status.res2_b7                                    BOOL       # reserve
+494.0      PresetParams.Status.res_i1                                     INT        # reserve
+496.0      PresetParams.Status.date_time                                  DATETIME   # date and time
+504.0      PresetParams.Status.result                                     INT        # 1 - OK 2 - NOK
+506.0      PresetParams.Status.res_i2                                     INT        # reserve
+# # Tracedb_Status_lokalny - END - size of 20 bytes.   
+# PresetParams END - size of 104 bytes
+# UeberwachGroblBeGlocEvak Begin                                         # DB9.DBX3.2; FB310; Ueberwachung Grobleck beim Glocke ev akuieren
+508.0      UeberwachGroblBeGlocEvak.done                                  INT        # 0 - NO, 1 - YES
+510.0      UeberwachGroblBeGlocEvak.res_r1                                REAL       # reserve
+# # Tracedb_Status_lokalny - Begin
+514.0      UeberwachGroblBeGlocEvak.Status.res_r1                         REAL       # reserve
+518.0      UeberwachGroblBeGlocEvak.Status.OperationActive                BOOL       # 0 - Not Active, 1 - Switched ON
+518.1      UeberwachGroblBeGlocEvak.Status.res1_b1                        BOOL       # reserve
+518.2      UeberwachGroblBeGlocEvak.Status.res1_b2                        BOOL       # reserve
+518.3      UeberwachGroblBeGlocEvak.Status.res1_b3                        BOOL       # reserve
+518.4      UeberwachGroblBeGlocEvak.Status.res1_b4                        BOOL       # reserve
+518.5      UeberwachGroblBeGlocEvak.Status.res1_b5                        BOOL       # reserve
+518.6      UeberwachGroblBeGlocEvak.Status.res1_b6                        BOOL       # reserve
+518.7      UeberwachGroblBeGlocEvak.Status.res1_b7                        BOOL       # reserve
+519.0      UeberwachGroblBeGlocEvak.Status.DatabaseSave                   BOOL       # TODO: check if it's used?
+519.1      UeberwachGroblBeGlocEvak.Status.res2_b1                        BOOL       # reserve
+519.2      UeberwachGroblBeGlocEvak.Status.res2_b2                        BOOL       # reserve
+519.3      UeberwachGroblBeGlocEvak.Status.res2_b3                        BOOL       # reserve
+519.4      UeberwachGroblBeGlocEvak.Status.res2_b4                        BOOL       # reserve
+519.5      UeberwachGroblBeGlocEvak.Status.res2_b5                        BOOL       # reserve
+519.6      UeberwachGroblBeGlocEvak.Status.res2_b6                        BOOL       # reserve
+519.7      UeberwachGroblBeGlocEvak.Status.res2_b7                        BOOL       # reserve
+520.0      UeberwachGroblBeGlocEvak.Status.res_i1                         INT        # reserve
+522.0      UeberwachGroblBeGlocEvak.Status.date_time                      DATETIME   # date and time
+530.0      UeberwachGroblBeGlocEvak.Status.result                         INT        # 1 - OK 2 - NOK
+532.0      UeberwachGroblBeGlocEvak.Status.res_i2                         INT        # reserve
+# # Tracedb_Status_lokalny - END - size of 20 bytes.   
+# UeberwachGroblBeGlocEvak END - size of 26 bytes
+# UeberwachGroblBeHeliumfu Begin                                         # DB9.DBX3.3; FB310; Ueberwachung Grobleck beim Heliumfuel len
+534.0      UeberwachGroblBeHeliumfu.done                                  INT        # 0 - NO, 1 - YES
+536.0      UeberwachGroblBeHeliumfu.res_r1                                REAL       # reserve # DB8.DBX656.5
+# # Tracedb_Status_lokalny - Begin
+540.0      UeberwachGroblBeHeliumfu.Status.res_r1                         REAL       # reserve
+544.0      UeberwachGroblBeHeliumfu.Status.OperationActive                BOOL       # 0 - Not Active, 1 - Switched ON
+544.1      UeberwachGroblBeHeliumfu.Status.res1_b1                        BOOL       # reserve
+544.2      UeberwachGroblBeHeliumfu.Status.res1_b2                        BOOL       # reserve
+544.3      UeberwachGroblBeHeliumfu.Status.res1_b3                        BOOL       # reserve
+544.4      UeberwachGroblBeHeliumfu.Status.res1_b4                        BOOL       # reserve
+544.5      UeberwachGroblBeHeliumfu.Status.res1_b5                        BOOL       # reserve
+544.6      UeberwachGroblBeHeliumfu.Status.res1_b6                        BOOL       # reserve
+544.7      UeberwachGroblBeHeliumfu.Status.res1_b7                        BOOL       # reserve
+545.0      UeberwachGroblBeHeliumfu.Status.DatabaseSave                   BOOL       # TODO: check if it's used?
+545.1      UeberwachGroblBeHeliumfu.Status.res2_b1                        BOOL       # reserve
+545.2      UeberwachGroblBeHeliumfu.Status.res2_b2                        BOOL       # reserve
+545.3      UeberwachGroblBeHeliumfu.Status.res2_b3                        BOOL       # reserve
+545.4      UeberwachGroblBeHeliumfu.Status.res2_b4                        BOOL       # reserve
+545.5      UeberwachGroblBeHeliumfu.Status.res2_b5                        BOOL       # reserve
+545.6      UeberwachGroblBeHeliumfu.Status.res2_b6                        BOOL       # reserve
+545.7      UeberwachGroblBeHeliumfu.Status.res2_b7                        BOOL       # reserve
+546.0      UeberwachGroblBeHeliumfu.Status.res_i1                         INT        # reserve
+548.0      UeberwachGroblBeHeliumfu.Status.date_time                      DATETIME   # date and time
+556.0      UeberwachGroblBeHeliumfu.Status.result                         INT        # 1 - OK 2 - NOK
+558.0      UeberwachGroblBeHeliumfu.Status.res_i2                         INT        # reserve
+# # Tracedb_Status_lokalny - END - size of 20 bytes.   
+# UeberwachGroblBeHeliumfu END - size of 26 bytes
+# Leckrate Begin                                                         # DB9.DBX1.1; FB310; Wyciek
+560.0      Leckrate.leak_result                                           REAL       # DB9.DBD10; [mbar l/s]
+564.0      Leckrate.leak_max                                              REAL       # DB8.DBD328; [mbar l/s] Maximale Leckrate
+568.0      Leckrate.leak_Max_Mantisse_REZ                                 REAL       # DB8.DBD320; Maximal zulaessige Leckrate Mantisse
+572.0      Leckrate.leak_Max_Exponent_REZ                                 REAL       # DB8.DBD324; Maximal zulaessige Leckrate Exponent
+576.0      Leckrate.leak_Grobleck                                         REAL       # DB8.DBD340; [mbar l/s] Leckrate Grobleckerkennung
+580.0      Leckrate.leak_Mantisse_Grob_REZ                                REAL       # DB8.DBD332; Maximal zulaessige Leckrate Mantisse
+584.0      Leckrate.leak_Exponent_Grob_REZ                                REAL       # DB8.DBD336; Maximal zulaessige Leckrate Exponent
+588.0      Leckrate.leak_UebernahmeLeckrate                               REAL       # DB8.DBD188; [s] uebernahme Leckrate nach
+592.0      Leckrate.res_r1                                                REAL       # reserve
+596.0      Leckrate.res_r2                                                REAL       # reserve
+600.0      Leckrate.res_r3                                                REAL       # reserve
+604.0      Leckrate.res_r4                                                REAL       # reserve
+# # Tracedb_Status_lokalny - Begin
+608.0      Leckrate.Status.res_r1                                         REAL       # reserve
+612.0      Leckrate.Status.OperationActive                                BOOL       # 0 - Not Active, 1 - Switched ON
+612.1      Leckrate.Status.res1_b1                                        BOOL       # reserve
+612.2      Leckrate.Status.res1_b2                                        BOOL       # reserve
+612.3      Leckrate.Status.res1_b3                                        BOOL       # reserve
+612.4      Leckrate.Status.res1_b4                                        BOOL       # reserve
+612.5      Leckrate.Status.res1_b5                                        BOOL       # reserve
+612.6      Leckrate.Status.res1_b6                                        BOOL       # reserve
+612.7      Leckrate.Status.res1_b7                                        BOOL       # reserve
+613.0      Leckrate.Status.DatabaseSave                                   BOOL       # TODO: check if it's used?
+613.1      Leckrate.Status.res2_b1                                        BOOL       # reserve
+613.2      Leckrate.Status.res2_b2                                        BOOL       # reserve
+613.3      Leckrate.Status.res2_b3                                        BOOL       # reserve
+613.4      Leckrate.Status.res2_b4                                        BOOL       # reserve
+613.5      Leckrate.Status.res2_b5                                        BOOL       # reserve
+613.6      Leckrate.Status.res2_b6                                        BOOL       # reserve
+613.7      Leckrate.Status.res2_b7                                        BOOL       # reserve
+614.0      Leckrate.Status.res_i1                                         INT        # reserve
+616.0      Leckrate.Status.date_time                                      DATETIME   # date and time
+624.0      Leckrate.Status.result                                         INT        # 1 - OK 2 - NOK
+626.0      Leckrate.Status.res_i2                                         INT        # reserve
+# # Tracedb_Status_lokalny - END - size of 20 bytes.   
+# Leckrate END - size of 68 bytes
+
+# Tracedb_12706 END - size of 628 bytes

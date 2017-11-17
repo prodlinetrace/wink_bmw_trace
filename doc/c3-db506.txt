@@ -1,0 +1,244 @@
+
+# Tracedb_12707 BEGIN
+# db8xxHeader BEGIN
+# Tracedb_Logowanie - Begin
+0.0        operator.login                                                 STRING[8]  # set by PLC
+10.0       operator.password                                              STRING[16] # set by PLC
+28.0       operator.res_r1                                                REAL       # reserve
+32.0       operator.res_r2                                                REAL       # reserve
+36.0       operator.operator_status                                       INT        # PC: 0 - not defined, 1 - logged in, 2 - logged out, 3 - blocked, 4 - wrong password
+38.0       operator.operator_do_login                                     BOOL       # set by: PLC - flag used to login. PC - switches off flag once login is ready.
+38.1       operator.operator_do_login                                     BOOL       # set by: PLC - flag used to logout. PC - switches off flag once logout is ready.
+38.2       operator.operator_is_login                                     BOOL       # set by: PLC - flag used to check status. constantly set by PLC. Have value 1 when operator.operator_status is 1. Otherwise have value of 0.
+38.3       operator.res1_b3                                               BOOL       # reserve
+38.4       operator.res1_b4                                               BOOL       # reserve
+38.5       operator.res1_b5                                               BOOL       # reserve
+38.6       operator.res1_b6                                               BOOL       # reserve
+38.7       operator.res1_b7                                               BOOL       # reserve
+39.0       operator.res2_b3                                               BOOL       # reserve
+39.1       operator.res2_b4                                               BOOL       # reserve
+39.2       operator.res2_b5                                               BOOL       # reserve
+39.3       operator.res2_b3                                               BOOL       # reserve
+39.4       operator.res2_b4                                               BOOL       # reserve
+39.5       operator.res2_b5                                               BOOL       # reserve
+39.6       operator.res2_b6                                               BOOL       # reserve
+39.7       operator.res2_b7                                               BOOL       # reserve
+40.0       operator.res_r3                                                REAL       # reserve
+44.0       operator.operator_datetime                                     DATETIME   # date and time from PLC. size is 8 bytes.
+# Tracedb_Logowanie - END - size of 52 bytes
+# Tracedb_Global_Head - Begin
+52.0       head.station_id                                                INT        # station ID
+54.0       head_program_number                                            INT        # program number
+56.0       head.nest_number                                               INT        # nest number
+58.0       head.detail_id                                                 STRING[30] # detail ID
+90.0       head.res_i1                                                    INT        # reserve
+92.0       head.res_i2                                                    INT        # reserve
+94.0       head.res_r3                                                    REAL       # reserve
+98.0       head.res_r4                                                    REAL       # reserve
+# Tracedb_Global_Head - END - size of 50 bytes.
+# Tracedb_Status_Globalny - Begin
+102.0      status.res_r1                                                  REAL       # reserve
+106.0      ctrl.PLC_trc_on                                                BOOL       # traceability flag. used by PLC to indicate if tracaebility should be switched on.
+106.1      ctrl.PLC_live                                                  BOOL       # Controlled by PLC. blinks every 300[ms]. Indicates that PLC is alive
+106.2      ctrl.PC_live                                                   BOOL       # Watched by PLC. PC should blink this bit every 300[ms] to notify that application is connected.
+106.3      status_save_only_mode                                          BOOL       # 1 - baza zapisuje wyniki ale PLC nie sprawdza czy z poprzedniej stacji OK
+106.4      status_no_id_scanning                                          BOOL       # 1 - praca bez skanowania ID detalu.
+106.5      status_no_type_verify                                          BOOL       # 1 - praca bez weryfikacji typu / rezerwa
+106.6      status_no_scanning                                             BOOL       # 1 - wariant bez skanowania (mimo ze praca ze skanowaniem id detalu)
+106.7      status_rez_b7                                                  BOOL       # reserve
+107.0      status.PLC_Save                                                BOOL       # PLC_Save bit - monitored by PC, set by PLC. PC saves status if set to True. Once PC finishes it sets it back to False.
+107.1      status.PLC_Query                                               BOOL       # PLC_Query bit - monitored by PC, set by PLC. PC reads status from database if set to True. Once PC finishes it sets it back to False.
+107.2      status.flag_id_query                                           BOOL       # ID_Query bit - PLC asks PC to set detail_id
+107.3      status.PC_Ready                                                BOOL       # PC_Ready bit. Monitored by PLC. PCL waits for True. PC sets to False when it starts processing. PC sets back to True once processing is finished.
+107.4      status.flag_id_ready                                           BOOL       # ID_Ready bit - PC indicates that detail_id is already set.
+107.5      status.res_b5                                                  BOOL       # reserve
+107.6      status.res_b6                                                  BOOL       # reserve
+107.7      status.res_b7                                                  BOOL       # reserve
+108.0      status.res_i1                                                  INT        # reserve
+110.0      status.date_time                                               DATETIME   # date and time
+118.0      status.station_result                                          INT        # wynik ze stanowiska
+120.0      status.database_result                                         INT        # wynik z bazy danych
+# Tracedb_Status_Globalny - END - size of 20 bytes. 
+
+# db8xxHeader END - size of 122
+# ReadID Begin
+122.0      ReadID.id                                                      STRING[30] # Odczytane id ze skanera DMC
+154.0      ReadID.res_r1                                                  REAL       # reserve
+# # Tracedb_Status_lokalny - Begin
+158.0      ReadID.Status.res_r1                                           REAL       # reserve
+162.0      ReadID.Status.OperationActive                                  BOOL       # 0 - Not Active, 1 - Switched ON
+162.1      ReadID.Status.res1_b1                                          BOOL       # reserve
+162.2      ReadID.Status.res1_b2                                          BOOL       # reserve
+162.3      ReadID.Status.res1_b3                                          BOOL       # reserve
+162.4      ReadID.Status.res1_b4                                          BOOL       # reserve
+162.5      ReadID.Status.res1_b5                                          BOOL       # reserve
+162.6      ReadID.Status.res1_b6                                          BOOL       # reserve
+162.7      ReadID.Status.res1_b7                                          BOOL       # reserve
+163.0      ReadID.Status.DatabaseSave                                     BOOL       # TODO: check if it's used?
+163.1      ReadID.Status.res2_b1                                          BOOL       # reserve
+163.2      ReadID.Status.res2_b2                                          BOOL       # reserve
+163.3      ReadID.Status.res2_b3                                          BOOL       # reserve
+163.4      ReadID.Status.res2_b4                                          BOOL       # reserve
+163.5      ReadID.Status.res2_b5                                          BOOL       # reserve
+163.6      ReadID.Status.res2_b6                                          BOOL       # reserve
+163.7      ReadID.Status.res2_b7                                          BOOL       # reserve
+164.0      ReadID.Status.res_i1                                           INT        # reserve
+166.0      ReadID.Status.date_time                                        DATETIME   # date and time
+174.0      ReadID.Status.result                                           INT        # 1 - OK 2 - NOK
+176.0      ReadID.Status.res_i2                                           INT        # reserve
+# # Tracedb_Status_lokalny - END - size of 20 bytes.   
+# ReadID END - size of 56 bytes
+# Tool Begin
+178.0      Tool.name                                                      STRING[30] # DB554.DBW2; np. TU1 : WP10D00-D
+210.0      Tool.res_r1                                                    REAL       # reserve
+# # Tracedb_Status_lokalny - Begin
+214.0      Tool.Status.res_r1                                             REAL       # reserve
+218.0      Tool.Status.OperationActive                                    BOOL       # 0 - Not Active, 1 - Switched ON
+218.1      Tool.Status.res1_b1                                            BOOL       # reserve
+218.2      Tool.Status.res1_b2                                            BOOL       # reserve
+218.3      Tool.Status.res1_b3                                            BOOL       # reserve
+218.4      Tool.Status.res1_b4                                            BOOL       # reserve
+218.5      Tool.Status.res1_b5                                            BOOL       # reserve
+218.6      Tool.Status.res1_b6                                            BOOL       # reserve
+218.7      Tool.Status.res1_b7                                            BOOL       # reserve
+219.0      Tool.Status.DatabaseSave                                       BOOL       # TODO: check if it's used?
+219.1      Tool.Status.res2_b1                                            BOOL       # reserve
+219.2      Tool.Status.res2_b2                                            BOOL       # reserve
+219.3      Tool.Status.res2_b3                                            BOOL       # reserve
+219.4      Tool.Status.res2_b4                                            BOOL       # reserve
+219.5      Tool.Status.res2_b5                                            BOOL       # reserve
+219.6      Tool.Status.res2_b6                                            BOOL       # reserve
+219.7      Tool.Status.res2_b7                                            BOOL       # reserve
+220.0      Tool.Status.res_i1                                             INT        # reserve
+222.0      Tool.Status.date_time                                          DATETIME   # date and time
+230.0      Tool.Status.result                                             INT        # 1 - OK 2 - NOK
+232.0      Tool.Status.res_i2                                             INT        # reserve
+# # Tracedb_Status_lokalny - END - size of 20 bytes.   
+# Tool END - size of 56 bytes
+# Detection Begin
+234.0      Detection.name                                                 STRING[20] # DB553.DBW6; np. BRAK lub MODEL 1
+256.0      Detection.res_r1                                               REAL       # reserve
+# # Tracedb_Status_lokalny - Begin
+260.0      Detection.Status.res_r1                                        REAL       # reserve
+264.0      Detection.Status.OperationActive                               BOOL       # 0 - Not Active, 1 - Switched ON
+264.1      Detection.Status.res1_b1                                       BOOL       # reserve
+264.2      Detection.Status.res1_b2                                       BOOL       # reserve
+264.3      Detection.Status.res1_b3                                       BOOL       # reserve
+264.4      Detection.Status.res1_b4                                       BOOL       # reserve
+264.5      Detection.Status.res1_b5                                       BOOL       # reserve
+264.6      Detection.Status.res1_b6                                       BOOL       # reserve
+264.7      Detection.Status.res1_b7                                       BOOL       # reserve
+265.0      Detection.Status.DatabaseSave                                  BOOL       # TODO: check if it's used?
+265.1      Detection.Status.res2_b1                                       BOOL       # reserve
+265.2      Detection.Status.res2_b2                                       BOOL       # reserve
+265.3      Detection.Status.res2_b3                                       BOOL       # reserve
+265.4      Detection.Status.res2_b4                                       BOOL       # reserve
+265.5      Detection.Status.res2_b5                                       BOOL       # reserve
+265.6      Detection.Status.res2_b6                                       BOOL       # reserve
+265.7      Detection.Status.res2_b7                                       BOOL       # reserve
+266.0      Detection.Status.res_i1                                        INT        # reserve
+268.0      Detection.Status.date_time                                     DATETIME   # date and time
+276.0      Detection.Status.result                                        INT        # 1 - OK 2 - NOK
+278.0      Detection.Status.res_i2                                        INT        # reserve
+# # Tracedb_Status_lokalny - END - size of 20 bytes.   
+# Detection END - size of 46 bytes
+# VendorDMCCodeMarking Begin
+280.0      VendorDMCCodeMarking.laser_program_name                        STRING[20] # DB553.DBW2; np. BMW403DM
+302.0      VendorDMCCodeMarking.laser_program_filename                    STRING[20] # DB560.DBB0; np. Job_0002.xlp
+324.0      VendorDMCCodeMarking.laser_program_number                      INT        # numer programu lasera
+326.0      VendorDMCCodeMarking.res_r1                                    REAL       # reserve
+# # Tracedb_Status_lokalny - Begin
+330.0      VendorDMCCodeMarking.Status.res_r1                             REAL       # reserve
+334.0      VendorDMCCodeMarking.Status.OperationActive                    BOOL       # 0 - Not Active, 1 - Switched ON
+334.1      VendorDMCCodeMarking.Status.res1_b1                            BOOL       # reserve
+334.2      VendorDMCCodeMarking.Status.res1_b2                            BOOL       # reserve
+334.3      VendorDMCCodeMarking.Status.res1_b3                            BOOL       # reserve
+334.4      VendorDMCCodeMarking.Status.res1_b4                            BOOL       # reserve
+334.5      VendorDMCCodeMarking.Status.res1_b5                            BOOL       # reserve
+334.6      VendorDMCCodeMarking.Status.res1_b6                            BOOL       # reserve
+334.7      VendorDMCCodeMarking.Status.res1_b7                            BOOL       # reserve
+335.0      VendorDMCCodeMarking.Status.DatabaseSave                       BOOL       # TODO: check if it's used?
+335.1      VendorDMCCodeMarking.Status.res2_b1                            BOOL       # reserve
+335.2      VendorDMCCodeMarking.Status.res2_b2                            BOOL       # reserve
+335.3      VendorDMCCodeMarking.Status.res2_b3                            BOOL       # reserve
+335.4      VendorDMCCodeMarking.Status.res2_b4                            BOOL       # reserve
+335.5      VendorDMCCodeMarking.Status.res2_b5                            BOOL       # reserve
+335.6      VendorDMCCodeMarking.Status.res2_b6                            BOOL       # reserve
+335.7      VendorDMCCodeMarking.Status.res2_b7                            BOOL       # reserve
+336.0      VendorDMCCodeMarking.Status.res_i1                             INT        # reserve
+338.0      VendorDMCCodeMarking.Status.date_time                          DATETIME   # date and time
+346.0      VendorDMCCodeMarking.Status.result                             INT        # 1 - OK 2 - NOK
+348.0      VendorDMCCodeMarking.Status.res_i2                             INT        # reserve
+# # Tracedb_Status_lokalny - END - size of 20 bytes.   
+# VendorDMCCodeMarking END - size of 70 bytes
+# VendorDMCCodeRead Begin
+350.0      VendorDMCCodeRead.vendor_dmc                                   STRING[60] # DB559.DBB24; np.
+412.0      VendorDMCCodeRead.dmc_position                                 STRING[20] # DB553.DBW2; np. BMW403DM
+434.0      VendorDMCCodeRead.res_r1                                       REAL       # reserve
+438.0      VendorDMCCodeRead.res_r2                                       REAL       # reserve # Blad odczytu. DB559.DBX0.1; 1-OK; 2-NOK
+# # Tracedb_Status_lokalny - Begin
+442.0      VendorDMCCodeRead.Status.res_r1                                REAL       # reserve
+446.0      VendorDMCCodeRead.Status.OperationActive                       BOOL       # 0 - Not Active, 1 - Switched ON
+446.1      VendorDMCCodeRead.Status.res1_b1                               BOOL       # reserve
+446.2      VendorDMCCodeRead.Status.res1_b2                               BOOL       # reserve
+446.3      VendorDMCCodeRead.Status.res1_b3                               BOOL       # reserve
+446.4      VendorDMCCodeRead.Status.res1_b4                               BOOL       # reserve
+446.5      VendorDMCCodeRead.Status.res1_b5                               BOOL       # reserve
+446.6      VendorDMCCodeRead.Status.res1_b6                               BOOL       # reserve
+446.7      VendorDMCCodeRead.Status.res1_b7                               BOOL       # reserve
+447.0      VendorDMCCodeRead.Status.DatabaseSave                          BOOL       # TODO: check if it's used?
+447.1      VendorDMCCodeRead.Status.res2_b1                               BOOL       # reserve
+447.2      VendorDMCCodeRead.Status.res2_b2                               BOOL       # reserve
+447.3      VendorDMCCodeRead.Status.res2_b3                               BOOL       # reserve
+447.4      VendorDMCCodeRead.Status.res2_b4                               BOOL       # reserve
+447.5      VendorDMCCodeRead.Status.res2_b5                               BOOL       # reserve
+447.6      VendorDMCCodeRead.Status.res2_b6                               BOOL       # reserve
+447.7      VendorDMCCodeRead.Status.res2_b7                               BOOL       # reserve
+448.0      VendorDMCCodeRead.Status.res_i1                                INT        # reserve
+450.0      VendorDMCCodeRead.Status.date_time                             DATETIME   # date and time
+458.0      VendorDMCCodeRead.Status.result                                INT        # 1 - OK 2 - NOK
+460.0      VendorDMCCodeRead.Status.res_i2                                INT        # reserve
+# # Tracedb_Status_lokalny - END - size of 20 bytes.   
+# VendorDMCCodeRead END - size of 112 bytes
+# VendorDMCCodeRead Begin
+462.0      VendorDMCCodeClass.CodeClass                                   STRING[2]  # DB559.DBB17; np. A
+466.0      VendorDMCCodeClass.Modulation                                  STRING[2]  # DB559.DBB8; np. A
+470.0      VendorDMCCodeClass.FixedPatternDamage                          STRING[2]  # DB559.DBB9; np. A
+474.0      VendorDMCCodeClass.SymbolContrast                              STRING[2]  # DB559.DBB11; np. A
+478.0      VendorDMCCodeClass.AxialNonUniformity                          STRING[2]  # DB559.DBB12; np. A
+482.0      VendorDMCCodeClass.UnusedErrorCorrection                       STRING[2]  # DB559.DBB13; np. A
+486.0      VendorDMCCodeClass.GridNonUniformity                           STRING[2]  # DB559.DBB15; np. A
+490.0      VendorDMCCodeClass.Class_3_res                                 STRING[2]  # DB559.DBB10; np. A
+494.0      VendorDMCCodeClass.Class_7_res                                 STRING[2]  # DB559.DBB14; np. A
+498.0      VendorDMCCodeClass.Class_9_res                                 STRING[2]  # DB559.DBB16; np. A
+502.0      VendorDMCCodeClass.MinimalClass_res                            STRING[2]  # DB559.DBB18; np. A
+506.0      VendorDMCCodeClass.AcceptableClass                             STRING[2]  # DB559.DBW22; np. A
+510.0      VendorDMCCodeClass.CurrentClass                                STRING[2]  # DB559.DBW20; np. A
+514.0      VendorDMCCodeClass.res_r1                                      REAL       # reserve
+518.0      VendorDMCCodeClass.res_r2                                      REAL       # reserve # Jakosc odczytu. DB559.DBW4; 1-OK; 2-NOK
+# # Tracedb_Status_lokalny - Begin
+522.0      VendorDMCCodeClass.Status.res_r1                               REAL       # reserve
+526.0      VendorDMCCodeClass.Status.OperationActive                      BOOL       # 0 - Not Active, 1 - Switched ON
+526.1      VendorDMCCodeClass.Status.res1_b1                              BOOL       # reserve
+526.2      VendorDMCCodeClass.Status.res1_b2                              BOOL       # reserve
+526.3      VendorDMCCodeClass.Status.res1_b3                              BOOL       # reserve
+526.4      VendorDMCCodeClass.Status.res1_b4                              BOOL       # reserve
+526.5      VendorDMCCodeClass.Status.res1_b5                              BOOL       # reserve
+526.6      VendorDMCCodeClass.Status.res1_b6                              BOOL       # reserve
+526.7      VendorDMCCodeClass.Status.res1_b7                              BOOL       # reserve
+527.0      VendorDMCCodeClass.Status.DatabaseSave                         BOOL       # TODO: check if it's used?
+527.1      VendorDMCCodeClass.Status.res2_b1                              BOOL       # reserve
+527.2      VendorDMCCodeClass.Status.res2_b2                              BOOL       # reserve
+527.3      VendorDMCCodeClass.Status.res2_b3                              BOOL       # reserve
+527.4      VendorDMCCodeClass.Status.res2_b4                              BOOL       # reserve
+527.5      VendorDMCCodeClass.Status.res2_b5                              BOOL       # reserve
+527.6      VendorDMCCodeClass.Status.res2_b6                              BOOL       # reserve
+527.7      VendorDMCCodeClass.Status.res2_b7                              BOOL       # reserve
+528.0      VendorDMCCodeClass.Status.res_i1                               INT        # reserve
+530.0      VendorDMCCodeClass.Status.date_time                            DATETIME   # date and time
+538.0      VendorDMCCodeClass.Status.result                               INT        # 1 - OK 2 - NOK
+540.0      VendorDMCCodeClass.Status.res_i2                               INT        # reserve
+# # Tracedb_Status_lokalny - END - size of 20 bytes.   
+# VendorDMCCodeClass END - size of 80 bytes
+
+# Tracedb_12707 END - size of 542 bytes
