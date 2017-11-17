@@ -36,7 +36,7 @@ UDT80 = """
            operator_do_logout=OPERATOR_DO_LOGIN, operator_is_login=OPERATOR_IS_LOGIN, operator_date_time=OPERATOR_DATE_TIME)
 
 UDT81 = """
-# Tracedb_Status_lokalny - Begin
+# # Tracedb_Status_lokalny - Begin
 0.0    __UDT81_prefix__.Status.res_r1                        REAL        # reserve
 4.0    __UDT81_prefix__.Status.OperationActive               BOOL        # 0 - Not Active, 1 - Switched ON
 4.1    __UDT81_prefix__.Status.res1_b1                       BOOL        # reserve
@@ -54,7 +54,7 @@ UDT81 = """
 5.5    __UDT81_prefix__.Status.res2_b5                       BOOL        # reserve
 5.6    __UDT81_prefix__.Status.res2_b6                       BOOL        # reserve
 5.7    __UDT81_prefix__.Status.res2_b7                       BOOL        # reserve
-6.0    __UDT81_prefix__.Status.res_i1                        INT         # reserve TODO: change to int in DOC.
+6.0    __UDT81_prefix__.Status.res_i1                        INT         # reserve
 8.0    __UDT81_prefix__.Status.date_time                     DATETIME    # date and time
 16.0   __UDT81_prefix__.Status.result                        INT         # 1 - OK 2 - NOK
 18.0   __UDT81_prefix__.Status.res_i2                        INT         # reserve
@@ -105,7 +105,7 @@ UDT82 = """
 
 db8xxHeader = """# db8xxHeader BEGIN
 """ \
-+ UDT80 \
++ offset_spec_block(UDT80, 0) \
 + offset_spec_block(GlobalHead, 52) \
 + offset_spec_block(UDT82, 52+50) \
 + """

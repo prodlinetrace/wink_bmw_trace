@@ -72,10 +72,17 @@ def offset_spec_block(spec_block, offset=0):
     """
     result = []
     for line in spec_block.split('\n'):
-        if line and not line.startswith('#'):  # skip commented lines
-            row = line.split('#')[0]  # remove trailing comment
+        if line and line.startswith('#'):  # just append comments and continue. 
+            result.append(line)
+            continue
+        if line:
+            row = line.split('#')[0].strip()  # read the row without comment
+            _comment = ''
+            if len(line.split('#')) > 1:
+                 _comment = "#".join(line.split("#")[1:]).strip()  # read comment if present 
             _index, _name, _type = row.split()
             shifted_index = str(float(_index) + offset)
-            result.append("   ".join([shifted_index, _name, _type]))
+            #result.append("   ".join([shifted_index, _name, _type, _comment]))
+            result.append("{index:10} {name:62} {type:10} # {comment}".format(index=shifted_index, name=_name, type=_type, comment=_comment))
 
     return "\n".join(result) + "\n"
