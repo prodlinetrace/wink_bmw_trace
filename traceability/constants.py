@@ -61,3 +61,6 @@ STATION_STATUS_CODES = {
     11: {"result": "REPEATEDINTERRUPTED", "desc": "Repeated test was interrupted"},
     99: {"result": "VALUEERROR", "desc": "Faulty value was passed. Unable to process data."},
 }
+
+
+#STATION_ID, STATION_STATUS, SERIAL_NUMBER, PRODUCT_TYPE, PROGRAM_NAME, OPERATOR_NUMBER
