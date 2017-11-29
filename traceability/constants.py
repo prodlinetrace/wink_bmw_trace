@@ -43,6 +43,9 @@ STATUS_DATE_TIME        = 'status.date_time'       # 8 bytes
 #STATION_NUMBER          = 'status.station_number'  # byte
 #STATION_STATUS          = 'status.station_status'  # byte
 
+# obsolete stuff 
+PC_OPEN_BROWSER_FLAG    =  'status.open_browser_flag'       
+
 
 # trc templates
 TRC_TMPL_COUNT          = 'body.trc.template_count'

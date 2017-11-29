@@ -109,8 +109,10 @@ class MainWindow(wx.App):
     def updateLogWindow(self):
         self._mode = self.ID_UPDATE_LOG
         offset_file = "{logfile}.offset".format(logfile=self.logfile)
+        logger.info("Using offset file: {offset_file}".format(offset_file=offset_file))
         if os.path.exists(offset_file) and os.path.isfile(offset_file):
-            content = file(offset_file, "r").read()
+            with open(offset_file, encoding='utf-8', errors='replace') as offset:
+                content = offset.read()
             if len(content.split()) < 2:  # less then two lines in a offset file - broken - remove
                 logger.info("offset file is empty: {offset_file}. Trying to remove it. ".format(offset_file=offset_file))
                 time.sleep(1)

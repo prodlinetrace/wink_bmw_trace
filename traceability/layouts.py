@@ -32,8 +32,7 @@ UDT80 = """
 40.0    operator.res_r3                                      REAL        # reserve
 44.0    {operator_date_time}                                 DATETIME    # date and time from PLC. size is 8 bytes.
 # Tracedb_Logowanie - END - size of 52 bytes
-""".format(operator_login=OPERATOR_LOGIN, operator_password=OPERATOR_PASSWORD, operator_status=OPERATOR_STATUS, operator_do_login=OPERATOR_DO_LOGIN, \
-           operator_do_logout=OPERATOR_DO_LOGIN, operator_is_login=OPERATOR_IS_LOGIN, operator_date_time=OPERATOR_DATE_TIME)
+""".format(operator_login=OPERATOR_LOGIN, operator_password=OPERATOR_PASSWORD, operator_status=OPERATOR_STATUS, operator_do_login=OPERATOR_DO_LOGIN, operator_do_logout=OPERATOR_DO_LOGOUT, operator_is_login=OPERATOR_IS_LOGIN, operator_date_time=OPERATOR_DATE_TIME)
 
 UDT81 = """
 # # Tracedb_Status_lokalny - Begin

@@ -646,6 +646,7 @@ class PLC(PLCBase):
             logger.warn("PLC: {plc} DB: {db} is missing on PLC. Skipping".format(plc=self.get_id(), db=dbid))
             return
 
+        return  # TODO: remove this crap
         if OPERATOR_QUERY_FLAG in block.export():
             if block.operator_query_flag():  # get the operator query flag value from db
                 block.set_pc_ready_flag(False)  # set PC ready flag to False
