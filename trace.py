@@ -240,9 +240,11 @@ if __name__ == "__main__":
     for thread in threading.enumerate():
         if thread.isAlive():
             try:
-                thread._Thread__stop()
+                # thread._Thread__stop()
                 if thread.getName() != 'MainThread':
                     thread.join()
+                    logger.error("Thread: {thread} just finished. Thread: {t} ".format(thread=str(thread.getName()), t=thread))
+
             except Exception as e:
                 logger.error("Thread: {thread} could not be terminated. Exception: {exc} ".format(thread=str(thread.getName()), exc=e.__str__()))
                 logger.error("Traceback: {tb}".format(tb=traceback.format_exc()))
