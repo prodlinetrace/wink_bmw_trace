@@ -31,8 +31,6 @@ except Exception as e:
 if 'DATABASE_URL' in os.environ:
     if os.environ.get('DATABASE_URL') != '':
         _config['dburi'] = os.environ.get('DATABASE_URL')
-    
-
 # print(_config['dburi'])
 
 _app = Flask(__name__)

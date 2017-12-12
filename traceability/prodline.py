@@ -157,6 +157,7 @@ class ProdLineBase(object):
         self.__plc_list = []
 
         for plc in self._config['main']['plcs']:
+            plc = plc.strip()
             ip = self._config[plc]['ip'][0]
             rack = self._config[plc]['rack'][0]
             slot = self._config[plc]['slot'][0]
@@ -165,6 +166,7 @@ class ProdLineBase(object):
             iden = self._config[plc]['id'][0]
             datablocks = []
             for cblock in self._config[plc]['blocks']:
+                cblock = cblock.strip()
                 if cblock in self._config:
                     dbid = int(self._config[cblock]['id'][0])
                     datablocks.append(dbid)

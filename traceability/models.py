@@ -103,18 +103,14 @@ db.event.listen(Comment.body, 'set', Comment.on_changed_body)
 class Product(db.Model):
     __tablename__ = 'product'
     id = db.Column(db.String(30), nullable=False, unique=True, index=True, primary_key=True)
-    type = db.Column(db.String(10), nullable=False, index=True)
-    serial = db.Column(db.String(20), nullable=False, index=True)
     date_added = db.Column(db.String(40), index=True)
 
     comments = db.relationship('Comment', lazy='dynamic', backref='product')
     statuses = db.relationship('Status', lazy='dynamic', backref='product')
     operations = db.relationship('Operation', lazy='dynamic', backref='product')
 
-    def __init__(self, serial, prodtype='0000000000', date=None):
-        self.serial = serial
-        self.type = prodtype
-        self.id = self.get_product_id(self.type, self.serial)
+    def __init__(self, id, date=None):
+        self.id = self.calculate_product_id(id)
         if date is None:
             date = datetime.now()
         self.date_added = str(date)
@@ -123,28 +119,21 @@ class Product(db.Model):
         return '<Product {id}>'.format(id=self.id)
 
     @staticmethod
-    def calculate_product_id(_type=None, _serial=None):
-        return str(_type).zfill(10) + str(_serial).zfill(18)
+    def calculate_product_id(id):
+        return str(id).zfill(30)
 
-    def get_product_id(self, _type=None, _serial=None):
+    def get_product_id(self, id):
         """
-        returns product id based on product_type and serial_number.
-        It is used within Product table.
+        returns product id.
         """
-        if _type is None:
-            _type = self.type
-        if _serial is None:
-            _serial = self.serial
-
-        return Product.calculate_product_id(_type, _serial)
+        return Product.calculate_product_id(id=self.id)
 
     @property
     def serialize(self):
         """Return object data in easily serializeable format"""
         return {
             'id': self.id,
-            'serial': self.serial,
-            'type': self.type,
+            'date_added': self.date_added,
         }
 
 
@@ -189,22 +178,26 @@ class Status(db.Model):
     status = db.Column(db.Integer, db.ForeignKey('operation_status.id'))
     date_time = db.Column(db.String(40))
     product_id = db.Column(db.String(30), db.ForeignKey('product.id'))
-    program_id = db.Column(db.String(20), db.ForeignKey('program.id'))
+    # program_id = db.Column(db.String(20), db.ForeignKey('program.id'))
     station_id = db.Column(db.Integer, db.ForeignKey('station.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    program_number = db.Column(db.Integer)
+    nest_number = db.Column(db.Integer)
 
-    def __init__(self, status, product, program, station, user=None, date_time=None):
+    def __init__(self, status, product, station, program_number, nest_number, user=None, date_time=None):
         self.status = status
         self.product_id = product
-        self.program_id = program
+        #self.program_id = program
         self.station_id = station
         self.user_id = user
         if date_time is None:
             date_time = datetime.now()
         self.date_time = str(date_time)
+        self.program_number = program_number
+        self.nest_number = nest_number
 
     def __repr__(self):
-        return '<Status Id: {id} for Product: {product} Program: {program} Station: {station} Status: {status}>'.format(id=self.id, product=self.product_id, program=self.program_id, station=self.station_id, status=self.status)
+        return '<Status Id: {id} for Product: {product} Station: {station} Status: {status} Program: {program_number} Nest: {nest_number}'.format(id=self.id, product=self.product_id, station=self.station_id, status=self.status, program_number=self.program_number, nest_number=self.nest_number)
 
     @property
     def serialize(self):
@@ -213,8 +206,9 @@ class Status(db.Model):
             'id': self.id,
             'status': self.status,
             'product_id': self.product_id,
-            'program_id': self.program_id,
             'station_id': self.station_id,
+            'program_number': self.program_number,
+            'nest_number': self.nest_number,
             'user_id': self.user_id,
             'date_time': self.date_time,
         }
@@ -227,7 +221,9 @@ class Operation(db.Model):
     station_id = db.Column(db.Integer, db.ForeignKey('station.id'))
     operation_status_id = db.Column(db.Integer, db.ForeignKey('operation_status.id'))
     operation_type_id = db.Column(db.Integer, db.ForeignKey('operation_type.id'))
-    program_id = db.Column(db.String(20), db.ForeignKey('program.id'))
+    #program_id = db.Column(db.String(20), db.ForeignKey('program.id'))
+    program_number = db.Column(db.Integer)
+    nest_number = db.Column(db.Integer)
     date_time = db.Column(db.String(40))
     result_1 = db.Column(db.Float)
     result_1_max = db.Column(db.Float)
@@ -238,12 +234,14 @@ class Operation(db.Model):
     result_2_min = db.Column(db.Float)
     result_2_status_id = db.Column(db.Integer, db.ForeignKey('operation_status.id'))
 
-    def __init__(self, product, station, operation_status_id, operation_type_id, program_id, date_time, r1=None, r1_max=None, r1_min=None, r1_stat=None, r2=None, r2_max=None, r2_min=None, r2_stat=None):
+    def __init__(self, product, station, operation_status_id, operation_type_id, program_number, nest_number, date_time, r1=None, r1_max=None, r1_min=None, r1_stat=None, r2=None, r2_max=None, r2_min=None, r2_stat=None):
         self.product_id = product
         self.station_id = station
         self.operation_status_id = operation_status_id
         self.operation_type_id = operation_type_id
-        self.program_id = str(program_id)
+        #self.program_id = str(program_id)
+        self.program_number = str(program_number)
+        self.nest_number = str(nest_number)
         if date_time is None:
             date_time = datetime.now()
         self.date_time = str(date_time)
@@ -271,7 +269,9 @@ class Operation(db.Model):
             'station_id': self.station_id,
             'operation_type_id': self.operation_type_id,
             'operation_status_id': self.operation_status_id,
-            'program_id': self.program_id,
+            #'program_id': self.program_id,
+            'program_number': self.program_number,
+            'nest_number': self.nest_number,
             'date_time': self.date_time,
 
             'result_1': self.result_1,
@@ -348,8 +348,8 @@ class Program(db.Model):
     id = db.Column(db.String(20), primary_key=True)
     name = db.Column(db.String(64))
     description = db.Column(db.String(255))
-    operations = db.relationship('Operation', lazy='dynamic', backref='program', foreign_keys='Operation.program_id')
-    statuses = db.relationship('Status', lazy='dynamic', backref='program', foreign_keys='Status.program_id')
+    #operations = db.relationship('Operation', lazy='dynamic', backref='program', foreign_keys='Operation.program_id')
+    #statuses = db.relationship('Status', lazy='dynamic', backref='program', foreign_keys='Status.program_id')
 
     def __init__(self, ident, name="Default Program Name", description="Default Program Description"):
         self.id = ident
