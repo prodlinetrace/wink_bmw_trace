@@ -136,6 +136,7 @@ hidden_imports = [
                 "itsdangerous",
                 "werkzeug.http",
                 "pymysql",
+                "asyncio",
 ]
 
 excludes = [    "tkinter",

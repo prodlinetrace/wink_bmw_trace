@@ -35,6 +35,7 @@ if 'DATABASE_URL' in os.environ:
 
 _app = Flask(__name__)
 _app.config['SQLALCHEMY_DATABASE_URI'] = _config['dburi']
+_app.config['SQLALCHEMY_TRACK_MODIFICATIONS '] = False
 db = SQLAlchemy(_app)
 
 # try to create schema
