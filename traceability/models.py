@@ -120,7 +120,7 @@ class Product(db.Model):
 
     @staticmethod
     def calculate_product_id(id):
-        return str(id).zfill(30)
+        return str(id)
 
     def get_product_id(self, id):
         """

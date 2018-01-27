@@ -59,7 +59,7 @@ class Database(object):
         date_time = str(date_time)
         logger.info("CON: {dbcon} PID: {product_id} ST: {station} STATUS: {status} PROGRAM: {program_id} NEST: {nest_id} OPERATOR: {operator} DT: {date_time}. Saving status record.".format(dbcon=self.name, product_id=product_id, station=station, status=status, program_id=program_id, nest_id=nest_id, operator=operator, date_time=date_time))
 
-        self.add_program_if_required(program_id)
+        #self.add_program_if_required(program_id)
         self.add_product_if_required(product_id)
         self.add_station_if_required(station)
         self.add_operation_status_if_required(status)  # status and operation status names are kept in one and same table
@@ -73,7 +73,7 @@ class Database(object):
         program_id = str(program_id)
         station_id = int(station_id)
 
-        self.add_program_if_required(program_id)
+        #self.add_program_if_required(program_id)
         self.add_product_if_required(product_id)
         self.add_station_if_required(station_id)
         self.add_operation_status_if_required(operation_status)
@@ -127,10 +127,10 @@ class Database(object):
     def add_product_if_required(self, product_id):
         #product_type = str(product_type)
         #serial_number = str(serial_number)
-        product_id = str(product_id)
+        product_id = product_id
 
         try:
-            _product = Product.query.filter_by(id=str(product_id)).first()
+            _product = Product.query.filter_by(id=product_id).first()
             if _product is None:  # add item if not exists yet.
                 new_prod = Product(product_id)
                 db.session.add(new_prod)
