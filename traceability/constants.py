@@ -40,6 +40,10 @@ ID_READY_FLAG           = 'status.flag_id_ready'
 
 STATUS_DATE_TIME        = 'status.date_time'       # 8 bytes
 
+STATUS_STATION_NUMBER   = 'status.station_number'
+STATUS_STATION_RESULT   = 'status.station_result'
+STATUS_DATABASE_RESULT  = 'status.database_result'
+
 #STATION_NUMBER          = 'status.station_number'  # byte
 #STATION_STATUS          = 'status.station_status'  # byte
 

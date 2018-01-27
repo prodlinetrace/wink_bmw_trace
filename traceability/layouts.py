@@ -93,14 +93,15 @@ UDT82 = """
 5.5   status.res_b5                                          BOOL        # reserve
 5.6   status.res_b6                                          BOOL        # reserve
 5.7   status.res_b7                                          BOOL        # reserve
-6.0   status.res_i1                                          INT         # reserve
+6.0   {status_station_number}                                INT         # station_number - used for quering/saving station status. result should be saved in status_database_result
 8.0   {status_datetime}                                      DATETIME    # date and time
-16.0   status.station_result                                 INT         # wynik ze stanowiska
-18.0   status.database_result                                INT         # wynik z bazy danych
+16.0  {status_station_result}                                INT         # wynik ze stanowiska
+18.0  {status_database_result}                               INT         # wynik z bazy danych
 # Tracedb_Status_Globalny - END - size of 20 bytes. 
 """.format(status_plc_live=PLC_HEARTBEAT_FLAG, status_pc_live=PC_HEARTBEAT_FLAG, status_plc_trc_on=PLC_TRC_ON, status_datetime=STATUS_DATE_TIME, \
-    status_save_only_mode=STATUS_SAVE_ONLY_MODE_FLAG, status_no_id_scanning=STATUS_NO_ID_SCANNING_FLAG,  status_no_type_verify=STATUS_NO_TYPE_VERIFY_FLAG, status_no_scanning=STATUS_NO_SCANNING_FLAG, \
-    flag_pc_ready=PC_READY_FLAG, flag_plc_query=PLC_QUERY_FLAG, flag_plc_save=PLC_SAVE_FLAG, flag_id_query=ID_QUERY_FLAG, flag_id_ready=ID_READY_FLAG)
+    status_save_only_mode=STATUS_SAVE_ONLY_MODE_FLAG, status_no_id_scanning=STATUS_NO_ID_SCANNING_FLAG, status_no_type_verify=STATUS_NO_TYPE_VERIFY_FLAG, status_no_scanning=STATUS_NO_SCANNING_FLAG, \
+    flag_pc_ready=PC_READY_FLAG, flag_plc_query=PLC_QUERY_FLAG, flag_plc_save=PLC_SAVE_FLAG, flag_id_query=ID_QUERY_FLAG, flag_id_ready=ID_READY_FLAG, \
+    status_station_result=STATUS_STATION_RESULT, status_database_result=STATUS_DATABASE_RESULT, status_station_number=STATUS_STATION_NUMBER)
 
 db8xxHeader = """# db8xxHeader BEGIN
 """ \
