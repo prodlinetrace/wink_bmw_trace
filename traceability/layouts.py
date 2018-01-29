@@ -93,7 +93,7 @@ UDT82 = """
 5.5   status.res_b5                                          BOOL        # reserve
 5.6   status.res_b6                                          BOOL        # reserve
 5.7   status.res_b7                                          BOOL        # reserve
-6.0   {status_station_number}                                INT         # station_number - used for quering/saving station status. result should be saved in status_database_result
+6.0   {status_station_number}                                INT         # station_number - used to query station status. Result should be saved in status_database_result  (System will use head.station_id while saving status to database)
 8.0   {status_datetime}                                      DATETIME    # date and time
 16.0  {status_station_result}                                INT         # wynik ze stanowiska
 18.0  {status_database_result}                               INT         # wynik z bazy danych
