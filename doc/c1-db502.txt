@@ -8,7 +8,7 @@
 32.0       operator.res_r2                                                REAL       # reserve
 36.0       operator.operator_status                                       INT        # PC: 0 - not defined, 1 - logged in, 2 - logged out, 3 - blocked, 4 - wrong password
 38.0       operator.operator_do_login                                     BOOL       # set by: PLC - flag used to login. PC - switches off flag once login is ready.
-38.1       operator.operator_do_login                                     BOOL       # set by: PLC - flag used to logout. PC - switches off flag once logout is ready.
+38.1       operator.operator_do_logout                                    BOOL       # set by: PLC - flag used to logout. PC - switches off flag once logout is ready.
 38.2       operator.operator_is_login                                     BOOL       # set by: PLC - flag used to check status. constantly set by PLC. Have value 1 when operator.operator_status is 1. Otherwise have value of 0.
 38.3       operator.res1_b3                                               BOOL       # reserve
 38.4       operator.res1_b4                                               BOOL       # reserve
@@ -54,7 +54,7 @@
 107.5      status.res_b5                                                  BOOL       # reserve
 107.6      status.res_b6                                                  BOOL       # reserve
 107.7      status.res_b7                                                  BOOL       # reserve
-108.0      status.res_i1                                                  INT        # reserve
+108.0      status.station_number                                          INT        # station_number - used for quering/saving station status. result should be saved in status_database_result
 110.0      status.date_time                                               DATETIME   # date and time
 118.0      status.station_result                                          INT        # wynik ze stanowiska
 120.0      status.database_result                                         INT        # wynik z bazy danych
