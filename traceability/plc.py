@@ -513,7 +513,81 @@ class PLC(PLCBase):
         if block is None:
             logger.warn("PLC: {plc} DB: {db} is missing on PLC. Skipping".format(plc=self.get_id(), db=dbid))
             return
+        
+        # print("dbid: {dbid} type: {type}".format(dbid=dbid, type=type(dbid)))
+        # logger.info("dbid: {dbid} type: {type}".format(dbid=dbid, type=type(dbid)))
+        if dbid in [500, 800]:
+            self.process_UDT83(dbid) 
+        
+        if dbid in [501, 502, 801, 802]:
+            self.process_UDT84(dbid) 
+        
+        if dbid in [503, 504, 803, 804]:
+            self.process_UDT85(dbid)
+            
+        if dbid in [505, 506, 805, 806]:
+            self.process_UDT88(dbid) 
 
+    def process_UDT83(self, dbid):
+        logger.debug("UDT83 dbid: {dbid} type: {type}".format(dbid=dbid, type=type(dbid)))
+
+    def process_UDT84(self, dbid):
+        logger.debug("UDT84 dbid: {dbid} type: {type}".format(dbid=dbid, type=type(dbid)))
+
+
+
+    def process_UDT85(self, dbid):
+        logger.debug("UDT85 dbid: {dbid} type: {type}".format(dbid=dbid, type=type(dbid)))
+        block = self.get_db(dbid)
+        # logger.debug("dbid: {dbid} block: {block}".format(dbid=dbid, block=block))
+        ReadID = block.get("ReadID.id")
+        ReadID_Status_Active = block.get("ReadID.Status.OperationActive")
+        ReadID_Status_DatabaseSave = block.get("ReadID.Status.DatabaseSave")
+        ReadID_Status_date_time = block.get("ReadID.Status.date_time")
+        ReadID_Status_result = block.get("ReadID.Status.result")
+        
+        # read data - just hardcode and read whatever is needed.
+        # save it to database afterwards.  
+        
+        
+        logger.debug("dbid: {dbid} block: {block} ReadID: {ReadID} ReadID_Status_Active: {ReadID_Status_Active} ReadID_Status_DatabaseSave: {ReadID_Status_DatabaseSave} ReadID_Status_date_time: {ReadID_Status_date_time} ReadID_Status_result: {ReadID_Status_result}".format(dbid=dbid, block=block, ReadID=ReadID, ReadID_Status_Active=ReadID_Status_Active, ReadID_Status_DatabaseSave=ReadID_Status_DatabaseSave, ReadID_Status_date_time=ReadID_Status_date_time, ReadID_Status_result=ReadID_Status_result))
+        
+        
+        read_id_block = """
+        # ReadID Begin
+        122.0      ReadID.id                                                      STRING[30] # Odczytane id ze skanera DMC
+        154.0      ReadID.res_r1                                                  REAL       # reserve
+        # # Tracedb_Status_lokalny - Begin
+        158.0      ReadID.Status.res_r1                                           REAL       # reserve
+        162.0      ReadID.Status.OperationActive                                  BOOL       # 0 - Not Active, 1 - Switched ON
+        162.1      ReadID.Status.res1_b1                                          BOOL       # reserve
+        162.2      ReadID.Status.res1_b2                                          BOOL       # reserve
+        162.3      ReadID.Status.res1_b3                                          BOOL       # reserve
+        162.4      ReadID.Status.res1_b4                                          BOOL       # reserve
+        162.5      ReadID.Status.res1_b5                                          BOOL       # reserve
+        162.6      ReadID.Status.res1_b6                                          BOOL       # reserve
+        162.7      ReadID.Status.res1_b7                                          BOOL       # reserve
+        163.0      ReadID.Status.DatabaseSave                                     BOOL       # TODO: check if it's used?
+        163.1      ReadID.Status.res2_b1                                          BOOL       # reserve
+        163.2      ReadID.Status.res2_b2                                          BOOL       # reserve
+        163.3      ReadID.Status.res2_b3                                          BOOL       # reserve
+        163.4      ReadID.Status.res2_b4                                          BOOL       # reserve
+        163.5      ReadID.Status.res2_b5                                          BOOL       # reserve
+        163.6      ReadID.Status.res2_b6                                          BOOL       # reserve
+        163.7      ReadID.Status.res2_b7                                          BOOL       # reserve
+        164.0      ReadID.Status.res_i1                                           INT        # reserve
+        166.0      ReadID.Status.date_time                                        DATETIME   # date and time
+        174.0      ReadID.Status.result                                           INT        # 1 - OK 2 - NOK
+        176.0      ReadID.Status.res_i2                                           INT        # reserve
+        # # Tracedb_Status_lokalny - END - size of 20 bytes.   
+        # ReadID END - size of 56 bytes
+        """
+        
+        #(data, status) = read_data()
+    def process_UDT88(self, dbid):
+        logger.debug("UDT88 dbid: {dbid} type: {type}".format(dbid=dbid, type=type(dbid)))
+             
+        """
         if TRC_TMPL_COUNT in block.export():
             template_count = block.__getitem__(TRC_TMPL_COUNT)
             logger.debug("PLC: {plc} DB: {db} traceability template count: {count}".format(plc=self.get_id(), db=dbid, count=template_count))
@@ -543,14 +617,14 @@ class PLC(PLCBase):
                             logger.warning("PLC: {plc} DB: {db} is missing field {field} in block body: {body}. Message skipped.".format(plc=self.get_id(), db=block.get_db_number(), field=field, body=block.export()))
                             return
                     # get some basic data from data block
-                    """
+                    '''
                     try:
                         data = block[PRODUCT_TYPE]
                         product_type = int(data)
                     except ValueError as e:
                         logger.error("PLC: {plc} DB: {db} Data read error. Input: {data} Exception: {e}, TB: {tb}".format(plc=self.id, db=dbid, data=data, e=e, tb=traceback.format_exc()))
                         product_type = 0
-                    """
+                    '''
                     try:
                         data = block[HEAD_DETAIL_ID]
                         head_detail_id = data
@@ -589,6 +663,7 @@ class PLC(PLCBase):
                     self.database_engine.write_operation(head_detail_id, head_station_id, operation_status, operation_type, program_id, date_time, result_1, result_1_max, result_1_min, result_1_status, result_2, result_2_max, result_2_min, result_2_status)
                     self.counter_saved_operations += 1
                     block.set_flag(pc_save_flag_name, False)  # cancel save flag:
+        """
 
     def show_product_details(self, dbid):
         block = self.get_db(dbid)

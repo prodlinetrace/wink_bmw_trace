@@ -65,6 +65,15 @@ class DB(object):
             data[key] = self[key]
         return data
 
+    def has_key(self, key):
+        if key in self._specification:
+            return True
+        else:
+            return False
+
+    def get(self, key):
+        return self.__getitem__(key)
+
     def __getitem__(self, key):
         """
         Get a specific db field
