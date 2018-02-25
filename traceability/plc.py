@@ -535,10 +535,44 @@ class PLC(PLCBase):
 
     def process_UDT83(self, dbid):
         logger.debug("UDT83 dbid: {dbid} type: {type}".format(dbid=dbid, type=type(dbid)))
+        block = self.get_db(dbid)
+
+        LaserMarking_LaserProgramName = block.get("LaserMarking.LaserProgramName")
+        LaserMarking_id = block.get("LaserMarking.id")
+        LaserMarking_status = Local_Status("LaserMarking", block)
+
+        LaserMarkingVerification_id = block.get("LaserMarkingVerification.id")
+        LaserMarkingVerification_status = Local_Status("LaserMarkingVerification", block)
 
     def process_UDT84(self, dbid):
         logger.debug("UDT84 dbid: {dbid} type: {type}".format(dbid=dbid, type=type(dbid)))
+        block = self.get_db(dbid)
+        ReadID_id = block.get("ReadID.id")
+        ReadID_status = Local_Status("ReadID", block)
+        logger.debug("dbid: {dbid} block: {block} ReadID: {ReadID} ReadID_Status_Active: {ReadID_Status_Active} ReadID_Status_DatabaseSave: {ReadID_Status_DatabaseSave} ReadID_Status_date_time: {ReadID_Status_date_time} ReadID_Status_result: {ReadID_Status_result}".format(dbid=dbid, block=block, ReadID=ReadID_id, ReadID_Status_Active=ReadID_status.active, ReadID_Status_DatabaseSave=ReadID_status.database_save, ReadID_Status_date_time=ReadID_status.date_time, ReadID_Status_result=ReadID_status.result))
 
+        SensorOiling_done = block.get("SensorOiling.done")
+        SensorOiling_status = Local_Status("SensorOiling", block)
+
+        ManualSensorMounting_done = block.get("ManualSensorMounting.done")
+        ManualSensorMounting_status = Local_Status("ManualSensorMounting", block)
+
+        SensorDMC_reference = block.get("SensorDMC.reference")
+        SensorDMC_read = block.get("SensorDMC.read")
+        SensorDMC_compare = block.get("SensorDMC.compare")
+        SensorDMC_from_string_sign = block.get("SensorDMC.from_string_sign")
+        SensorDMC_string_length = block.get("SensorDMC.string_length")
+        SensorDMC_sensor_type = block.get("SensorDMC.sensor_type")
+        SensorDMC_status = Local_Status("SensorDMC", block)
+
+        AutomaticSensorMounting_screwdriver_program_number = block.get("AutomaticSensorMounting.screwdriver_program_number")
+        AutomaticSensorMounting_torque = block.get("AutomaticSensorMounting.torque")
+        AutomaticSensorMounting_angle = block.get("AutomaticSensorMounting.angle")
+        AutomaticSensorMounting_torque_max = block.get("AutomaticSensorMounting.torque_max")
+        AutomaticSensorMounting_torque_min = block.get("AutomaticSensorMounting.torque_min")        
+        AutomaticSensorMounting_angle_max = block.get("AutomaticSensorMounting.angle_max")        
+        AutomaticSensorMounting_angle_min = block.get("AutomaticSensorMounting.angle_min")        
+        AutomaticSensorMounting_status = Local_Status("AutomaticSensorMounting", block)
 
     def process_UDT85(self, dbid):
         logger.debug("UDT85 dbid: {dbid} type: {type}".format(dbid=dbid, type=type(dbid)))
@@ -610,6 +644,40 @@ class PLC(PLCBase):
 
     def process_UDT88(self, dbid):
         logger.debug("UDT88 dbid: {dbid} type: {type}".format(dbid=dbid, type=type(dbid)))
+        block = self.get_db(dbid)
+
+        ReadID_id = block.get("ReadID.id")
+        ReadID_status = Local_Status("ReadID", block)
+        logger.debug("dbid: {dbid} block: {block} ReadID: {ReadID} ReadID_Status_Active: {ReadID_Status_Active} ReadID_Status_DatabaseSave: {ReadID_Status_DatabaseSave} ReadID_Status_date_time: {ReadID_Status_date_time} ReadID_Status_result: {ReadID_Status_result}".format(dbid=dbid, block=block, ReadID=ReadID_id, ReadID_Status_Active=ReadID_status.active, ReadID_Status_DatabaseSave=ReadID_status.database_save, ReadID_Status_date_time=ReadID_status.date_time, ReadID_Status_result=ReadID_status.result))
+
+        Tool_name = block.get("Tool.name")
+        Tool_status = Local_Status("Tool", block)
+
+        Detection_name = block.get("Detection.done")
+        Detection_status = Local_Status("Detection", block)
+
+        VendorDMCCodeMarking_laser_program_name = block.get("VendorDMCCodeMarking.laser_program_name")
+        VendorDMCCodeMarking_laser_program_filename = block.get("VendorDMCCodeMarking.laser_program_filename")
+        VendorDMCCodeMarking_laser_program_number = block.get("VendorDMCCodeMarking.laser_program_number")
+        VendorDMCCodeMarking_status = Local_Status("VendorDMCCodeMarking", block)
+
+        VendorDMCCodeRead_vendor_dmc = block.get("VendorDMCCodeRead.vendor_dmc")
+        VendorDMCCodeRead_dmc_position = block.get("VendorDMCCodeRead.dmc_position")
+        VendorDMCCodeRead_status = Local_Status("VendorDMCCodeRead", block)
+
+        VendorDMCCodeClass_CodeClass = block.get("VendorDMCCodeClass.CodeClass")
+        VendorDMCCodeClass_Modulation = block.get("VendorDMCCodeClass.Modulation")
+        VendorDMCCodeClass_FixedPatternDamage = block.get("VendorDMCCodeClass.FixedPatternDamage")
+        VendorDMCCodeClass_SymbolContrast = block.get("VendorDMCCodeClass.SymbolContrast")
+        VendorDMCCodeClass_AxialNonUniformity = block.get("VendorDMCCodeClass.AxialNonUniformity")
+        VendorDMCCodeClass_UnusedErrorCorrection = block.get("VendorDMCCodeClass.UnusedErrorCorrection")
+        VendorDMCCodeClass_GridNonUniformity = block.get("VendorDMCCodeClass.GridNonUniformity")
+        VendorDMCCodeClass_MinimalClass_res = block.get("VendorDMCCodeClass.MinimalClass_res")
+        VendorDMCCodeClass_AcceptableClass = block.get("VendorDMCCodeClass.AcceptableClass")
+        VendorDMCCodeClass_CurrentClass = block.get("VendorDMCCodeClass.CurrentClass")
+        VendorDMCCodeClass_status = Local_Status("VendorDMCCodeClass", block)
+
+
              
         """
         if TRC_TMPL_COUNT in block.export():
