@@ -252,18 +252,18 @@
 338.0      DrucksensorNachPruefling.Status.res_i2                         INT        # reserve
 # # Tracedb_Status_lokalny - END - size of 20 bytes.   
 # DrucksensorNachPruefling END - size of 26 bytes
-# PresetParams Begin                                         # Parametry z nastaw
-340.0      PresetParams.P_He_vor_PT_REAL                                  REAL       # DB475.DBD8; [bar] HMI_IW.Kammer1.P_He_vor_PT_REAL
-344.0      PresetParams.P_He_Versorgung_REAL                              REAL       # DB475.DBD448; [bar] HMI_IW.Anlage.P_He_Versorgung_REAL
-348.0      PresetParams.P_Vac_PT_REAL                                     REAL       # DB475.DBD20; [mbar] HMI_IW.Kammer1.P_Vac_PT_REAL
-352.0      PresetParams.P_He_nach_PT_REAL                                 REAL       # DB475.DBD14; [bar] HMI_IW.Kammer1.P_He_nach_PT_REAL
-356.0      PresetParams.Leckrate                                          REAL       # DB9.DBD10; [mbar l/s] Pruef-Erg.Glocke.Kammer1.Leckrate
-360.0      PresetParams.P_Glocke_REAL                                     REAL       # DB475.DBD2; [mbar] HMI_IW.Kammer1.P_Glocke_REAL
-364.0      PresetParams.Roh_Mittel_Mul_Faktor                             REAL       # DB20.DBD608; [mbar l/s] INFICON-DB.Leckratenscalierung .Roh_Mittel_Mul_Faktor
-368.0      PresetParams.res_r1                                            REAL       # reserve
-372.0      PresetParams.res_r2                                            REAL       # reserve
-376.0      PresetParams.res_r3                                            REAL       # reserve
-380.0      PresetParams.res_r4                                            REAL       # reserve
+# SchemaParams Begin                                         # Parametry z nastaw
+340.0      SchemaParams.P_He_vor_PT_REAL                                  REAL       # DB475.DBD8; [bar] HMI_IW.Kammer1.P_He_vor_PT_REAL
+344.0      SchemaParams.P_He_Versorgung_REAL                              REAL       # DB475.DBD448; [bar] HMI_IW.Anlage.P_He_Versorgung_REAL
+348.0      SchemaParams.P_Vac_PT_REAL                                     REAL       # DB475.DBD20; [mbar] HMI_IW.Kammer1.P_Vac_PT_REAL
+352.0      SchemaParams.P_He_nach_PT_REAL                                 REAL       # DB475.DBD14; [bar] HMI_IW.Kammer1.P_He_nach_PT_REAL
+356.0      SchemaParams.Leckrate                                          REAL       # DB9.DBD10; [mbar l/s] Pruef-Erg.Glocke.Kammer1.Leckrate
+360.0      SchemaParams.P_Glocke_REAL                                     REAL       # DB475.DBD2; [mbar] HMI_IW.Kammer1.P_Glocke_REAL
+364.0      SchemaParams.Roh_Mittel_Mul_Faktor                             REAL       # DB20.DBD608; [mbar l/s] INFICON-DB.Leckratenscalierung .Roh_Mittel_Mul_Faktor
+368.0      SchemaParams.res_r1                                            REAL       # reserve
+372.0      SchemaParams.res_r2                                            REAL       # reserve
+376.0      SchemaParams.res_r3                                            REAL       # reserve
+380.0      SchemaParams.res_r4                                            REAL       # reserve
 # # Tracedb_Status_lokalny - Begin
 384.0      SchemaParams.Status.res_r1                                     REAL       # reserve
 388.0      SchemaParams.Status.OperationActive                            BOOL       # 0 - Not Active, 1 - Switched ON
