@@ -83,7 +83,7 @@ class DB(object):
             assert key in self._specification
             index, _type = self._specification[key]
         except AssertionError as e:
-            logger.error("PLC: {plc} DB: {db} unable to read key: {key}".format(plc=self.plc.get_id(), db=self.db_name, key=key))
+            logger.error("PLC: {plc} DB: {db} unable to find key: {key} in DB specification block".format(plc=self.plc.get_id(), db=self.db_name, key=key))
             logger.warning("PLC: {plc} DB: {db} specification: {spec}".format(plc=self.plc.get_id(), db=self.db_name, spec=self._specification))
             if TRC_TMPL_COUNT in self._specification:
                 template_count = self.__getitem__(TRC_TMPL_COUNT)
@@ -372,3 +372,20 @@ class DB(object):
             logger.debug("PLC: {plc} DB: {db} FLAG: {flag} set/checked value: {value}/{checkedval}.".format(plc=self.plc.get_id(), db=self.get_db_number(), flag=flag, value=value, checkedval=checkedval))
             if value != checkedval:
                 logger.warning("PLC: {plc} DB: {db} FLAG: {flag} set/checked value does not match: {value}/{checkedval}.".format(plc=self.plc.get_id(), db=self.get_db_number(), flag=flag, value=value, checkedval=checkedval))
+
+
+class Local_Status(object):
+    '''
+        Class that represents Local_Status for given PLC data block
+    '''
+    def __init__(self, id=None, block=None):
+        self.id = id
+        self.__block = block
+
+        self.active = self.__block.get("{id}.Status.OperationActive".format(id=self.id))
+        self.database_save = self.__block.get("{id}.Status.DatabaseSave".format(id=self.id))
+        self.date_time = self.__block.get("{id}.Status.date_time".format(id=self.id))
+        self.result = self.__block.get("{id}.Status.result".format(id=self.id))
+            
+    def get(self):
+        return self

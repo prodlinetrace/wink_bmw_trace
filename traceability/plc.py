@@ -11,6 +11,7 @@ from .models import Product
 from .blocks import DBs
 from .custom_exceptions import UnknownDB
 from .database import Database
+from .block import Local_Status
 logger = logging.getLogger(__name__)
 
 
@@ -516,6 +517,10 @@ class PLC(PLCBase):
         
         # print("dbid: {dbid} type: {type}".format(dbid=dbid, type=type(dbid)))
         # logger.info("dbid: {dbid} type: {type}".format(dbid=dbid, type=type(dbid)))
+        
+        # read data - just hardcode and read whatever is needed.
+        # save it to database afterwards.  
+        
         if dbid in [500, 800]:
             self.process_UDT83(dbid) 
         
@@ -535,55 +540,74 @@ class PLC(PLCBase):
         logger.debug("UDT84 dbid: {dbid} type: {type}".format(dbid=dbid, type=type(dbid)))
 
 
-
     def process_UDT85(self, dbid):
         logger.debug("UDT85 dbid: {dbid} type: {type}".format(dbid=dbid, type=type(dbid)))
         block = self.get_db(dbid)
         # logger.debug("dbid: {dbid} block: {block}".format(dbid=dbid, block=block))
-        ReadID = block.get("ReadID.id")
-        ReadID_Status_Active = block.get("ReadID.Status.OperationActive")
-        ReadID_Status_DatabaseSave = block.get("ReadID.Status.DatabaseSave")
-        ReadID_Status_date_time = block.get("ReadID.Status.date_time")
-        ReadID_Status_result = block.get("ReadID.Status.result")
-        
-        # read data - just hardcode and read whatever is needed.
-        # save it to database afterwards.  
-        
-        
-        logger.debug("dbid: {dbid} block: {block} ReadID: {ReadID} ReadID_Status_Active: {ReadID_Status_Active} ReadID_Status_DatabaseSave: {ReadID_Status_DatabaseSave} ReadID_Status_date_time: {ReadID_Status_date_time} ReadID_Status_result: {ReadID_Status_result}".format(dbid=dbid, block=block, ReadID=ReadID, ReadID_Status_Active=ReadID_Status_Active, ReadID_Status_DatabaseSave=ReadID_Status_DatabaseSave, ReadID_Status_date_time=ReadID_Status_date_time, ReadID_Status_result=ReadID_Status_result))
-        
-        
-        read_id_block = """
-        # ReadID Begin
-        122.0      ReadID.id                                                      STRING[30] # Odczytane id ze skanera DMC
-        154.0      ReadID.res_r1                                                  REAL       # reserve
-        # # Tracedb_Status_lokalny - Begin
-        158.0      ReadID.Status.res_r1                                           REAL       # reserve
-        162.0      ReadID.Status.OperationActive                                  BOOL       # 0 - Not Active, 1 - Switched ON
-        162.1      ReadID.Status.res1_b1                                          BOOL       # reserve
-        162.2      ReadID.Status.res1_b2                                          BOOL       # reserve
-        162.3      ReadID.Status.res1_b3                                          BOOL       # reserve
-        162.4      ReadID.Status.res1_b4                                          BOOL       # reserve
-        162.5      ReadID.Status.res1_b5                                          BOOL       # reserve
-        162.6      ReadID.Status.res1_b6                                          BOOL       # reserve
-        162.7      ReadID.Status.res1_b7                                          BOOL       # reserve
-        163.0      ReadID.Status.DatabaseSave                                     BOOL       # TODO: check if it's used?
-        163.1      ReadID.Status.res2_b1                                          BOOL       # reserve
-        163.2      ReadID.Status.res2_b2                                          BOOL       # reserve
-        163.3      ReadID.Status.res2_b3                                          BOOL       # reserve
-        163.4      ReadID.Status.res2_b4                                          BOOL       # reserve
-        163.5      ReadID.Status.res2_b5                                          BOOL       # reserve
-        163.6      ReadID.Status.res2_b6                                          BOOL       # reserve
-        163.7      ReadID.Status.res2_b7                                          BOOL       # reserve
-        164.0      ReadID.Status.res_i1                                           INT        # reserve
-        166.0      ReadID.Status.date_time                                        DATETIME   # date and time
-        174.0      ReadID.Status.result                                           INT        # 1 - OK 2 - NOK
-        176.0      ReadID.Status.res_i2                                           INT        # reserve
-        # # Tracedb_Status_lokalny - END - size of 20 bytes.   
-        # ReadID END - size of 56 bytes
-        """
-        
-        #(data, status) = read_data()
+        ReadID_id = block.get("ReadID.id")
+        ReadID_status = Local_Status("ReadID", block)
+        logger.debug("dbid: {dbid} block: {block} ReadID: {ReadID} ReadID_Status_Active: {ReadID_Status_Active} ReadID_Status_DatabaseSave: {ReadID_Status_DatabaseSave} ReadID_Status_date_time: {ReadID_Status_date_time} ReadID_Status_result: {ReadID_Status_result}".format(dbid=dbid, block=block, ReadID=ReadID_id, ReadID_Status_Active=ReadID_status.active, ReadID_Status_DatabaseSave=ReadID_status.database_save, ReadID_Status_date_time=ReadID_status.date_time, ReadID_Status_result=ReadID_status.result))
+
+        Teilabfrage_done = block.get("Teilabfrage.done")
+        Teilabfrage_status = Local_Status("Teilabfrage", block)
+
+        Nadelpruefung_done = block.get("Nadelpruefung.done")
+        Nadelpruefung_status = Local_Status("Nadelpruefung", block)
+
+        Mutternabfrage_done = block.get("Mutternabfrage.done")
+        Mutternabfrage_status = Local_Status("Mutternabfrage", block)
+
+        Kreismarkierer_done = block.get("Kreismarkierer.done")
+        Kreismarkierer_servomotor_number = block.get("Kreismarkierer.servomotor_number")
+        Kreismarkierer_marking_time = block.get("Kreismarkierer.marking_time")
+        Kreismarkierer_status = Local_Status("Kreismarkierer", block)
+
+        Durchflusspruefung_done = block.get("Durchflusspruefung.done")
+        Durchflusspruefung_status = Local_Status("Durchflusspruefung", block)
+
+        SchemaParams_P_He_vor_PT_REAL = block.get("SchemaParams.P_He_vor_PT_REAL")
+        SchemaParams_P_He_Versorgung_REAL = block.get("SchemaParams.P_He_Versorgung_REAL") 
+        SchemaParams_P_Vac_PT_REAL = block.get("SchemaParams.P_Vac_PT_REAL")
+        SchemaParams_P_He_nach_PT_REAL = block.get("SchemaParams.P_He_nach_PT_REAL")
+        SchemaParams_Leckrate = block.get("SchemaParams.Leckrate")
+        SchemaParams_P_Glocke_REAL = block.get("SchemaParams.P_Glocke_REAL")
+        SchemaParams_Roh_Mittel_Mul_Faktor = block.get("SchemaParams.Roh_Mittel_Mul_Faktor")
+        SchemaParams_status = Local_Status("SchemaParams", block)
+
+        PresetParams_GloVacGrob_Soll = block.get("PresetParams.GloVacGrob_Soll")
+        PresetParams_GloVacFein_Soll = block.get("PresetParams.GloVacFein_Soll")
+        PresetParams_GloVacGrob = block.get("PresetParams.GloVacGrob")
+        PresetParams_GloVacFein = block.get("PresetParams.GloVacFein")
+        PresetParams_PtVac_Atmos_Soll_1 = block.get("PresetParams.PtVac_Atmos_Soll_1")
+        PresetParams_PtVac_He_Soll_1 = block.get("PresetParams.PtVac_He_Soll_1")
+        PresetParams_PT_evakuieren_Atmos = block.get("PresetParams.PT_evakuieren_Atmos")
+        PresetParams_PT_evakuieren_Helium = block.get("PresetParams.PT_evakuieren_Helium")
+        PresetParams_PT_fluten_1 = block.get("PresetParams.PT_fluten_1")
+        PresetParams_Helium_Min_1 = block.get("PresetParams.Helium_Min_1")
+        PresetParams_Helium_Soll_1 = block.get("PresetParams.Helium_Soll_1")
+        PresetParams_HeliumFuellen = block.get("PresetParams.HeliumFuellen")
+        PresetParams_Helium_entspannen_HD = block.get("PresetParams.Helium_entspannen_HD")
+        PresetParams_FrgHeliumEvakuieren = block.get("PresetParams.FrgHeliumEvakuieren")
+        PresetParams_Prueffreigabe = block.get("PresetParams.Prueffreigabe")
+        PresetParams_Doppel_WT = block.get("PresetParams.Doppel_WT")
+        PresetParams_status = Local_Status("PresetParams", block)
+
+        UeberwachGroblBeGlocEvak_done = block.get("UeberwachGroblBeGlocEvak.done")
+        UeberwachGroblBeGlocEvak_status = Local_Status("UeberwachGroblBeGlocEvak", block)
+
+        UeberwachGroblBeHeliumfu_done = block.get("UeberwachGroblBeHeliumfu.done")
+        UeberwachGroblBeHeliumfu_status = Local_Status("UeberwachGroblBeHeliumfu", block)
+
+        Leckrate_leak_result = block.get("Leckrate.leak_result")
+        Leckrate_leak_max = block.get("Leckrate.leak_max")
+        Leckrate_leak_Max_Mantisse_REZ = block.get("Leckrate.leak_Max_Mantisse_REZ")
+        Leckrate_leak_Max_Exponent_REZ = block.get("Leckrate.leak_Max_Exponent_REZ")
+        Leckrate_leak_Grobleck = block.get("Leckrate.leak_Grobleck")
+        Leckrate_leak_Mantisse_Grob_REZ = block.get("Leckrate.leak_Mantisse_Grob_REZ")
+        Leckrate_leak_Exponent_Grob_REZ = block.get("Leckrate.leak_Exponent_Grob_REZ")
+        Leckrate_leak_UebernahmeLeckrate = block.get("Leckrate.leak_UebernahmeLeckrate")
+        Leckrate_status = Local_Status("Leckrate", block)
+
     def process_UDT88(self, dbid):
         logger.debug("UDT88 dbid: {dbid} type: {type}".format(dbid=dbid, type=type(dbid)))
              
