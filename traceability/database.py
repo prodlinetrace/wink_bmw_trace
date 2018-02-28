@@ -47,47 +47,52 @@ class Database(object):
         logger.error("CON: {dbcon} I should never get here...".format(dbcon=self.name))
         return 0
 
-    def write_status(self, product_id, station, status, program_id, nest_id, operator=0, date_time=datetime.now()):
+    def write_status(self, product_id, station, status, program, nest, operator=0, date_time=datetime.now()):
         #product_type = str(product_type)
         #serial_number = str(serial_number)
         product_id = str(product_id)
         station = int(station)
         status = int(status)
-        program_id = int(program_id)
-        nest_id = int(nest_id)
+        program = int(program)
+        nest = int(nest)
         operator = int(operator)
         date_time = str(date_time)
-        logger.info("CON: {dbcon} PID: {product_id} ST: {station} STATUS: {status} PROGRAM: {program_id} NEST: {nest_id} OPERATOR: {operator} DT: {date_time}. Saving status record.".format(dbcon=self.name, product_id=product_id, station=station, status=status, program_id=program_id, nest_id=nest_id, operator=operator, date_time=date_time))
+        logger.info("CON: {dbcon} PID: {product_id} ST: {station} STATUS: {status} PROGRAM: {program} NEST: {nest} OPERATOR: {operator} DT: {date_time}. Saving status record.".format(dbcon=self.name, product_id=product_id, station=station, status=status, program=program, nest=nest, operator=operator, date_time=date_time))
 
         #self.add_program_if_required(program_id)
         self.add_product_if_required(product_id)
         self.add_station_if_required(station)
         self.add_operation_status_if_required(status)  # status and operation status names are kept in one and same table
         self.add_operator_if_required(operator)  # add / operator / user if required.
-        self.add_status(status, product_id, program_id, nest_id,station, operator, date_time)
+        self.add_status(status, product_id, program, nest, station, operator, date_time)
 
-    def write_operation(self, product_id, station_id, operation_status, operation_type, program_id, date_time, result_1, result_1_max, result_1_min, result_1_status, result_2, result_2_max, result_2_min, result_2_status):
+    #def write_operation(self, product_id, station_id, operation_status, operation_type, program_id, date_time, result_1, result_1_max, result_1_min, result_1_status, result_2, result_2_max, result_2_min, result_2_status):
+    def write_operation(self, product_id, station_id, operation_status, operation_type, program_number, nest_number, date_time):
         #product_type = str(product_type)
         #serial_number = str(serial_number)
         product_id = Product.calculate_product_id(product_id)
-        program_id = str(program_id)
+        program_number = int(program_number)
+        nest_number = int(nest_number)
         station_id = int(station_id)
 
         #self.add_program_if_required(program_id)
         self.add_product_if_required(product_id)
         self.add_station_if_required(station_id)
         self.add_operation_status_if_required(operation_status)
-        self.add_operation_status_if_required(result_1_status)
-        self.add_operation_status_if_required(result_2_status)
+        #self.add_operation_status_if_required(result_1_status)
+        #self.add_operation_status_if_required(result_2_status)
         self.add_operation_type_if_required(operation_type)
-        self.add_operation(product_id, station_id, operation_status, operation_type, program_id, date_time, result_1, result_1_max, result_1_min, result_1_status, result_2, result_2_max, result_2_min, result_2_status)
+        #self.add_operation(product_id, station_id, operation_status, operation_type, program_id, date_time, result_1, result_1_max, result_1_min, result_1_status, result_2, result_2_max, result_2_min, result_2_status)
+        return self.add_operation(product_id, station_id, operation_status, operation_type, program_number, nest_number, date_time)
 
-    def add_operation(self, product_id, station_id, operation_status, operation_type, program_id, date_time, result_1, result_1_max, result_1_min, result_1_status, result_2, result_2_max, result_2_min, result_2_status):
+    #def add_operation(self, product_id, station_id, operation_status, operation_type, program_id, date_time, result_1, result_1_max, result_1_min, result_1_status, result_2, result_2_max, result_2_min, result_2_status):
+    def add_operation(self, product_id, station_id, operation_status, operation_type, program_number, nest_number, date_time):
         if date_time is None:
             date_time = str(date_time)
 
         try:
-            new_operation = Operation(product=product_id, station=station_id, operation_status_id=operation_status, operation_type_id=operation_type, program_id=program_id, date_time=date_time, r1=result_1, r1_max=result_1_max, r1_min=result_1_min, r1_stat=result_1_status, r2=result_2, r2_max=result_2_max, r2_min=result_2_min, r2_stat=result_2_status)
+            #new_operation = Operation(product=product_id, station=station_id, operation_status_id=operation_status, operation_type_id=operation_type, program_id=program_id, date_time=date_time, r1=result_1, r1_max=result_1_max, r1_min=result_1_min, r1_stat=result_1_status, r2=result_2, r2_max=result_2_max, r2_min=result_2_min, r2_stat=result_2_status)
+            new_operation = Operation(product=product_id, station=station_id, operation_status_id=operation_status, operation_type_id=operation_type, program_number=program_number, nest_number=nest_number, date_time=date_time)
             db.session.add(new_operation)
             try:
                 db.session.commit()
@@ -98,20 +103,41 @@ class Database(object):
         except sqlalchemy.exc.OperationalError as e:
             logger.error("CON: {dbcon} Database: {dbfile} is locked. Error: {err}".format(dbcon=self.name, dbfile=db.get_app().config['SQLALCHEMY_DATABASE_URI'], err=e.__str__()))
             return False
-        return True
 
-    def add_status(self, status, product, program_number, nest_number, station, operator, date_time=None):
+        db.session.flush()
+        return new_operation.id
+
+    def write_result(self, detail_id, station_id, operation_id, unit_id, type_id, value):
+        self.add_unit_if_required(unit_id)
+        
+        try:
+            new_result = Result(detail_id, station_id, operation_id, unit_id=unit_id, type_id=type_id, value=value)
+            db.session.add(new_result)
+            try:
+                db.session.commit()
+            except sqlalchemy.exc.IntegrityError as e:
+                logger.error("CON: {dbcon} {rep} : {err}".format(dbcon=self.name, rep=repr(e), err=e.__str__()))
+            logger.info("CON: {dbcon} Adding new Result to database: {result}".format(dbcon=self.name, result=new_result))
+
+        except sqlalchemy.exc.OperationalError as e:
+            logger.error("CON: {dbcon} Database: {dbfile} is locked. Error: {err}".format(dbcon=self.name, dbfile=db.get_app().config['SQLALCHEMY_DATABASE_URI'], err=e.__str__()))
+            return False
+
+        db.session.flush()
+
+    def add_status(self, status, product, program, nest, station, operator, date_time=None):
         status = int(status)
         product = str(product)
-        program_number = int(program_number)
-        nest_number = int(nest_number)
+        program = int(program)
+        nest = int(nest)
         station = int(station)
         operator = int(operator)
         if date_time is None:
             date_time = str(date_time)
 
         try:
-            new_status = Status(status=status, product=product, program_number=program_number, nest_number=nest_number, station=station, user=operator, date_time=date_time)
+            #def __init__(self, status, product, station, program_number, nest_number, user=None, date_time=None):
+            new_status = Status(status=status, product=product, program=program, nest=nest, station_id=station, user=operator, date_time=date_time)
             db.session.add(new_status)
             try:
                 db.session.commit()
@@ -219,18 +245,18 @@ class Database(object):
             return False
         return True
 
-    def add_program_if_required(self, program):
-        program = str(program)
+    def add_unit_if_required(self, unit):
+        unit = str(unit)
         try:
-            _program = Program.query.filter_by(id=str(program)).first()
-            if _program is None:  # add new program if required (should not happen often)
-                new_program = Program(ident=program, name="{id}".format(id=program))
-                db.session.add(new_program)
+            _unit = Unit.query.filter_by(id=str(unit)).first()
+            if _unit is None:  # add new unit if required (should not happen often)
+                new_unit = Unit(ident=unit, name="{id}".format(id=unit))
+                db.session.add(new_unit)
                 try:
                     db.session.commit()
                 except sqlalchemy.exc.IntegrityError as e:
                     logger.error("CON: {dbcon} {rep} : {err}".format(dbcon=self.name, rep=repr(e), err=e.__str__()))
-                logger.info("CON: {dbcon} Adding new Program to database: {program}".format(dbcon=self.name, program=str(program)))
+                logger.info("CON: {dbcon} Adding new unit to database: {unit}".format(dbcon=self.name, unit=str(unit)))
 
         except sqlalchemy.exc.OperationalError as e:
             logger.error("CON: {dbcon} Database: {dbfile} is locked. Error: {err}".format(dbcon=self.name, dbfile=db.get_app().config['SQLALCHEMY_DATABASE_URI'], err=e.__str__()))

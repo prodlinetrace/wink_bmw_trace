@@ -364,8 +364,7 @@ class PLC(PLCBase):
                         block.set_pc_ready_flag(True)  # set PC ready flag back to true
                         return
                 try:
-                    data = block[HEAD_DETAIL_ID]
-                    head_detail_id = data
+                    head_detail_id = data = block[HEAD_DETAIL_ID]
                 except ValueError as e:
                     logger.error("PLC: {plc} DB: {db} Data read error. Input: {data} Exception: {e}, TB: {tb}".format(plc=self.id, db=dbid, data=data, e=e, tb=traceback.format_exc()))
                     head_detail_id = ""
@@ -444,9 +443,11 @@ class PLC(PLCBase):
                         block.set_plc_save_flag(False)
                         block.set_pc_ready_flag(True)  # set busy flag back to ready
                         return
+                    
+                # TODO: Hack remove me once test PLC is fixed.
+                block.store_item("head.detail_id", "1125")
                 try:
-                    data = block[HEAD_DETAIL_ID]
-                    head_detail_id = data
+                    head_detail_id = data = block[HEAD_DETAIL_ID]
                 except ValueError as e:
                     logger.error("PLC: {plc} DB: {db} Data read error. Input: {data} Exception: {e}, TB: {tb}".format(plc=self.id, db=dbid, data=data, e=e, tb=traceback.format_exc()))
                     head_detail_id = ""
@@ -498,7 +499,6 @@ class PLC(PLCBase):
                 except ValueError as e:
                     logger.error("PLC: {plc} DB: {db} Data read error. Input: {data} Exception: {e}, TB: {tb}".format(plc=self.id, db=dbid, data=data, e=e, tb=traceback.format_exc()))
                     operator_id = 0
-
                 self.database_engine.write_status(head_detail_id, head_station_id, station_status, program_number, nest_number, operator_id, date_time)
                 self.counter_status_message_write += 1
                 block.set_plc_save_flag(False)
@@ -578,9 +578,50 @@ class PLC(PLCBase):
         logger.debug("UDT85 dbid: {dbid} type: {type}".format(dbid=dbid, type=type(dbid)))
         block = self.get_db(dbid)
         # logger.debug("dbid: {dbid} block: {block}".format(dbid=dbid, block=block))
+        #block.store_item("ReadID.id", "1125")
+        head_detail_id = block.get("head.detail_id")
+        block.store_item("ReadID.id", head_detail_id)  # overwrite value read by scanner. 
+        
         ReadID_id = block.get("ReadID.id")
         ReadID_status = Local_Status("ReadID", block)
-        logger.debug("dbid: {dbid} block: {block} ReadID: {ReadID} ReadID_Status_Active: {ReadID_Status_Active} ReadID_Status_DatabaseSave: {ReadID_Status_DatabaseSave} ReadID_Status_date_time: {ReadID_Status_date_time} ReadID_Status_result: {ReadID_Status_result}".format(dbid=dbid, block=block, ReadID=ReadID_id, ReadID_Status_Active=ReadID_status.active, ReadID_Status_DatabaseSave=ReadID_status.database_save, ReadID_Status_date_time=ReadID_status.date_time, ReadID_Status_result=ReadID_status.result))
+        
+        #head_detail_id = block.get("head.detail_id")
+        #block.store_item("head.detail_id", "1125")
+        #detail_id = head_detail_id
+        
+        # Read some global data BEGIN
+        detail_id = block.get("head.detail_id")
+        logger.info("head_detail_id: {head_detail_id} detail_id: {detail_id}".format(head_detail_id=head_detail_id, detail_id=detail_id))
+        
+        detail_id = block[HEAD_DETAIL_ID]
+        station_id = int(block[HEAD_STATION_ID])
+        station_status = int(block[STATUS_STATION_RESULT])
+        #try:
+        #    status = STATION_STATUS_CODES[station_status]['result']
+        #except ValueError as e:
+        #    logger.warning("PLC: {plc} DB: {db} wrong value for status, returning undefined. Exception: {e}".format(plc=self.id, db=block.get_db_number(), e=e))
+        #    status = STATION_STATUS_CODES[99]['result']
+        program_number = int(block[HEAD_PROGRAM_NUMBER])
+        nest_number = int(block[HEAD_NEST_NUMBER])
+        date_time = str(block[STATUS_DATE_TIME])
+        # Read some global data END        
+        
+        if ReadID_status.active and ReadID_status.database_save: 
+            logger.info("dbid: {dbid} block: {block} ReadID: {ReadID} ReadID_Status_Active: {ReadID_Status_Active} ReadID_Status_DatabaseSave: {ReadID_Status_DatabaseSave} ReadID_Status_date_time: {ReadID_Status_date_time} ReadID_Status_result: {ReadID_Status_result}".format(dbid=dbid, block=block, ReadID=ReadID_id, ReadID_Status_Active=ReadID_status.active, ReadID_Status_DatabaseSave=ReadID_status.database_save, ReadID_Status_date_time=ReadID_status.date_time, ReadID_Status_result=ReadID_status.result))
+            #logger.info("PLC: {plc} DB: {db} PID: {head_detail_id} ST: {station} TN: {template_number} FN: {flag}".format(plc=self.id, db=block.get_db_number(), head_detail_id=head_detail_id, station=head_station_id, template_number=template_number, flag=pc_save_flag_name))
+            
+            operation_status = int(ReadID_status.result)  # 1 OK, 0 NOK
+            operation_type = 111333  # hardcoded value AKA operation_id
+
+            operation_id = self.database_engine.write_operation(detail_id, station_id, operation_status, operation_type, program_number, nest_number, date_time)
+            self.counter_saved_operations += 1
+            type_id = 1  # 1 - STRING, 2 - INT, 3 - REAL
+            unit_id = 3  # e.g. [Nm]
+            #def write_result                  (detail_id, station_id, operation_id, unit_id=unit_id, type_id=type_id, value=ReadID_id):
+
+            self.database_engine.write_result(detail_id, station_id, operation_id, unit_id, type_id, ReadID_id)
+            # mark item as read
+            ReadID_status.set_database_save(0)
 
         Teilabfrage_done = block.get("Teilabfrage.done")
         Teilabfrage_status = Local_Status("Teilabfrage", block)

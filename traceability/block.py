@@ -387,5 +387,33 @@ class Local_Status(object):
         self.date_time = self.__block.get("{id}.Status.date_time".format(id=self.id))
         self.result = self.__block.get("{id}.Status.result".format(id=self.id))
             
-    def get(self):
-        return self
+    def get_result(self):
+        self.result = self.__block.get("{id}.Status.result".format(id=self.id))
+        return self.result
+    
+    def set_result(self, value):
+        self.__block.store_item("{id}.Status.result".format(id=self.id), int(value))
+        self.result = self.__block.get("{id}.Status.result".format(id=self.id))
+        return self.result
+    
+    def get_active(self):
+        self.active = self.__block.get("{id}.Status.OperationActive".format(id=self.id))
+        return self.result
+    
+    def set_active(self, value):
+        self.__block.store_item("{id}.Status.OperationActive".format(id=self.id), int(value))
+        self.active = self.__block.get("{id}.Status.OperationActive".format(id=self.id))
+        return self.result
+
+    def get_database_save(self):
+        self.database_save = self.__block.get("{id}.Status.DatabaseSave".format(id=self.id))
+        return self.database_save
+    
+    def set_database_save(self, value):
+        self.__block.store_item("{id}.Status.DatabaseSave".format(id=self.id), bool(value))
+        self.database_save = self.__block.get("{id}.Status.DatabaseSave".format(id=self.id))
+        return self.database_save
+
+    def get_date_time(self):
+        self.date_time = self.__block.get("{id}.Status.date_time".format(id=self.id))
+        return self.date_time
