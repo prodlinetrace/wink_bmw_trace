@@ -10,7 +10,7 @@ from flask_login import UserMixin
 from . import db
 logger = logging.getLogger(__name__)
 
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 
 
 class User(UserMixin, db.Model):
@@ -300,19 +300,21 @@ class Result(db.Model):
     # unit_id = db.Column(db.Integer, db.ForeignKey('unit.id'))
     unit_id = db.Column(db.Integer, db.ForeignKey('unit.id'))
     type_id = db.Column(db.Integer)  # type should be used for casting.
+    desc_id = db.Column(db.Integer, db.ForeignKey('desc.id'))
     value = db.Column(db.String(30))
 
     """
-        type_id = 1  # 1 - STRING, 2 - INT, 3 - REAL
-        unit_id = 3  # e.g. [Nm]
+        # type_id = 1  # 1 - STRING, 2 - INT, 3 - REAL, 4 - BOOL
+        # unit_id = 3  # 1 [Nm], 2 [N], 3 [Pa], 4 [bool], 5 [s], 6 [None], 7 [mbar l/s], 8 [bar], 9 [mbar]
         self.database_engine.write_result(detail_id, station_id, operation_id, unit_id=unit_id, value_type_id=value_type_id, value=ReadID_id)
     """
-    def __init__(self, product, station, operation_id, unit_id, type_id, value):
+    def __init__(self, product, station, operation_id, unit_id, type_id, desc_id, value):
         self.product_id = product
         self.station_id = station
         self.operation_id = operation_id
         self.unit_id = unit_id
         self.type_id = type_id
+        self.desc_id = desc_id
         self.value = value
     def __repr__(self):
         return '<Assembly Result Id: {id} for: Product: {product} Station: {station} operation_id: {operation_id}>'.format(id=self.id, product=self.product_id, station=self.station_id, operation_id=self.operation_id)
@@ -328,6 +330,7 @@ class Result(db.Model):
             'operation_id': self.operation_id,
             'unit_id': self.unit_id,
             'type_id': self.type_id,
+            'desc_id': self.desc_id,
             'value': self.value
         }
 
@@ -389,6 +392,7 @@ class Operation_Type(db.Model):
             'description': self.description,
         }
 
+
 class Program(db.Model):
     __tablename__ = 'program'
     id = db.Column(db.String(20), primary_key=True)
@@ -414,6 +418,7 @@ class Program(db.Model):
             'description': self.description,
         }
 
+
 class Unit(db.Model):
     __tablename__ = 'unit'
     id = db.Column(db.Integer, primary_key=True)
@@ -438,5 +443,29 @@ class Unit(db.Model):
             'id': self.id,
             'name': self.name,
             'symbol': self.symbol,
+            'description': self.description,
+        }
+
+
+class Desc(db.Model):
+    __tablename__ = 'desc'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64))
+    description = db.Column(db.String(255))
+
+    def __init__(self, ident, name="Default Desc Name", description="Default Desc Description"):
+        self.id = ident
+        self.name = name
+        self.description = description
+
+    def __repr__(self):
+        return '<Desc Id: {id} Name: {name} Description: {desc}>'.format(id=self.id, name=self.name, desc=self.description)
+
+    @property
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {
+            'id': self.id,
+            'name': self.name,
             'description': self.description,
         }

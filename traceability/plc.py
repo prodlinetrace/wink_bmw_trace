@@ -296,7 +296,7 @@ class PLCBase(object):
             if self.__database_keepalive_sent == False: 
                 self.database_engine.send_keepalive_query()
                 self.__database_keepalive_sent = True
-                logger.info("PLC: {plc}. Dummy SQL keepalive query sent.".format(plc=self.id))
+                logger.info("PLC: {plc} Dummy SQL keepalive query sent.".format(plc=self.id))
         else:
             self.__database_keepalive_sent = False
 
@@ -445,7 +445,7 @@ class PLC(PLCBase):
                         return
                     
                 # TODO: Hack remove me once test PLC is fixed.
-                block.store_item("head.detail_id", "1125")
+                #block.store_item("head.detail_id", "1125")
                 try:
                     head_detail_id = data = block[HEAD_DETAIL_ID]
                 except ValueError as e:
@@ -590,8 +590,8 @@ class PLC(PLCBase):
         #detail_id = head_detail_id
         
         # Read some global data BEGIN
-        detail_id = block.get("head.detail_id")
-        logger.info("head_detail_id: {head_detail_id} detail_id: {detail_id}".format(head_detail_id=head_detail_id, detail_id=detail_id))
+        #detail_id = block.get("head.detail_id")
+        #logger.info("head_detail_id: {head_detail_id} detail_id: {detail_id}".format(head_detail_id=head_detail_id, detail_id=detail_id))
         
         detail_id = block[HEAD_DETAIL_ID]
         station_id = int(block[HEAD_STATION_ID])
@@ -607,38 +607,120 @@ class PLC(PLCBase):
         # Read some global data END        
         
         if ReadID_status.active and ReadID_status.database_save: 
-            logger.info("dbid: {dbid} block: {block} ReadID: {ReadID} ReadID_Status_Active: {ReadID_Status_Active} ReadID_Status_DatabaseSave: {ReadID_Status_DatabaseSave} ReadID_Status_date_time: {ReadID_Status_date_time} ReadID_Status_result: {ReadID_Status_result}".format(dbid=dbid, block=block, ReadID=ReadID_id, ReadID_Status_Active=ReadID_status.active, ReadID_Status_DatabaseSave=ReadID_status.database_save, ReadID_Status_date_time=ReadID_status.date_time, ReadID_Status_result=ReadID_status.result))
+            logger.info("PLC: {plc} dbid: {dbid} block: {block} ReadID: {ReadID} ReadID_Status_Active: {ReadID_Status_Active} ReadID_Status_DatabaseSave: {ReadID_Status_DatabaseSave} ReadID_Status_date_time: {ReadID_Status_date_time} ReadID_Status_result: {ReadID_Status_result}".format(plc=self.id, dbid=dbid, block=block, ReadID=ReadID_id, ReadID_Status_Active=ReadID_status.active, ReadID_Status_DatabaseSave=ReadID_status.database_save, ReadID_Status_date_time=ReadID_status.date_time, ReadID_Status_result=ReadID_status.result))
             #logger.info("PLC: {plc} DB: {db} PID: {head_detail_id} ST: {station} TN: {template_number} FN: {flag}".format(plc=self.id, db=block.get_db_number(), head_detail_id=head_detail_id, station=head_station_id, template_number=template_number, flag=pc_save_flag_name))
             
-            operation_status = int(ReadID_status.result)  # 1 OK, 0 NOK
-            operation_type = 111333  # hardcoded value AKA operation_id
+            operation_type = 1  # hardcoded operation_id value 1 - scanner read
+            if ReadID_id == head_detail_id:
+                operation_status = 1   # scanner read OK
+            else:
+                operation_status = 2   # scanner read NOK
 
-            operation_id = self.database_engine.write_operation(detail_id, station_id, operation_status, operation_type, program_number, nest_number, date_time)
-            self.counter_saved_operations += 1
-            type_id = 1  # 1 - STRING, 2 - INT, 3 - REAL
-            unit_id = 3  # e.g. [Nm]
-            #def write_result                  (detail_id, station_id, operation_id, unit_id=unit_id, type_id=type_id, value=ReadID_id):
-
-            self.database_engine.write_result(detail_id, station_id, operation_id, unit_id, type_id, ReadID_id)
+            # write status
+            self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, ReadID_status.date_time)
             # mark item as read
             ReadID_status.set_database_save(0)
-
+            
         Teilabfrage_done = block.get("Teilabfrage.done")
         Teilabfrage_status = Local_Status("Teilabfrage", block)
+        if Teilabfrage_status.active and Teilabfrage_status.database_save: 
+        #if Teilabfrage_status.database_save:
+            operation_type = 2  # hardcoded operation_id value 2 - Teilabfrage_done
+            operation_status = int(Teilabfrage_status.result)  # 1 OK, 0 NOK
+            results = [
+                {
+                    'type_id': 4,
+                    'unit_id': 4,
+                    'value': Teilabfrage_done, 
+                }
+            ]
+            # write status
+            self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, Teilabfrage_status.date_time, results)
+            # mark item as read
+            Teilabfrage_status.set_database_save(0)
 
         Nadelpruefung_done = block.get("Nadelpruefung.done")
         Nadelpruefung_status = Local_Status("Nadelpruefung", block)
+        if Nadelpruefung_status.active and Nadelpruefung_status.database_save:
+        #if Nadelpruefung_status.database_save:
+            operation_type = 3  # hardcoded operation_id value 3 - Nadelpruefung_done
+            operation_status = int(Nadelpruefung_status.result)  # 1 OK, 0 NOK
+            results = [
+                {
+                    'type_id': 4,
+                    'unit_id': 4,
+                    'value': Nadelpruefung_done, 
+                }
+            ]
+            # write status
+            self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, Nadelpruefung_status.date_time, results)
+            # mark item as read
+            Nadelpruefung_status.set_database_save(0)        
 
         Mutternabfrage_done = block.get("Mutternabfrage.done")
         Mutternabfrage_status = Local_Status("Mutternabfrage", block)
+        if Mutternabfrage_status.active and Mutternabfrage_status.database_save:
+            operation_type = 4  # hardcoded operation_id value 4 - Mutternabfrage_done
+            operation_status = int(Mutternabfrage_status.result)  # 1 OK, 0 NOK
+            results = [
+                {
+                    'type_id': 4,
+                    'unit_id': 4,
+                    'value': Mutternabfrage_done, 
+                }
+            ]
+            # write status
+            self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, Mutternabfrage_status.date_time, results)
+            # mark item as read
+            Mutternabfrage_status.set_database_save(0)     
 
         Kreismarkierer_done = block.get("Kreismarkierer.done")
         Kreismarkierer_servomotor_number = block.get("Kreismarkierer.servomotor_number")
         Kreismarkierer_marking_time = block.get("Kreismarkierer.marking_time")
         Kreismarkierer_status = Local_Status("Kreismarkierer", block)
-
+        if Kreismarkierer_status.active and Kreismarkierer_status.database_save:
+            operation_type = 5  # hardcoded operation_id value 5 - Kreismarkierer_done
+            operation_status = int(Kreismarkierer_status.result)  # 1 OK, 0 NOK
+            results = [
+                {
+                    'type_id': 4,
+                    'unit_id': 4,
+                    'value': Kreismarkierer_done, 
+                },
+                {
+                    'type_id': 2,
+                    'unit_id': 6,
+                    'value': Kreismarkierer_servomotor_number, 
+                },
+                {
+                    'type_id': 5,
+                    'unit_id': 5,
+                    'value': Kreismarkierer_marking_time, 
+                },
+            ]
+            # write status
+            self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, Kreismarkierer_status.date_time, results)
+            # mark item as read
+            Kreismarkierer_status.set_database_save(0)             
+        
         Durchflusspruefung_done = block.get("Durchflusspruefung.done")
         Durchflusspruefung_status = Local_Status("Durchflusspruefung", block)
+        if Durchflusspruefung_status.active and Durchflusspruefung_status.database_save: 
+            operation_type = 6  # hardcoded operation_id value 6 - Durchflusspruefung_done
+            operation_status = int(Durchflusspruefung_status.result)  # 1 OK, 0 NOK
+            # type_id = 1  # 1 - STRING, 2 - INT, 3 - REAL, 4 - BOOL
+            # unit_id = 3  # e.g. 1 [Nm], 2 [N], 3 [Pa], 4 [bool],  5 [s], 6 [None], 7 [mbar l/s]
+            results = [
+                {
+                    'type_id': 4,
+                    'unit_id': 4,
+                    'value': Durchflusspruefung_done, 
+                }
+            ]
+            # write status
+            self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, Durchflusspruefung_status.date_time, results)
+            # mark item as read
+            Durchflusspruefung_status.set_database_save(0)
 
         SchemaParams_P_He_vor_PT_REAL = block.get("SchemaParams.P_He_vor_PT_REAL")
         SchemaParams_P_He_Versorgung_REAL = block.get("SchemaParams.P_He_Versorgung_REAL") 
@@ -648,6 +730,53 @@ class PLC(PLCBase):
         SchemaParams_P_Glocke_REAL = block.get("SchemaParams.P_Glocke_REAL")
         SchemaParams_Roh_Mittel_Mul_Faktor = block.get("SchemaParams.Roh_Mittel_Mul_Faktor")
         SchemaParams_status = Local_Status("SchemaParams", block)
+
+        if SchemaParams_status.active and SchemaParams_status.database_save: 
+            operation_type = 7  # hardcoded operation_id value 7 - SchemaParams_status
+            operation_status = int(SchemaParams_status.result)  # 1 OK, 0 NOK
+            # type_id = 1  # 1 - STRING, 2 - INT, 3 - REAL, 4 - BOOL
+            # unit_id = 3  # e.g. 1 [Nm], 2 [N], 3 [Pa], 4 [bool],  5 [s], 6 [None], 7 [mbar l/s], 8 [bar], 9 [mbar]
+            results = [
+                {
+                    'type_id': 3,
+                    'unit_id': 8,
+                    'value': SchemaParams_P_He_vor_PT_REAL,
+                },
+                {
+                    'type_id': 3,
+                    'unit_id': 8,
+                    'value': SchemaParams_P_He_Versorgung_REAL, 
+                },
+                {
+                    'type_id': 3,
+                    'unit_id': 9,
+                    'value': SchemaParams_P_Vac_PT_REAL, 
+                },
+                {
+                    'type_id': 3,
+                    'unit_id': 8,
+                    'value': SchemaParams_P_He_nach_PT_REAL, 
+                },
+                {
+                    'type_id': 3,
+                    'unit_id': 7,
+                    'value': SchemaParams_Leckrate, 
+                },
+                {
+                    'type_id': 3,
+                    'unit_id': 9,
+                    'value': SchemaParams_P_Glocke_REAL, 
+                },
+                {
+                    'type_id': 3,
+                    'unit_id': 7,
+                    'value': SchemaParams_Roh_Mittel_Mul_Faktor, 
+                },
+            ]
+            # write status
+            self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, SchemaParams_status.date_time, results)
+            # mark item as read
+            SchemaParams_status.set_database_save(0)
 
         PresetParams_GloVacGrob_Soll = block.get("PresetParams.GloVacGrob_Soll")
         PresetParams_GloVacFein_Soll = block.get("PresetParams.GloVacFein_Soll")
@@ -666,12 +795,131 @@ class PLC(PLCBase):
         PresetParams_Prueffreigabe = block.get("PresetParams.Prueffreigabe")
         PresetParams_Doppel_WT = block.get("PresetParams.Doppel_WT")
         PresetParams_status = Local_Status("PresetParams", block)
+        if PresetParams_status.active and PresetParams_status.database_save: 
+            operation_type = 8  # hardcoded operation_id value 8 - PresetParams_status
+            operation_status = int(PresetParams_status.result)  # 1 OK, 0 NOK
+            # type_id = 1  # 1 - STRING, 2 - INT, 3 - REAL, 4 - BOOL
+            # unit_id = 3  # e.g. 1 [Nm], 2 [N], 3 [Pa], 4 [bool],  5 [s], 6 [None], 7 [mbar l/s], 8 [bar], 9 [mbar]
+            results = [
+                {
+                    'type_id': 3,
+                    'unit_id': 8,
+                    'value': PresetParams_GloVacGrob_Soll,
+                },
+                {
+                    'type_id': 3,
+                    'unit_id': 8,
+                    'value': PresetParams_GloVacFein_Soll,
+                },
+                {
+                    'type_id': 3,
+                    'unit_id': 5,
+                    'value': PresetParams_GloVacGrob,
+                },
+                {
+                    'type_id': 3,
+                    'unit_id': 5,
+                    'value': PresetParams_GloVacFein,
+                },
+                {
+                    'type_id': 3,
+                    'unit_id': 9,
+                    'value': PresetParams_PtVac_Atmos_Soll_1,
+                },
+                {
+                    'type_id': 3,
+                    'unit_id': 9,
+                    'value': PresetParams_PtVac_He_Soll_1,
+                },
+                {
+                    'type_id': 3,
+                    'unit_id': 5,
+                    'value': PresetParams_PT_evakuieren_Atmos,
+                },
+                {
+                    'type_id': 3,
+                    'unit_id': 5,
+                    'value': PresetParams_PT_evakuieren_Helium,
+                },
+                {
+                    'type_id': 3,
+                    'unit_id': 5,
+                    'value': PresetParams_PT_fluten_1,
+                },
+                {
+                    'type_id': 3,
+                    'unit_id': 8,
+                    'value': PresetParams_Helium_Min_1,
+                },
+                {
+                    'type_id': 3,
+                    'unit_id': 8,
+                    'value': PresetParams_Helium_Soll_1,
+                },
+                {
+                    'type_id': 3,
+                    'unit_id': 5,
+                    'value': PresetParams_HeliumFuellen,
+                },
+                {
+                    'type_id': 3,
+                    'unit_id': 5,
+                    'value': PresetParams_Helium_entspannen_HD,
+                },
+                {
+                    'type_id': 3,
+                    'unit_id': 8,
+                    'value': PresetParams_FrgHeliumEvakuieren,
+                },
+                {
+                    'type_id': 2,
+                    'unit_id': 6,
+                    'value': PresetParams_Prueffreigabe,
+                },
+                {
+                    'type_id': 4,
+                    'unit_id': 4,
+                    'value': PresetParams_Doppel_WT,
+                },                       
+           ]
+            # write status
+            self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, PresetParams_status.date_time, results)
+            # mark item as read
+            PresetParams_status.set_database_save(0)
 
         UeberwachGroblBeGlocEvak_done = block.get("UeberwachGroblBeGlocEvak.done")
         UeberwachGroblBeGlocEvak_status = Local_Status("UeberwachGroblBeGlocEvak", block)
+        if UeberwachGroblBeGlocEvak_status.active and UeberwachGroblBeGlocEvak_status.database_save: 
+            operation_type = 9  # hardcoded operation_id value 9 - UeberwachGroblBeGlocEvak_done
+            operation_status = int(UeberwachGroblBeGlocEvak_status.result)  # 1 OK, 0 NOK
+            results = [
+                {
+                    'type_id': 4,
+                    'unit_id': 4,
+                    'value': UeberwachGroblBeGlocEvak_done, 
+                }
+            ]
+            # write status
+            self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, UeberwachGroblBeGlocEvak_status.date_time, results)
+            # mark item as read
+            UeberwachGroblBeGlocEvak_status.set_database_save(0)
 
         UeberwachGroblBeHeliumfu_done = block.get("UeberwachGroblBeHeliumfu.done")
         UeberwachGroblBeHeliumfu_status = Local_Status("UeberwachGroblBeHeliumfu", block)
+        if UeberwachGroblBeHeliumfu_status.active and UeberwachGroblBeHeliumfu_status.database_save: 
+            operation_type = 10  # hardcoded operation_id value 10 - UeberwachGroblBeHeliumfu_done
+            operation_status = int(UeberwachGroblBeHeliumfu_status.result)  # 1 OK, 0 NOK
+            results = [
+                {
+                    'type_id': 4,
+                    'unit_id': 4,
+                    'value': UeberwachGroblBeHeliumfu_done, 
+                }
+            ]
+            # write status
+            self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, UeberwachGroblBeHeliumfu_status.date_time, results)
+            # mark item as read
+            UeberwachGroblBeHeliumfu_status.set_database_save(0)
 
         Leckrate_leak_result = block.get("Leckrate.leak_result")
         Leckrate_leak_max = block.get("Leckrate.leak_max")
@@ -682,6 +930,55 @@ class PLC(PLCBase):
         Leckrate_leak_Exponent_Grob_REZ = block.get("Leckrate.leak_Exponent_Grob_REZ")
         Leckrate_leak_UebernahmeLeckrate = block.get("Leckrate.leak_UebernahmeLeckrate")
         Leckrate_status = Local_Status("Leckrate", block)
+        if Leckrate_status.active and Leckrate_status.database_save: 
+            operation_type = 11  # hardcoded operation_id value 11 - Leckrate_leak
+            operation_status = int(Leckrate_status.result)  # 1 OK, 0 NOK
+            results = [
+                {
+                    'type_id': 3,
+                    'unit_id': 7,
+                    'value': Leckrate_leak_result,
+                },
+                {
+                    'type_id': 3,
+                    'unit_id': 7,
+                    'value': Leckrate_leak_max, 
+                },
+                {
+                    'type_id': 3,
+                    'unit_id': 7,
+                    'value': Leckrate_leak_Max_Mantisse_REZ, 
+                },
+                {
+                    'type_id': 3,
+                    'unit_id': 7,
+                    'value': Leckrate_leak_Max_Exponent_REZ, 
+                },
+                {
+                    'type_id': 3,
+                    'unit_id': 7,
+                    'value': Leckrate_leak_Grobleck, 
+                },
+                {
+                    'type_id': 3,
+                    'unit_id': 7,
+                    'value': Leckrate_leak_Mantisse_Grob_REZ, 
+                },
+                {
+                    'type_id': 3,
+                    'unit_id': 7,
+                    'value': Leckrate_leak_Exponent_Grob_REZ, 
+                },
+                {
+                    'type_id': 3,
+                    'unit_id': 7,
+                    'value': Leckrate_leak_UebernahmeLeckrate, 
+                },
+            ]
+            # write status
+            self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, Leckrate_status.date_time, results)
+            # mark item as read
+            Leckrate_status.set_database_save(0)
 
     def process_UDT88(self, dbid):
         logger.debug("UDT88 dbid: {dbid} type: {type}".format(dbid=dbid, type=type(dbid)))

@@ -66,6 +66,22 @@ class Database(object):
         self.add_operator_if_required(operator)  # add / operator / user if required.
         self.add_status(status, product_id, program, nest, station, operator, date_time)
 
+    def write_operation_result(self, product_id, station_id, operation_status, operation_type, program_number, nest_number, date_time, results=[]):
+        operation_id = self.write_operation(product_id, station_id, operation_status, operation_type, program_number, nest_number, date_time)
+        
+        if results is not None:
+            for result in results:
+                # type_id = 1  # 1 - STRING, 2 - INT, 3 - REAL, 4 - BOOL
+                # unit_id = 3  # 1 [Nm], 2 [N], 3 [Pa], 4 [bool], 5 [s], 6 [None], 7 [mbar l/s], 8 [bar], 9 [mbar]
+                value = result['value']
+                type_id = result['type_id']
+                unit_id = result['unit_id']
+                desc_id = 1
+                if 'desc_id' in result:
+                    desc_id = result['desc_id']
+                self.write_result(product_id, station_id, operation_id, unit_id, type_id, desc_id, value)
+        
+    
     #def write_operation(self, product_id, station_id, operation_status, operation_type, program_id, date_time, result_1, result_1_max, result_1_min, result_1_status, result_2, result_2_max, result_2_min, result_2_status):
     def write_operation(self, product_id, station_id, operation_status, operation_type, program_number, nest_number, date_time):
         #product_type = str(product_type)
@@ -107,11 +123,12 @@ class Database(object):
         db.session.flush()
         return new_operation.id
 
-    def write_result(self, detail_id, station_id, operation_id, unit_id, type_id, value):
+    def write_result(self, detail_id, station_id, operation_id, unit_id, type_id, desc_id, value):
         self.add_unit_if_required(unit_id)
+        self.add_desc_if_required(desc_id)
         
         try:
-            new_result = Result(detail_id, station_id, operation_id, unit_id=unit_id, type_id=type_id, value=value)
+            new_result = Result(detail_id, station_id, operation_id, unit_id=unit_id, type_id=type_id, desc_id=desc_id, value=value)
             db.session.add(new_result)
             try:
                 db.session.commit()
@@ -239,6 +256,24 @@ class Database(object):
                 except sqlalchemy.exc.IntegrityError as e:
                     logger.error("CON: {dbcon} {rep} : {err}".format(dbcon=self.name, rep=repr(e), err=e.__str__()))
                 logger.info("CON: {dbcon} Adding new User (operator) to database: {user}".format(dbcon=self.name, user=str(user)))
+
+        except sqlalchemy.exc.OperationalError as e:
+            logger.error("CON: {dbcon} Database: {dbfile} is locked. Error: {err}".format(dbcon=self.name, dbfile=db.get_app().config['SQLALCHEMY_DATABASE_URI'], err=e.__str__()))
+            return False
+        return True
+
+    def add_desc_if_required(self, desc):
+        desc = str(desc)
+        try:
+            _desc = Desc.query.filter_by(id=str(desc)).first()
+            if _desc is None:  # add new unit if required (should not happen often)
+                new_desc = Desc(ident=desc, name="{id}".format(id=desc))
+                db.session.add(new_desc)
+                try:
+                    db.session.commit()
+                except sqlalchemy.exc.IntegrityError as e:
+                    logger.error("CON: {dbcon} {rep} : {err}".format(dbcon=self.name, rep=repr(e), err=e.__str__()))
+                logger.info("CON: {dbcon} Adding new description to database: {desc}".format(dbcon=self.name, desc=str(desc)))
 
         except sqlalchemy.exc.OperationalError as e:
             logger.error("CON: {dbcon} Database: {dbfile} is locked. Error: {err}".format(dbcon=self.name, dbfile=db.get_app().config['SQLALCHEMY_DATABASE_URI'], err=e.__str__()))
