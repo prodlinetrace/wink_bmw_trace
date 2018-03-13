@@ -549,13 +549,59 @@ class PLC(PLCBase):
         block = self.get_db(dbid)
         ReadID_id = block.get("ReadID.id")
         ReadID_status = Local_Status("ReadID", block)
-        logger.debug("dbid: {dbid} block: {block} ReadID: {ReadID} ReadID_Status_Active: {ReadID_Status_Active} ReadID_Status_DatabaseSave: {ReadID_Status_DatabaseSave} ReadID_Status_date_time: {ReadID_Status_date_time} ReadID_Status_result: {ReadID_Status_result}".format(dbid=dbid, block=block, ReadID=ReadID_id, ReadID_Status_Active=ReadID_status.active, ReadID_Status_DatabaseSave=ReadID_status.database_save, ReadID_Status_date_time=ReadID_status.date_time, ReadID_Status_result=ReadID_status.result))
+        #logger.debug("dbid: {dbid} block: {block} ReadID: {ReadID} ReadID_Status_Active: {ReadID_Status_Active} ReadID_Status_DatabaseSave: {ReadID_Status_DatabaseSave} ReadID_Status_date_time: {ReadID_Status_date_time} ReadID_Status_result: {ReadID_Status_result}".format(dbid=dbid, block=block, ReadID=ReadID_id, ReadID_Status_Active=ReadID_status.active, ReadID_Status_DatabaseSave=ReadID_status.database_save, ReadID_Status_date_time=ReadID_status.date_time, ReadID_Status_result=ReadID_status.result))
+
+        if ReadID_status.active and ReadID_status.database_save: 
+            logger.info("PLC: {plc} dbid: {dbid} block: {block} ReadID: {ReadID} ReadID_Status_Active: {ReadID_Status_Active} ReadID_Status_DatabaseSave: {ReadID_Status_DatabaseSave} ReadID_Status_date_time: {ReadID_Status_date_time} ReadID_Status_result: {ReadID_Status_result}".format(plc=self.id, dbid=dbid, block=block, ReadID=ReadID_id, ReadID_Status_Active=ReadID_status.active, ReadID_Status_DatabaseSave=ReadID_status.database_save, ReadID_Status_date_time=ReadID_status.date_time, ReadID_Status_result=ReadID_status.result))
+            
+            operation_type = 1  # hardcoded operation_id value 1 - scanner read
+            if ReadID_id == head_detail_id:
+                operation_status = 1   # scanner read OK
+            else:
+                operation_status = 2   # scanner read NOK
+
+            # write status
+            self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, ReadID_status.date_time)
+            # mark item as read
+            ReadID_status.set_database_save(0)
+            
 
         SensorOiling_done = block.get("SensorOiling.done")
         SensorOiling_status = Local_Status("SensorOiling", block)
+        if SensorOiling_status.active and SensorOiling_status.database_save: 
+            operation_type = 101  # hardcoded operation_id value 101 - SensorOiling_done
+            operation_status = int(SensorOiling_status.result)  # 1 OK, 0 NOK
+            results = [
+                {
+                    'type_id': 4,
+                    'unit_id': 4,
+                    'value': SensorOiling_done, 
+                }
+            ]
+            # write status
+            self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, SensorOiling_status.date_time, results)
+            # mark item as read
+            SensorOiling_status.set_database_save(0)
+
+
 
         ManualSensorMounting_done = block.get("ManualSensorMounting.done")
         ManualSensorMounting_status = Local_Status("ManualSensorMounting", block)
+        if ManualSensorMounting_status.active and ManualSensorMounting_status.database_save: 
+            operation_type = 102  # hardcoded operation_id value 102 - ManualSensorMounting_done
+            operation_status = int(ManualSensorMounting_status.result)  # 1 OK, 0 NOK
+            results = [
+                {
+                    'type_id': 4,
+                    'unit_id': 4,
+                    'value': ManualSensorMounting_done, 
+                }
+            ]
+            # write status
+            self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, ManualSensorMounting_status.date_time, results)
+            # mark item as read
+            ManualSensorMounting_status.set_database_save(0)
+
 
         SensorDMC_reference = block.get("SensorDMC.reference")
         SensorDMC_read = block.get("SensorDMC.read")
@@ -564,6 +610,45 @@ class PLC(PLCBase):
         SensorDMC_string_length = block.get("SensorDMC.string_length")
         SensorDMC_sensor_type = block.get("SensorDMC.sensor_type")
         SensorDMC_status = Local_Status("SensorDMC", block)
+        if SensorDMC_status.active and SensorDMC_status.database_save: 
+            operation_type = 103  # hardcoded operation_id value 103
+            operation_status = int(SensorDMC_status.result)  # 1 OK, 0 NOK
+            results = [
+                {
+                    'type_id': 1,
+                    'unit_id': 6,
+                    'value': SensorDMC_reference, 
+                },
+                {
+                    'type_id': 1,
+                    'unit_id': 6,
+                    'value': SensorDMC_read, 
+                },
+                {
+                    'type_id': 1,
+                    'unit_id': 6,
+                    'value': SensorDMC_compare, 
+                },
+                {
+                    'type_id': 2,
+                    'unit_id': 6,
+                    'value': SensorDMC_from_string_sign, 
+                },
+                {
+                    'type_id': 2,
+                    'unit_id': 6,
+                    'value': SensorDMC_string_length, 
+                },
+                {
+                    'type_id': 2,
+                    'unit_id': 6,
+                    'value': SensorDMC_sensor_type, 
+                },                       
+            ]
+            # write status
+            self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, SensorDMC_status.date_time, results)
+            # mark item as read
+            SensorDMC_status.set_database_save(0)
 
         AutomaticSensorMounting_screwdriver_program_number = block.get("AutomaticSensorMounting.screwdriver_program_number")
         AutomaticSensorMounting_torque = block.get("AutomaticSensorMounting.torque")
@@ -573,6 +658,50 @@ class PLC(PLCBase):
         AutomaticSensorMounting_angle_max = block.get("AutomaticSensorMounting.angle_max")        
         AutomaticSensorMounting_angle_min = block.get("AutomaticSensorMounting.angle_min")        
         AutomaticSensorMounting_status = Local_Status("AutomaticSensorMounting", block)
+        if AutomaticSensorMounting_status.active and AutomaticSensorMounting_status.database_save: 
+            operation_type = 104  # hardcoded operation_id value 104
+            operation_status = int(AutomaticSensorMounting_status.result)  # 1 OK, 0 NOK
+            results = [
+                {
+                    'type_id': 2,
+                    'unit_id': 6,
+                    'value': AutomaticSensorMounting_screwdriver_program_number, 
+                },
+                {
+                    'type_id': 3,
+                    'unit_id': 1,
+                    'value': AutomaticSensorMounting_torque, 
+                },
+                {
+                    'type_id': 3,
+                    'unit_id': 2,
+                    'value': AutomaticSensorMounting_angle, 
+                },
+                {
+                    'type_id': 3,
+                    'unit_id': 1,
+                    'value': AutomaticSensorMounting_torque_max, 
+                },
+                {
+                    'type_id': 3,
+                    'unit_id': 1,
+                    'value': AutomaticSensorMounting_torque_min, 
+                },
+                {
+                    'type_id': 3,
+                    'unit_id': 2,
+                    'value': AutomaticSensorMounting_angle_max, 
+                },
+                {
+                    'type_id': 3,
+                    'unit_id': 2,
+                    'value': AutomaticSensorMounting_angle_min, 
+                },
+            ]
+            # write status
+            self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, AutomaticSensorMounting_status.date_time, results)
+            # mark item as read
+            AutomaticSensorMounting_status.set_database_save(0)
 
     def process_UDT85(self, dbid):
         logger.debug("UDT85 dbid: {dbid} type: {type}".format(dbid=dbid, type=type(dbid)))

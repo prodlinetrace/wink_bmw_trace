@@ -302,6 +302,8 @@ class Result(db.Model):
     type_id = db.Column(db.Integer)  # type should be used for casting.
     desc_id = db.Column(db.Integer, db.ForeignKey('desc.id'))
     value = db.Column(db.String(30))
+    
+    # TODO: consider adding timestamp here. 
 
     """
         # type_id = 1  # 1 - STRING, 2 - INT, 3 - REAL, 4 - BOOL
