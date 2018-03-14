@@ -72,7 +72,7 @@ class Database(object):
         if results is not None:
             for result in results:
                 # type_id = 1  # 1 - STRING, 2 - INT, 3 - REAL, 4 - BOOL
-                # unit_id = 3  # 1 [Nm], 2 [N], 3 [Pa], 4 [bool], 5 [s], 6 [None], 7 [mbar l/s], 8 [bar], 9 [mbar], 10 [m]
+                # unit_id = 3  # 0 [None], 1 [N], 2 [Nm], 3 [deg], 4 [mm], 5 [kN],  7 [mbar l/s], 8 [bar], 9 [mbar], 10 [m], 20 [Pa], 30 [s], 99 [bool], 
                 value = result['value']
                 type_id = result['type_id']
                 unit_id = result['unit_id']

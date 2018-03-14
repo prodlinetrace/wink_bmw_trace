@@ -574,7 +574,7 @@ class PLC(PLCBase):
             results = [
                 {
                     'type_id': 4,
-                    'unit_id': 4,
+                    'unit_id': 99,
                     'desc_id': operation_type * 100 + 1,
                     'value': SensorOiling_done, 
                 }
@@ -594,7 +594,7 @@ class PLC(PLCBase):
             results = [
                 {
                     'type_id': 4,
-                    'unit_id': 4,
+                    'unit_id': 99,
                     'desc_id': operation_type * 100 + 1,
                     'value': ManualSensorMounting_done, 
                 }
@@ -618,37 +618,37 @@ class PLC(PLCBase):
             results = [
                 {
                     'type_id': 1,
-                    'unit_id': 6,
+                    'unit_id': 0,
                     'desc_id': operation_type * 100 + 1,
                     'value': SensorDMC_reference, 
                 },
                 {
                     'type_id': 1,
-                    'unit_id': 6,
+                    'unit_id': 0,
                     'desc_id': operation_type * 100 + 2,
                     'value': SensorDMC_read, 
                 },
                 {
                     'type_id': 1,
-                    'unit_id': 6,
+                    'unit_id': 0,
                     'desc_id': operation_type * 100 + 3,
                     'value': SensorDMC_compare, 
                 },
                 {
                     'type_id': 2,
-                    'unit_id': 6,
+                    'unit_id': 0,
                     'desc_id': operation_type * 100 + 4,
                     'value': SensorDMC_from_string_sign, 
                 },
                 {
                     'type_id': 2,
-                    'unit_id': 6,
+                    'unit_id': 0,
                     'desc_id': operation_type * 100 + 5,
                     'value': SensorDMC_string_length, 
                 },
                 {
                     'type_id': 2,
-                    'unit_id': 6,
+                    'unit_id': 0,
                     'desc_id': operation_type * 100 + 6,
                     'value': SensorDMC_sensor_type, 
                 },                       
@@ -672,43 +672,43 @@ class PLC(PLCBase):
             results = [
                 {
                     'type_id': 2,
-                    'unit_id': 6,
+                    'unit_id': 0,
                     'desc_id': operation_type * 100 + 1,
                     'value': AutomaticSensorMounting_screwdriver_program_number, 
                 },
                 {
                     'type_id': 3,
-                    'unit_id': 1,
+                    'unit_id': 2,
                     'desc_id': operation_type * 100 + 2,
                     'value': AutomaticSensorMounting_torque, 
                 },
                 {
                     'type_id': 3,
-                    'unit_id': 2,
+                    'unit_id': 3,
                     'desc_id': operation_type * 100 + 3,
                     'value': AutomaticSensorMounting_angle, 
                 },
                 {
                     'type_id': 3,
-                    'unit_id': 1,
+                    'unit_id': 2,
                     'desc_id': operation_type * 100 + 4,
                     'value': AutomaticSensorMounting_torque_max, 
                 },
                 {
                     'type_id': 3,
-                    'unit_id': 1,
+                    'unit_id': 2,
                     'desc_id': operation_type * 100 + 5,
                     'value': AutomaticSensorMounting_torque_min, 
                 },
                 {
                     'type_id': 3,
-                    'unit_id': 2,
+                    'unit_id': 3,
                     'desc_id': operation_type * 100 + 6,
                     'value': AutomaticSensorMounting_angle_max, 
                 },
                 {
                     'type_id': 3,
-                    'unit_id': 2,
+                    'unit_id': 3,
                     'desc_id': operation_type * 100 + 7,
                     'value': AutomaticSensorMounting_angle_min, 
                 },
@@ -774,7 +774,7 @@ class PLC(PLCBase):
             results = [
                 {
                     'type_id': 4,
-                    'unit_id': 4,
+                    'unit_id': 99,
                     'desc_id': operation_type * 100 + 1,
                     'value': Teilabfrage_done, 
                 }
@@ -793,7 +793,7 @@ class PLC(PLCBase):
             results = [
                 {
                     'type_id': 4,
-                    'unit_id': 4,
+                    'unit_id': 99,
                     'desc_id': operation_type * 100 + 1,
                     'value': Nadelpruefung_done, 
                 }
@@ -811,7 +811,7 @@ class PLC(PLCBase):
             results = [
                 {
                     'type_id': 4,
-                    'unit_id': 4,
+                    'unit_id': 99,
                     'desc_id': operation_type * 100 + 1,
                     'value': Mutternabfrage_done, 
                 }
@@ -831,19 +831,19 @@ class PLC(PLCBase):
             results = [
                 {
                     'type_id': 4,
-                    'unit_id': 4,
+                    'unit_id': 99,
                     'desc_id': operation_type * 100 + 1,
                     'value': Kreismarkierer_done, 
                 },
                 {
                     'type_id': 2,
-                    'unit_id': 6,
+                    'unit_id': 0,
                     'desc_id': operation_type * 100 + 2,
                     'value': Kreismarkierer_servomotor_number, 
                 },
                 {
-                    'type_id': 5,
-                    'unit_id': 5,
+                    'type_id': 3,
+                    'unit_id': 30,
                     'desc_id': operation_type * 100 + 3,
                     'value': Kreismarkierer_marking_time, 
                 },
@@ -858,12 +858,10 @@ class PLC(PLCBase):
         if Durchflusspruefung_status.active and Durchflusspruefung_status.database_save: 
             operation_type = 206  # hardcoded operation_id value 206 - Durchflusspruefung_done
             operation_status = int(Durchflusspruefung_status.result)  # 1 OK, 0 NOK
-            # type_id = 1  # 1 - STRING, 2 - INT, 3 - REAL, 4 - BOOL
-            # unit_id = 3  # e.g. 1 [Nm], 2 [N], 3 [Pa], 4 [bool],  5 [s], 6 [None], 7 [mbar l/s]
             results = [
                 {
                     'type_id': 4,
-                    'unit_id': 4,
+                    'unit_id': 99,
                     'desc_id': operation_type * 100 + 1,
                     'value': Durchflusspruefung_done, 
                 }
@@ -885,8 +883,6 @@ class PLC(PLCBase):
         if SchemaParams_status.active and SchemaParams_status.database_save: 
             operation_type = 207  # hardcoded operation_id value 207 - SchemaParams_status
             operation_status = int(SchemaParams_status.result)  # 1 OK, 0 NOK
-            # type_id = 1  # 1 - STRING, 2 - INT, 3 - REAL, 4 - BOOL
-            # unit_id = 3  # e.g. 1 [Nm], 2 [N], 3 [Pa], 4 [bool],  5 [s], 6 [None], 7 [mbar l/s], 8 [bar], 9 [mbar]
             results = [
                 {
                     'type_id': 3,
@@ -956,8 +952,6 @@ class PLC(PLCBase):
         if PresetParams_status.active and PresetParams_status.database_save: 
             operation_type = 208  # hardcoded operation_id value 208 - PresetParams_status
             operation_status = int(PresetParams_status.result)  # 1 OK, 0 NOK
-            # type_id = 1  # 1 - STRING, 2 - INT, 3 - REAL, 4 - BOOL
-            # unit_id = 3  # e.g. 1 [Nm], 2 [N], 3 [Pa], 4 [bool],  5 [s], 6 [None], 7 [mbar l/s], 8 [bar], 9 [mbar]
             results = [
                 {
                     'type_id': 3,
@@ -973,13 +967,13 @@ class PLC(PLCBase):
                 },
                 {
                     'type_id': 3,
-                    'unit_id': 5,
+                    'unit_id': 30,
                     'desc_id': operation_type * 100 + 3,
                     'value': PresetParams_GloVacGrob,
                 },
                 {
                     'type_id': 3,
-                    'unit_id': 5,
+                    'unit_id': 30,
                     'desc_id': operation_type * 100 + 4,
                     'value': PresetParams_GloVacFein,
                 },
@@ -997,19 +991,19 @@ class PLC(PLCBase):
                 },
                 {
                     'type_id': 3,
-                    'unit_id': 5,
+                    'unit_id': 30,
                     'desc_id': operation_type * 100 + 7,
                     'value': PresetParams_PT_evakuieren_Atmos,
                 },
                 {
                     'type_id': 3,
-                    'unit_id': 5,
+                    'unit_id': 30,
                     'desc_id': operation_type * 100 + 8,
                     'value': PresetParams_PT_evakuieren_Helium,
                 },
                 {
                     'type_id': 3,
-                    'unit_id': 5,
+                    'unit_id': 30,
                     'desc_id': operation_type * 100 + 9,
                     'value': PresetParams_PT_fluten_1,
                 },
@@ -1027,13 +1021,13 @@ class PLC(PLCBase):
                 },
                 {
                     'type_id': 3,
-                    'unit_id': 5,
+                    'unit_id': 30,
                     'desc_id': operation_type * 100 + 12,
                     'value': PresetParams_HeliumFuellen,
                 },
                 {
                     'type_id': 3,
-                    'unit_id': 5,
+                    'unit_id': 30,
                     'desc_id': operation_type * 100 + 13,
                     'value': PresetParams_Helium_entspannen_HD,
                 },
@@ -1045,13 +1039,13 @@ class PLC(PLCBase):
                 },
                 {
                     'type_id': 2,
-                    'unit_id': 6,
+                    'unit_id': 0,
                     'desc_id': operation_type * 100 + 15,
                     'value': PresetParams_Prueffreigabe,
                 },
                 {
                     'type_id': 4,
-                    'unit_id': 4,
+                    'unit_id': 99,
                     'desc_id': operation_type * 100 + 16,
                     'value': PresetParams_Doppel_WT,
                 },                       
@@ -1069,7 +1063,7 @@ class PLC(PLCBase):
             results = [
                 {
                     'type_id': 4,
-                    'unit_id': 4,
+                    'unit_id': 99,
                     'desc_id': operation_type * 100 + 1,
                     'value': UeberwachGroblBeGlocEvak_done, 
                 }
@@ -1087,7 +1081,7 @@ class PLC(PLCBase):
             results = [
                 {
                     'type_id': 4,
-                    'unit_id': 4,
+                    'unit_id': 99,
                     'desc_id': operation_type * 100 + 1,
                     'value': UeberwachGroblBeHeliumfu_done, 
                 }
@@ -1154,8 +1148,8 @@ class PLC(PLCBase):
                 },
                 {
                     'type_id': 3,
-                    'unit_id': 7,
-                   'desc_id': operation_type * 100 + 8,
+                    'unit_id': 30,
+                    'desc_id': operation_type * 100 + 8,
                     'value': Leckrate_leak_UebernahmeLeckrate, 
                 },
             ]
@@ -1193,7 +1187,7 @@ class PLC(PLCBase):
             results = [
                 {
                     'type_id': 1,
-                    'unit_id': 6,
+                    'unit_id': 0,
                     'desc_id': operation_type * 100 + 1,
                     'value': Tool_name, 
                 }
@@ -1211,7 +1205,7 @@ class PLC(PLCBase):
             results = [
                 {
                     'type_id': 1,
-                    'unit_id': 6,
+                    'unit_id': 0,
                     'desc_id': operation_type * 100 + 1,
                     'value': Detection_name, 
                 }
@@ -1231,19 +1225,19 @@ class PLC(PLCBase):
             results = [
                 {
                     'type_id': 1,
-                    'unit_id': 6,
+                    'unit_id': 0,
                     'desc_id': operation_type * 100 + 1,
                     'value': VendorDMCCodeMarking_laser_program_name, 
                 },
                 {
                     'type_id': 1,
-                    'unit_id': 6,
+                    'unit_id': 0,
                     'desc_id': operation_type * 100 + 2,
                     'value': VendorDMCCodeMarking_laser_program_filename, 
                 },
                 {
                     'type_id': 2,
-                    'unit_id': 6,
+                    'unit_id': 0,
                     'desc_id': operation_type * 100 + 3,
                     'value': VendorDMCCodeMarking_laser_program_number, 
                 },
@@ -1262,13 +1256,13 @@ class PLC(PLCBase):
             results = [
                 {
                     'type_id': 1,
-                    'unit_id': 6,
+                    'unit_id': 0,
                     'desc_id': operation_type * 100 + 1,
                     'value': VendorDMCCodeRead_vendor_dmc, 
                 },
                 {
                     'type_id': 1,
-                    'unit_id': 6,
+                    'unit_id': 0,
                     'desc_id': operation_type * 100 + 2,
                     'value': VendorDMCCodeRead_dmc_position, 
                 },
@@ -1295,61 +1289,61 @@ class PLC(PLCBase):
             results = [
                 {
                     'type_id': 1,
-                    'unit_id': 6,
+                    'unit_id': 0,
                     'desc_id': operation_type * 100 + 1,
                     'value': VendorDMCCodeClass_CodeClass, 
                 },
                 {
                     'type_id': 1,
-                    'unit_id': 6,
+                    'unit_id': 0,
                     'desc_id': operation_type * 100 + 2,
                     'value': VendorDMCCodeClass_Modulation, 
                 },
                 {
                     'type_id': 1,
-                    'unit_id': 6,
+                    'unit_id': 0,
                     'desc_id': operation_type * 100 + 3,
                     'value': VendorDMCCodeClass_FixedPatternDamage, 
                 },
                 {
                     'type_id': 1,
-                    'unit_id': 6,
+                    'unit_id': 0,
                     'desc_id': operation_type * 100 + 4,
                     'value': VendorDMCCodeClass_SymbolContrast, 
                 },
                 {
                     'type_id': 1,
-                    'unit_id': 6,
+                    'unit_id': 0,
                     'desc_id': operation_type * 100 + 5,
                     'value': VendorDMCCodeClass_AxialNonUniformity, 
                 },
                 {
                     'type_id': 1,
-                    'unit_id': 6,
+                    'unit_id': 0,
                     'desc_id': operation_type * 100 + 6,
                     'value': VendorDMCCodeClass_UnusedErrorCorrection, 
                 },
                 {
                     'type_id': 1,
-                    'unit_id': 6,
+                    'unit_id': 0,
                     'desc_id': operation_type * 100 + 7,
                     'value': VendorDMCCodeClass_GridNonUniformity, 
                 },
                 {
                     'type_id': 1,
-                    'unit_id': 6,
+                    'unit_id': 0,
                     'desc_id': operation_type * 100 + 8,
                     'value': VendorDMCCodeClass_MinimalClass_res, 
                 },
                 {
                     'type_id': 1,
-                    'unit_id': 6,
+                    'unit_id': 0,
                     'desc_id': operation_type * 100 + 9,
                     'value': VendorDMCCodeClass_AcceptableClass, 
                 },
                 {
                     'type_id': 1,
-                    'unit_id': 6,
+                    'unit_id': 0,
                     'desc_id': operation_type * 100 + 10,
                     'value': VendorDMCCodeClass_CurrentClass, 
                 },
