@@ -554,7 +554,7 @@ class PLC(PLCBase):
         if ReadID_status.active and ReadID_status.database_save: 
             logger.info("PLC: {plc} dbid: {dbid} block: {block} ReadID: {ReadID} ReadID_Status_Active: {ReadID_Status_Active} ReadID_Status_DatabaseSave: {ReadID_Status_DatabaseSave} ReadID_Status_date_time: {ReadID_Status_date_time} ReadID_Status_result: {ReadID_Status_result}".format(plc=self.id, dbid=dbid, block=block, ReadID=ReadID_id, ReadID_Status_Active=ReadID_status.active, ReadID_Status_DatabaseSave=ReadID_status.database_save, ReadID_Status_date_time=ReadID_status.date_time, ReadID_Status_result=ReadID_status.result))
             
-            operation_type = 1  # hardcoded operation_id value 1 - scanner read
+            operation_type = 101  # hardcoded operation_id value 101 - scanner read
             if ReadID_id == head_detail_id:
                 operation_status = 1   # scanner read OK
             else:
@@ -569,12 +569,13 @@ class PLC(PLCBase):
         SensorOiling_done = block.get("SensorOiling.done")
         SensorOiling_status = Local_Status("SensorOiling", block)
         if SensorOiling_status.active and SensorOiling_status.database_save: 
-            operation_type = 101  # hardcoded operation_id value 101 - SensorOiling_done
+            operation_type = 102  # hardcoded operation_id value 102 - SensorOiling_done
             operation_status = int(SensorOiling_status.result)  # 1 OK, 0 NOK
             results = [
                 {
                     'type_id': 4,
                     'unit_id': 4,
+                    'desc_id': operation_type * 100 + 1,
                     'value': SensorOiling_done, 
                 }
             ]
@@ -588,12 +589,13 @@ class PLC(PLCBase):
         ManualSensorMounting_done = block.get("ManualSensorMounting.done")
         ManualSensorMounting_status = Local_Status("ManualSensorMounting", block)
         if ManualSensorMounting_status.active and ManualSensorMounting_status.database_save: 
-            operation_type = 102  # hardcoded operation_id value 102 - ManualSensorMounting_done
+            operation_type = 103  # hardcoded operation_id value 103 - ManualSensorMounting_done
             operation_status = int(ManualSensorMounting_status.result)  # 1 OK, 0 NOK
             results = [
                 {
                     'type_id': 4,
                     'unit_id': 4,
+                    'desc_id': operation_type * 100 + 1,
                     'value': ManualSensorMounting_done, 
                 }
             ]
@@ -611,37 +613,43 @@ class PLC(PLCBase):
         SensorDMC_sensor_type = block.get("SensorDMC.sensor_type")
         SensorDMC_status = Local_Status("SensorDMC", block)
         if SensorDMC_status.active and SensorDMC_status.database_save: 
-            operation_type = 103  # hardcoded operation_id value 103
+            operation_type = 104  # hardcoded operation_id value 104
             operation_status = int(SensorDMC_status.result)  # 1 OK, 0 NOK
             results = [
                 {
                     'type_id': 1,
                     'unit_id': 6,
+                    'desc_id': operation_type * 100 + 1,
                     'value': SensorDMC_reference, 
                 },
                 {
                     'type_id': 1,
                     'unit_id': 6,
+                    'desc_id': operation_type * 100 + 2,
                     'value': SensorDMC_read, 
                 },
                 {
                     'type_id': 1,
                     'unit_id': 6,
+                    'desc_id': operation_type * 100 + 3,
                     'value': SensorDMC_compare, 
                 },
                 {
                     'type_id': 2,
                     'unit_id': 6,
+                    'desc_id': operation_type * 100 + 4,
                     'value': SensorDMC_from_string_sign, 
                 },
                 {
                     'type_id': 2,
                     'unit_id': 6,
+                    'desc_id': operation_type * 100 + 5,
                     'value': SensorDMC_string_length, 
                 },
                 {
                     'type_id': 2,
                     'unit_id': 6,
+                    'desc_id': operation_type * 100 + 6,
                     'value': SensorDMC_sensor_type, 
                 },                       
             ]
@@ -659,42 +667,49 @@ class PLC(PLCBase):
         AutomaticSensorMounting_angle_min = block.get("AutomaticSensorMounting.angle_min")        
         AutomaticSensorMounting_status = Local_Status("AutomaticSensorMounting", block)
         if AutomaticSensorMounting_status.active and AutomaticSensorMounting_status.database_save: 
-            operation_type = 104  # hardcoded operation_id value 104
+            operation_type = 105  # hardcoded operation_id value 105
             operation_status = int(AutomaticSensorMounting_status.result)  # 1 OK, 0 NOK
             results = [
                 {
                     'type_id': 2,
                     'unit_id': 6,
+                    'desc_id': operation_type * 100 + 1,
                     'value': AutomaticSensorMounting_screwdriver_program_number, 
                 },
                 {
                     'type_id': 3,
                     'unit_id': 1,
+                    'desc_id': operation_type * 100 + 2,
                     'value': AutomaticSensorMounting_torque, 
                 },
                 {
                     'type_id': 3,
                     'unit_id': 2,
+                    'desc_id': operation_type * 100 + 3,
                     'value': AutomaticSensorMounting_angle, 
                 },
                 {
                     'type_id': 3,
                     'unit_id': 1,
+                    'desc_id': operation_type * 100 + 4,
                     'value': AutomaticSensorMounting_torque_max, 
                 },
                 {
                     'type_id': 3,
                     'unit_id': 1,
+                    'desc_id': operation_type * 100 + 5,
                     'value': AutomaticSensorMounting_torque_min, 
                 },
                 {
                     'type_id': 3,
                     'unit_id': 2,
+                    'desc_id': operation_type * 100 + 6,
                     'value': AutomaticSensorMounting_angle_max, 
                 },
                 {
                     'type_id': 3,
                     'unit_id': 2,
+                    'desc_id': operation_type * 100 + 7,
                     'value': AutomaticSensorMounting_angle_min, 
                 },
             ]
@@ -739,7 +754,7 @@ class PLC(PLCBase):
             logger.info("PLC: {plc} dbid: {dbid} block: {block} ReadID: {ReadID} ReadID_Status_Active: {ReadID_Status_Active} ReadID_Status_DatabaseSave: {ReadID_Status_DatabaseSave} ReadID_Status_date_time: {ReadID_Status_date_time} ReadID_Status_result: {ReadID_Status_result}".format(plc=self.id, dbid=dbid, block=block, ReadID=ReadID_id, ReadID_Status_Active=ReadID_status.active, ReadID_Status_DatabaseSave=ReadID_status.database_save, ReadID_Status_date_time=ReadID_status.date_time, ReadID_Status_result=ReadID_status.result))
             #logger.info("PLC: {plc} DB: {db} PID: {head_detail_id} ST: {station} TN: {template_number} FN: {flag}".format(plc=self.id, db=block.get_db_number(), head_detail_id=head_detail_id, station=head_station_id, template_number=template_number, flag=pc_save_flag_name))
             
-            operation_type = 1  # hardcoded operation_id value 1 - scanner read
+            operation_type = 201  # hardcoded operation_id value 201 - scanner read
             if ReadID_id == head_detail_id:
                 operation_status = 1   # scanner read OK
             else:
@@ -754,12 +769,13 @@ class PLC(PLCBase):
         Teilabfrage_status = Local_Status("Teilabfrage", block)
         if Teilabfrage_status.active and Teilabfrage_status.database_save: 
         #if Teilabfrage_status.database_save:
-            operation_type = 2  # hardcoded operation_id value 2 - Teilabfrage_done
+            operation_type = 202  # hardcoded operation_id value 202 - Teilabfrage_done
             operation_status = int(Teilabfrage_status.result)  # 1 OK, 0 NOK
             results = [
                 {
                     'type_id': 4,
                     'unit_id': 4,
+                    'desc_id': operation_type * 100 + 1,
                     'value': Teilabfrage_done, 
                 }
             ]
@@ -772,12 +788,13 @@ class PLC(PLCBase):
         Nadelpruefung_status = Local_Status("Nadelpruefung", block)
         if Nadelpruefung_status.active and Nadelpruefung_status.database_save:
         #if Nadelpruefung_status.database_save:
-            operation_type = 3  # hardcoded operation_id value 3 - Nadelpruefung_done
+            operation_type = 203  # hardcoded operation_id value 203 - Nadelpruefung_done
             operation_status = int(Nadelpruefung_status.result)  # 1 OK, 0 NOK
             results = [
                 {
                     'type_id': 4,
                     'unit_id': 4,
+                    'desc_id': operation_type * 100 + 1,
                     'value': Nadelpruefung_done, 
                 }
             ]
@@ -789,12 +806,13 @@ class PLC(PLCBase):
         Mutternabfrage_done = block.get("Mutternabfrage.done")
         Mutternabfrage_status = Local_Status("Mutternabfrage", block)
         if Mutternabfrage_status.active and Mutternabfrage_status.database_save:
-            operation_type = 4  # hardcoded operation_id value 4 - Mutternabfrage_done
+            operation_type = 204  # hardcoded operation_id value 204 - Mutternabfrage_done
             operation_status = int(Mutternabfrage_status.result)  # 1 OK, 0 NOK
             results = [
                 {
                     'type_id': 4,
                     'unit_id': 4,
+                    'desc_id': operation_type * 100 + 1,
                     'value': Mutternabfrage_done, 
                 }
             ]
@@ -808,22 +826,25 @@ class PLC(PLCBase):
         Kreismarkierer_marking_time = block.get("Kreismarkierer.marking_time")
         Kreismarkierer_status = Local_Status("Kreismarkierer", block)
         if Kreismarkierer_status.active and Kreismarkierer_status.database_save:
-            operation_type = 5  # hardcoded operation_id value 5 - Kreismarkierer_done
+            operation_type = 205  # hardcoded operation_id value 205 - Kreismarkierer_done
             operation_status = int(Kreismarkierer_status.result)  # 1 OK, 0 NOK
             results = [
                 {
                     'type_id': 4,
                     'unit_id': 4,
+                    'desc_id': operation_type * 100 + 1,
                     'value': Kreismarkierer_done, 
                 },
                 {
                     'type_id': 2,
                     'unit_id': 6,
+                    'desc_id': operation_type * 100 + 2,
                     'value': Kreismarkierer_servomotor_number, 
                 },
                 {
                     'type_id': 5,
                     'unit_id': 5,
+                    'desc_id': operation_type * 100 + 3,
                     'value': Kreismarkierer_marking_time, 
                 },
             ]
@@ -835,7 +856,7 @@ class PLC(PLCBase):
         Durchflusspruefung_done = block.get("Durchflusspruefung.done")
         Durchflusspruefung_status = Local_Status("Durchflusspruefung", block)
         if Durchflusspruefung_status.active and Durchflusspruefung_status.database_save: 
-            operation_type = 6  # hardcoded operation_id value 6 - Durchflusspruefung_done
+            operation_type = 206  # hardcoded operation_id value 206 - Durchflusspruefung_done
             operation_status = int(Durchflusspruefung_status.result)  # 1 OK, 0 NOK
             # type_id = 1  # 1 - STRING, 2 - INT, 3 - REAL, 4 - BOOL
             # unit_id = 3  # e.g. 1 [Nm], 2 [N], 3 [Pa], 4 [bool],  5 [s], 6 [None], 7 [mbar l/s]
@@ -843,6 +864,7 @@ class PLC(PLCBase):
                 {
                     'type_id': 4,
                     'unit_id': 4,
+                    'desc_id': operation_type * 100 + 1,
                     'value': Durchflusspruefung_done, 
                 }
             ]
@@ -861,7 +883,7 @@ class PLC(PLCBase):
         SchemaParams_status = Local_Status("SchemaParams", block)
 
         if SchemaParams_status.active and SchemaParams_status.database_save: 
-            operation_type = 7  # hardcoded operation_id value 7 - SchemaParams_status
+            operation_type = 207  # hardcoded operation_id value 207 - SchemaParams_status
             operation_status = int(SchemaParams_status.result)  # 1 OK, 0 NOK
             # type_id = 1  # 1 - STRING, 2 - INT, 3 - REAL, 4 - BOOL
             # unit_id = 3  # e.g. 1 [Nm], 2 [N], 3 [Pa], 4 [bool],  5 [s], 6 [None], 7 [mbar l/s], 8 [bar], 9 [mbar]
@@ -869,36 +891,43 @@ class PLC(PLCBase):
                 {
                     'type_id': 3,
                     'unit_id': 8,
+                    'desc_id': operation_type * 100 + 1,
                     'value': SchemaParams_P_He_vor_PT_REAL,
                 },
                 {
                     'type_id': 3,
                     'unit_id': 8,
+                    'desc_id': operation_type * 100 + 2,
                     'value': SchemaParams_P_He_Versorgung_REAL, 
                 },
                 {
                     'type_id': 3,
                     'unit_id': 9,
+                    'desc_id': operation_type * 100 + 3,
                     'value': SchemaParams_P_Vac_PT_REAL, 
                 },
                 {
                     'type_id': 3,
                     'unit_id': 8,
+                    'desc_id': operation_type * 100 + 4,
                     'value': SchemaParams_P_He_nach_PT_REAL, 
                 },
                 {
                     'type_id': 3,
                     'unit_id': 7,
+                    'desc_id': operation_type * 100 + 5,
                     'value': SchemaParams_Leckrate, 
                 },
                 {
                     'type_id': 3,
                     'unit_id': 9,
+                    'desc_id': operation_type * 100 + 6,
                     'value': SchemaParams_P_Glocke_REAL, 
                 },
                 {
                     'type_id': 3,
                     'unit_id': 7,
+                    'desc_id': operation_type * 100 + 7,
                     'value': SchemaParams_Roh_Mittel_Mul_Faktor, 
                 },
             ]
@@ -925,7 +954,7 @@ class PLC(PLCBase):
         PresetParams_Doppel_WT = block.get("PresetParams.Doppel_WT")
         PresetParams_status = Local_Status("PresetParams", block)
         if PresetParams_status.active and PresetParams_status.database_save: 
-            operation_type = 8  # hardcoded operation_id value 8 - PresetParams_status
+            operation_type = 208  # hardcoded operation_id value 208 - PresetParams_status
             operation_status = int(PresetParams_status.result)  # 1 OK, 0 NOK
             # type_id = 1  # 1 - STRING, 2 - INT, 3 - REAL, 4 - BOOL
             # unit_id = 3  # e.g. 1 [Nm], 2 [N], 3 [Pa], 4 [bool],  5 [s], 6 [None], 7 [mbar l/s], 8 [bar], 9 [mbar]
@@ -933,81 +962,97 @@ class PLC(PLCBase):
                 {
                     'type_id': 3,
                     'unit_id': 8,
+                    'desc_id': operation_type * 100 + 1,
                     'value': PresetParams_GloVacGrob_Soll,
                 },
                 {
                     'type_id': 3,
                     'unit_id': 8,
+                    'desc_id': operation_type * 100 + 2,
                     'value': PresetParams_GloVacFein_Soll,
                 },
                 {
                     'type_id': 3,
                     'unit_id': 5,
+                    'desc_id': operation_type * 100 + 3,
                     'value': PresetParams_GloVacGrob,
                 },
                 {
                     'type_id': 3,
                     'unit_id': 5,
+                    'desc_id': operation_type * 100 + 4,
                     'value': PresetParams_GloVacFein,
                 },
                 {
                     'type_id': 3,
                     'unit_id': 9,
+                    'desc_id': operation_type * 100 + 5,
                     'value': PresetParams_PtVac_Atmos_Soll_1,
                 },
                 {
                     'type_id': 3,
                     'unit_id': 9,
+                    'desc_id': operation_type * 100 + 6,
                     'value': PresetParams_PtVac_He_Soll_1,
                 },
                 {
                     'type_id': 3,
                     'unit_id': 5,
+                    'desc_id': operation_type * 100 + 7,
                     'value': PresetParams_PT_evakuieren_Atmos,
                 },
                 {
                     'type_id': 3,
                     'unit_id': 5,
+                    'desc_id': operation_type * 100 + 8,
                     'value': PresetParams_PT_evakuieren_Helium,
                 },
                 {
                     'type_id': 3,
                     'unit_id': 5,
+                    'desc_id': operation_type * 100 + 9,
                     'value': PresetParams_PT_fluten_1,
                 },
                 {
                     'type_id': 3,
                     'unit_id': 8,
+                    'desc_id': operation_type * 100 + 10,
                     'value': PresetParams_Helium_Min_1,
                 },
                 {
                     'type_id': 3,
                     'unit_id': 8,
+                    'desc_id': operation_type * 100 + 11,
                     'value': PresetParams_Helium_Soll_1,
                 },
                 {
                     'type_id': 3,
                     'unit_id': 5,
+                    'desc_id': operation_type * 100 + 12,
                     'value': PresetParams_HeliumFuellen,
                 },
                 {
                     'type_id': 3,
                     'unit_id': 5,
+                    'desc_id': operation_type * 100 + 13,
                     'value': PresetParams_Helium_entspannen_HD,
                 },
                 {
                     'type_id': 3,
                     'unit_id': 8,
+                    'desc_id': operation_type * 100 + 14,
                     'value': PresetParams_FrgHeliumEvakuieren,
                 },
                 {
                     'type_id': 2,
                     'unit_id': 6,
+                    'desc_id': operation_type * 100 + 15,
                     'value': PresetParams_Prueffreigabe,
                 },
                 {
                     'type_id': 4,
                     'unit_id': 4,
+                    'desc_id': operation_type * 100 + 16,
                     'value': PresetParams_Doppel_WT,
                 },                       
            ]
@@ -1019,12 +1064,13 @@ class PLC(PLCBase):
         UeberwachGroblBeGlocEvak_done = block.get("UeberwachGroblBeGlocEvak.done")
         UeberwachGroblBeGlocEvak_status = Local_Status("UeberwachGroblBeGlocEvak", block)
         if UeberwachGroblBeGlocEvak_status.active and UeberwachGroblBeGlocEvak_status.database_save: 
-            operation_type = 9  # hardcoded operation_id value 9 - UeberwachGroblBeGlocEvak_done
+            operation_type = 209  # hardcoded operation_id value 209 - UeberwachGroblBeGlocEvak_done
             operation_status = int(UeberwachGroblBeGlocEvak_status.result)  # 1 OK, 0 NOK
             results = [
                 {
                     'type_id': 4,
                     'unit_id': 4,
+                    'desc_id': operation_type * 100 + 1,
                     'value': UeberwachGroblBeGlocEvak_done, 
                 }
             ]
@@ -1036,12 +1082,13 @@ class PLC(PLCBase):
         UeberwachGroblBeHeliumfu_done = block.get("UeberwachGroblBeHeliumfu.done")
         UeberwachGroblBeHeliumfu_status = Local_Status("UeberwachGroblBeHeliumfu", block)
         if UeberwachGroblBeHeliumfu_status.active and UeberwachGroblBeHeliumfu_status.database_save: 
-            operation_type = 10  # hardcoded operation_id value 10 - UeberwachGroblBeHeliumfu_done
+            operation_type = 210  # hardcoded operation_id value 210 - UeberwachGroblBeHeliumfu_done
             operation_status = int(UeberwachGroblBeHeliumfu_status.result)  # 1 OK, 0 NOK
             results = [
                 {
                     'type_id': 4,
                     'unit_id': 4,
+                    'desc_id': operation_type * 100 + 1,
                     'value': UeberwachGroblBeHeliumfu_done, 
                 }
             ]
@@ -1060,47 +1107,55 @@ class PLC(PLCBase):
         Leckrate_leak_UebernahmeLeckrate = block.get("Leckrate.leak_UebernahmeLeckrate")
         Leckrate_status = Local_Status("Leckrate", block)
         if Leckrate_status.active and Leckrate_status.database_save: 
-            operation_type = 11  # hardcoded operation_id value 11 - Leckrate_leak
+            operation_type = 211  # hardcoded operation_id value 211 - Leckrate_leak
             operation_status = int(Leckrate_status.result)  # 1 OK, 0 NOK
             results = [
                 {
                     'type_id': 3,
                     'unit_id': 7,
+                    'desc_id': operation_type * 100 + 1,
                     'value': Leckrate_leak_result,
                 },
                 {
                     'type_id': 3,
                     'unit_id': 7,
+                    'desc_id': operation_type * 100 + 2,
                     'value': Leckrate_leak_max, 
                 },
                 {
                     'type_id': 3,
                     'unit_id': 7,
+                    'desc_id': operation_type * 100 + 3,
                     'value': Leckrate_leak_Max_Mantisse_REZ, 
                 },
                 {
                     'type_id': 3,
                     'unit_id': 7,
+                    'desc_id': operation_type * 100 + 4,
                     'value': Leckrate_leak_Max_Exponent_REZ, 
                 },
                 {
                     'type_id': 3,
                     'unit_id': 7,
+                    'desc_id': operation_type * 100 + 5,
                     'value': Leckrate_leak_Grobleck, 
                 },
                 {
                     'type_id': 3,
                     'unit_id': 7,
+                    'desc_id': operation_type * 100 + 6,
                     'value': Leckrate_leak_Mantisse_Grob_REZ, 
                 },
                 {
                     'type_id': 3,
                     'unit_id': 7,
+                    'desc_id': operation_type * 100 + 7,
                     'value': Leckrate_leak_Exponent_Grob_REZ, 
                 },
                 {
                     'type_id': 3,
                     'unit_id': 7,
+                   'desc_id': operation_type * 100 + 8,
                     'value': Leckrate_leak_UebernahmeLeckrate, 
                 },
             ]
@@ -1119,7 +1174,7 @@ class PLC(PLCBase):
         if ReadID_status.active and ReadID_status.database_save: 
             logger.info("PLC: {plc} dbid: {dbid} block: {block} ReadID: {ReadID} ReadID_Status_Active: {ReadID_Status_Active} ReadID_Status_DatabaseSave: {ReadID_Status_DatabaseSave} ReadID_Status_date_time: {ReadID_Status_date_time} ReadID_Status_result: {ReadID_Status_result}".format(plc=self.id, dbid=dbid, block=block, ReadID=ReadID_id, ReadID_Status_Active=ReadID_status.active, ReadID_Status_DatabaseSave=ReadID_status.database_save, ReadID_Status_date_time=ReadID_status.date_time, ReadID_Status_result=ReadID_status.result))
             
-            operation_type = 1  # hardcoded operation_id value 1 - scanner read
+            operation_type = 301  # hardcoded operation_id value 301 - scanner read
             if ReadID_id == head_detail_id:
                 operation_status = 1   # scanner read OK
             else:
@@ -1133,12 +1188,13 @@ class PLC(PLCBase):
         Tool_name = block.get("Tool.name")
         Tool_status = Local_Status("Tool", block)
         if Tool_status.active and Tool_status.database_save: 
-            operation_type = 301  # hardcoded operation_id value 301 - Tool_name
+            operation_type = 302  # hardcoded operation_id value 302 - Tool_name
             operation_status = int(Tool_status.result)  # 1 OK, 0 NOK
             results = [
                 {
                     'type_id': 1,
                     'unit_id': 6,
+                    'desc_id': operation_type * 100 + 1,
                     'value': Tool_name, 
                 }
             ]
@@ -1150,12 +1206,13 @@ class PLC(PLCBase):
         Detection_name = block.get("Detection.name")
         Detection_status = Local_Status("Detection", block)
         if Detection_status.active and Detection_status.database_save: 
-            operation_type = 302  # hardcoded operation_id value 302 - Detection_status
+            operation_type = 303  # hardcoded operation_id value 303 - Detection_status
             operation_status = int(Detection_status.result)  # 1 OK, 0 NOK
             results = [
                 {
                     'type_id': 1,
                     'unit_id': 6,
+                    'desc_id': operation_type * 100 + 1,
                     'value': Detection_name, 
                 }
             ]
@@ -1169,22 +1226,25 @@ class PLC(PLCBase):
         VendorDMCCodeMarking_laser_program_number = block.get("VendorDMCCodeMarking.laser_program_number")
         VendorDMCCodeMarking_status = Local_Status("VendorDMCCodeMarking", block)
         if VendorDMCCodeMarking_status.active and VendorDMCCodeMarking_status.database_save: 
-            operation_type = 303  # hardcoded operation_id value 301 - VendorDMCCodeMarking_status
+            operation_type = 304  # hardcoded operation_id value 304 - VendorDMCCodeMarking_status
             operation_status = int(VendorDMCCodeMarking_status.result)  # 1 OK, 0 NOK
             results = [
                 {
                     'type_id': 1,
                     'unit_id': 6,
+                    'desc_id': operation_type * 100 + 1,
                     'value': VendorDMCCodeMarking_laser_program_name, 
                 },
                 {
                     'type_id': 1,
                     'unit_id': 6,
+                    'desc_id': operation_type * 100 + 2,
                     'value': VendorDMCCodeMarking_laser_program_filename, 
                 },
                 {
                     'type_id': 2,
                     'unit_id': 6,
+                    'desc_id': operation_type * 100 + 3,
                     'value': VendorDMCCodeMarking_laser_program_number, 
                 },
             ]
@@ -1197,17 +1257,19 @@ class PLC(PLCBase):
         VendorDMCCodeRead_dmc_position = block.get("VendorDMCCodeRead.dmc_position")
         VendorDMCCodeRead_status = Local_Status("VendorDMCCodeRead", block)
         if VendorDMCCodeRead_status.active and VendorDMCCodeRead_status.database_save: 
-            operation_type = 304  # hardcoded operation_id value 304- VendorDMCCodeRead_status
+            operation_type = 305  # hardcoded operation_id value 305- VendorDMCCodeRead_status
             operation_status = int(VendorDMCCodeRead_status.result)  # 1 OK, 0 NOK
             results = [
                 {
                     'type_id': 1,
                     'unit_id': 6,
+                    'desc_id': operation_type * 100 + 1,
                     'value': VendorDMCCodeRead_vendor_dmc, 
                 },
                 {
                     'type_id': 1,
                     'unit_id': 6,
+                    'desc_id': operation_type * 100 + 2,
                     'value': VendorDMCCodeRead_dmc_position, 
                 },
             ]
@@ -1228,57 +1290,67 @@ class PLC(PLCBase):
         VendorDMCCodeClass_CurrentClass = block.get("VendorDMCCodeClass.CurrentClass")
         VendorDMCCodeClass_status = Local_Status("VendorDMCCodeClass", block)
         if VendorDMCCodeClass_status.active and VendorDMCCodeClass_status.database_save: 
-            operation_type = 305  # hardcoded operation_id value 305 - VendorDMCCodeClass_status
+            operation_type = 306  # hardcoded operation_id value 306 - VendorDMCCodeClass_status
             operation_status = int(VendorDMCCodeClass_status.result)  # 1 OK, 0 NOK
             results = [
                 {
                     'type_id': 1,
                     'unit_id': 6,
+                    'desc_id': operation_type * 100 + 1,
                     'value': VendorDMCCodeClass_CodeClass, 
                 },
                 {
                     'type_id': 1,
                     'unit_id': 6,
+                    'desc_id': operation_type * 100 + 2,
                     'value': VendorDMCCodeClass_Modulation, 
                 },
                 {
                     'type_id': 1,
                     'unit_id': 6,
+                    'desc_id': operation_type * 100 + 3,
                     'value': VendorDMCCodeClass_FixedPatternDamage, 
                 },
                 {
                     'type_id': 1,
                     'unit_id': 6,
+                    'desc_id': operation_type * 100 + 4,
                     'value': VendorDMCCodeClass_SymbolContrast, 
                 },
                 {
                     'type_id': 1,
                     'unit_id': 6,
+                    'desc_id': operation_type * 100 + 5,
                     'value': VendorDMCCodeClass_AxialNonUniformity, 
                 },
                 {
                     'type_id': 1,
                     'unit_id': 6,
+                    'desc_id': operation_type * 100 + 6,
                     'value': VendorDMCCodeClass_UnusedErrorCorrection, 
                 },
                 {
                     'type_id': 1,
                     'unit_id': 6,
+                    'desc_id': operation_type * 100 + 7,
                     'value': VendorDMCCodeClass_GridNonUniformity, 
                 },
                 {
                     'type_id': 1,
                     'unit_id': 6,
+                    'desc_id': operation_type * 100 + 8,
                     'value': VendorDMCCodeClass_MinimalClass_res, 
                 },
                 {
                     'type_id': 1,
                     'unit_id': 6,
+                    'desc_id': operation_type * 100 + 9,
                     'value': VendorDMCCodeClass_AcceptableClass, 
                 },
                 {
                     'type_id': 1,
                     'unit_id': 6,
+                    'desc_id': operation_type * 100 + 10,
                     'value': VendorDMCCodeClass_CurrentClass, 
                 },
             ]
