@@ -549,7 +549,7 @@ class PLC(PLCBase):
         block = self.get_db(dbid)
         ReadID_id = block.get("ReadID.id")
         ReadID_status = Local_Status("ReadID", block)
-        #logger.debug("dbid: {dbid} block: {block} ReadID: {ReadID} ReadID_Status_Active: {ReadID_Status_Active} ReadID_Status_DatabaseSave: {ReadID_Status_DatabaseSave} ReadID_Status_date_time: {ReadID_Status_date_time} ReadID_Status_result: {ReadID_Status_result}".format(dbid=dbid, block=block, ReadID=ReadID_id, ReadID_Status_Active=ReadID_status.active, ReadID_Status_DatabaseSave=ReadID_status.database_save, ReadID_Status_date_time=ReadID_status.date_time, ReadID_Status_result=ReadID_status.result))
+        logger.debug("dbid: {dbid} block: {block} ReadID: {ReadID} ReadID_Status_Active: {ReadID_Status_Active} ReadID_Status_DatabaseSave: {ReadID_Status_DatabaseSave} ReadID_Status_date_time: {ReadID_Status_date_time} ReadID_Status_result: {ReadID_Status_result}".format(dbid=dbid, block=block, ReadID=ReadID_id, ReadID_Status_Active=ReadID_status.active, ReadID_Status_DatabaseSave=ReadID_status.database_save, ReadID_Status_date_time=ReadID_status.date_time, ReadID_Status_result=ReadID_status.result))
 
         if ReadID_status.active and ReadID_status.database_save: 
             logger.info("PLC: {plc} dbid: {dbid} block: {block} ReadID: {ReadID} ReadID_Status_Active: {ReadID_Status_Active} ReadID_Status_DatabaseSave: {ReadID_Status_DatabaseSave} ReadID_Status_date_time: {ReadID_Status_date_time} ReadID_Status_result: {ReadID_Status_result}".format(plc=self.id, dbid=dbid, block=block, ReadID=ReadID_id, ReadID_Status_Active=ReadID_status.active, ReadID_Status_DatabaseSave=ReadID_status.database_save, ReadID_Status_date_time=ReadID_status.date_time, ReadID_Status_result=ReadID_status.result))
@@ -1116,21 +1116,105 @@ class PLC(PLCBase):
         ReadID_id = block.get("ReadID.id")
         ReadID_status = Local_Status("ReadID", block)
         logger.debug("dbid: {dbid} block: {block} ReadID: {ReadID} ReadID_Status_Active: {ReadID_Status_Active} ReadID_Status_DatabaseSave: {ReadID_Status_DatabaseSave} ReadID_Status_date_time: {ReadID_Status_date_time} ReadID_Status_result: {ReadID_Status_result}".format(dbid=dbid, block=block, ReadID=ReadID_id, ReadID_Status_Active=ReadID_status.active, ReadID_Status_DatabaseSave=ReadID_status.database_save, ReadID_Status_date_time=ReadID_status.date_time, ReadID_Status_result=ReadID_status.result))
+        if ReadID_status.active and ReadID_status.database_save: 
+            logger.info("PLC: {plc} dbid: {dbid} block: {block} ReadID: {ReadID} ReadID_Status_Active: {ReadID_Status_Active} ReadID_Status_DatabaseSave: {ReadID_Status_DatabaseSave} ReadID_Status_date_time: {ReadID_Status_date_time} ReadID_Status_result: {ReadID_Status_result}".format(plc=self.id, dbid=dbid, block=block, ReadID=ReadID_id, ReadID_Status_Active=ReadID_status.active, ReadID_Status_DatabaseSave=ReadID_status.database_save, ReadID_Status_date_time=ReadID_status.date_time, ReadID_Status_result=ReadID_status.result))
+            
+            operation_type = 1  # hardcoded operation_id value 1 - scanner read
+            if ReadID_id == head_detail_id:
+                operation_status = 1   # scanner read OK
+            else:
+                operation_status = 2   # scanner read NOK
+
+            # write status
+            self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, ReadID_status.date_time)
+            # mark item as read
+            ReadID_status.set_database_save(0)
 
         Tool_name = block.get("Tool.name")
         Tool_status = Local_Status("Tool", block)
+        if Tool_status.active and Tool_status.database_save: 
+            operation_type = 301  # hardcoded operation_id value 301 - Tool_name
+            operation_status = int(Tool_status.result)  # 1 OK, 0 NOK
+            results = [
+                {
+                    'type_id': 1,
+                    'unit_id': 6,
+                    'value': Tool_name, 
+                }
+            ]
+            # write status
+            self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, Tool_status.date_time, results)
+            # mark item as read
+            Tool_status.set_database_save(0)
 
-        Detection_name = block.get("Detection.done")
+        Detection_name = block.get("Detection.name")
         Detection_status = Local_Status("Detection", block)
+        if Detection_status.active and Detection_status.database_save: 
+            operation_type = 302  # hardcoded operation_id value 302 - Detection_status
+            operation_status = int(Detection_status.result)  # 1 OK, 0 NOK
+            results = [
+                {
+                    'type_id': 1,
+                    'unit_id': 6,
+                    'value': Detection_name, 
+                }
+            ]
+            # write status
+            self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, Detection_status.date_time, results)
+            # mark item as read
+            Detection_status.set_database_save(0)
 
         VendorDMCCodeMarking_laser_program_name = block.get("VendorDMCCodeMarking.laser_program_name")
         VendorDMCCodeMarking_laser_program_filename = block.get("VendorDMCCodeMarking.laser_program_filename")
         VendorDMCCodeMarking_laser_program_number = block.get("VendorDMCCodeMarking.laser_program_number")
         VendorDMCCodeMarking_status = Local_Status("VendorDMCCodeMarking", block)
+        if VendorDMCCodeMarking_status.active and VendorDMCCodeMarking_status.database_save: 
+            operation_type = 303  # hardcoded operation_id value 301 - VendorDMCCodeMarking_status
+            operation_status = int(VendorDMCCodeMarking_status.result)  # 1 OK, 0 NOK
+            results = [
+                {
+                    'type_id': 1,
+                    'unit_id': 6,
+                    'value': VendorDMCCodeMarking_laser_program_name, 
+                },
+                {
+                    'type_id': 1,
+                    'unit_id': 6,
+                    'value': VendorDMCCodeMarking_laser_program_filename, 
+                },
+                {
+                    'type_id': 2,
+                    'unit_id': 6,
+                    'value': VendorDMCCodeMarking_laser_program_number, 
+                },
+            ]
+            # write status
+            self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, Tool_statusVendorDMCCodeMarking_status.date_time, results)
+            # mark item as read
+            VendorDMCCodeMarking_status.set_database_save(0)
 
         VendorDMCCodeRead_vendor_dmc = block.get("VendorDMCCodeRead.vendor_dmc")
         VendorDMCCodeRead_dmc_position = block.get("VendorDMCCodeRead.dmc_position")
         VendorDMCCodeRead_status = Local_Status("VendorDMCCodeRead", block)
+        if VendorDMCCodeRead_status.active and VendorDMCCodeRead_status.database_save: 
+            operation_type = 304  # hardcoded operation_id value 304- VendorDMCCodeRead_status
+            operation_status = int(VendorDMCCodeRead_status.result)  # 1 OK, 0 NOK
+            results = [
+                {
+                    'type_id': 1,
+                    'unit_id': 6,
+                    'value': VendorDMCCodeRead_vendor_dmc, 
+                },
+                {
+                    'type_id': 1,
+                    'unit_id': 6,
+                    'value': VendorDMCCodeRead_dmc_position, 
+                },
+            ]
+            # write status
+            self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, VendorDMCCodeRead_status.date_time, results)
+            # mark item as read
+            VendorDMCCodeRead_status.set_database_save(0)
 
         VendorDMCCodeClass_CodeClass = block.get("VendorDMCCodeClass.CodeClass")
         VendorDMCCodeClass_Modulation = block.get("VendorDMCCodeClass.Modulation")
@@ -1143,9 +1227,66 @@ class PLC(PLCBase):
         VendorDMCCodeClass_AcceptableClass = block.get("VendorDMCCodeClass.AcceptableClass")
         VendorDMCCodeClass_CurrentClass = block.get("VendorDMCCodeClass.CurrentClass")
         VendorDMCCodeClass_status = Local_Status("VendorDMCCodeClass", block)
+        if VendorDMCCodeClass_status.active and VendorDMCCodeClass_status.database_save: 
+            operation_type = 305  # hardcoded operation_id value 305 - VendorDMCCodeClass_status
+            operation_status = int(VendorDMCCodeClass_status.result)  # 1 OK, 0 NOK
+            results = [
+                {
+                    'type_id': 1,
+                    'unit_id': 6,
+                    'value': VendorDMCCodeClass_CodeClass, 
+                },
+                {
+                    'type_id': 1,
+                    'unit_id': 6,
+                    'value': VendorDMCCodeClass_Modulation, 
+                },
+                {
+                    'type_id': 1,
+                    'unit_id': 6,
+                    'value': VendorDMCCodeClass_FixedPatternDamage, 
+                },
+                {
+                    'type_id': 1,
+                    'unit_id': 6,
+                    'value': VendorDMCCodeClass_SymbolContrast, 
+                },
+                {
+                    'type_id': 1,
+                    'unit_id': 6,
+                    'value': VendorDMCCodeClass_AxialNonUniformity, 
+                },
+                {
+                    'type_id': 1,
+                    'unit_id': 6,
+                    'value': VendorDMCCodeClass_UnusedErrorCorrection, 
+                },
+                {
+                    'type_id': 1,
+                    'unit_id': 6,
+                    'value': VendorDMCCodeClass_GridNonUniformity, 
+                },
+                {
+                    'type_id': 1,
+                    'unit_id': 6,
+                    'value': VendorDMCCodeClass_MinimalClass_res, 
+                },
+                {
+                    'type_id': 1,
+                    'unit_id': 6,
+                    'value': VendorDMCCodeClass_AcceptableClass, 
+                },
+                {
+                    'type_id': 1,
+                    'unit_id': 6,
+                    'value': VendorDMCCodeClass_CurrentClass, 
+                },
+            ]
+            # write status
+            self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, VendorDMCCodeClass_status.date_time, results)
+            # mark item as read
+            VendorDMCCodeClass_status.set_database_save(0)
 
-
-             
         """
         if TRC_TMPL_COUNT in block.export():
             template_count = block.__getitem__(TRC_TMPL_COUNT)
