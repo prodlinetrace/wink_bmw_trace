@@ -10,8 +10,16 @@ from flask_login import UserMixin
 from . import db
 logger = logging.getLogger(__name__)
 
-__version__ = '0.1.1'
+__version__ = '0.1.2'
 
+try:
+    from . import login_manager
+    @login_manager.user_loader
+    def load_user(user_id):
+        return User.query.get(int(user_id))
+except ImportError as e:
+    # desktop app - ignore in case login_manager is not defined.  
+    pass
 
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
