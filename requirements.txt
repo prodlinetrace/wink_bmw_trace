@@ -7,7 +7,7 @@ Flask-Autodoc==0.1.2
 
 SQLAlchemy==1.1.9
 Markdown==2.6.8
-bleach==2.0.0
+bleach==3.1.4
 pygtail==0.7.0
 cx_Freeze==5.0.2
 futures==3.1.1
