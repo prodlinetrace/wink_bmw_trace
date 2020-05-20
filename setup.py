@@ -205,7 +205,7 @@ shortcut_table = [(
 msi_data = {"Shortcut": shortcut_table}
 bdist_msi_options = {
     'data': msi_data,
-    'initial_target_dir': r'C:\\%s' % PROJECT_NAME,
+    'initial_target_dir': r'E:\\%s' % PROJECT_NAME,
     'add_to_path': True,
 }
 # GUI applications require a different base on Windows (the default is for a
