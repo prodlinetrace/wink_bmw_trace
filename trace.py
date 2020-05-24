@@ -60,8 +60,19 @@ class MainWindow(wx.App):
         self.valueLogTextArea = xrc.XRCCTRL(frame, "valueLogTextArea")
         textAreaFont = wx.Font(10, wx.MODERN, wx.NORMAL, wx.NORMAL, False, u'Consolas')
         self.valueLogTextArea.SetFont(textAreaFont)
-
-        self.application = ProdLine(sys.argv)
+        # try to catch errors during app initialization
+        try:
+            log_name = "init.log"
+            self.application = ProdLine(sys.argv)
+        except Exception as exc:
+            with open(log_name, "w") as f:
+                f.write("app initialization error\n")
+                traceback.print_exc(file=f)
+        else:
+            with open(log_name, "w") as f:
+                f.write("app initialization ok\n")
+                f.write("datetime initialized: {0}".format(self.application.year))
+            
         self._opts = self.application._opts
         self._config = parse_config(self._opts.config)
 #        self.webapp = webapp
@@ -89,6 +100,7 @@ class MainWindow(wx.App):
         self.application.set_pollsleep(self.pollSleep)
         self.application.set_polldbsleep(self.pollDbSleep)
         self.application.set_pc_ready_flag_on_poll(self.pcReadyFlagOnPoll)
+
         return True
 
     def OnVerbositySelect(self, event):

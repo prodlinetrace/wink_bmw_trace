@@ -128,7 +128,7 @@ hidden_imports = [
                 "sqlalchemy.util.queue",
                 "sqlalchemy.util.topological",
                 "flask_sqlalchemy._compat",
-                "flask_autodoc",
+                "flask_selfdoc",
                 #"jinja2",
                 "flask_login",
                 "markdown",
@@ -137,6 +137,8 @@ hidden_imports = [
                 "werkzeug.http",
                 "pymysql",
                 "asyncio",
+                "pyparsing",
+                "appdirs",
 ]
 
 excludes = [    "tkinter",
@@ -206,7 +208,7 @@ msi_data = {"Shortcut": shortcut_table}
 bdist_msi_options = {
     'data': msi_data,
     'initial_target_dir': r'E:\\%s' % PROJECT_NAME,
-    'add_to_path': True,
+    'add_to_path': False,
 }
 # GUI applications require a different base on Windows (the default is for a
 # console application).

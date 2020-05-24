@@ -1,6 +1,8 @@
 import snap7
 import threading
 import concurrent.futures
+import os
+import locale
 import traceback
 import logging
 from logging.handlers import TimedRotatingFileHandler
@@ -9,6 +11,20 @@ from time import sleep
 from .helpers import parse_config, parse_args
 from .database import Database
 import sqlalchemy
+
+from contextlib import contextmanager
+
+LOCALE_LOCK = threading.Lock()
+
+@contextmanager
+def setlocale(name):
+    with LOCALE_LOCK:
+        saved = locale.setlocale(locale.LC_ALL)
+        try:
+            yield locale.setlocale(locale.LC_ALL, name)
+        finally:
+            locale.setlocale(locale.LC_ALL, saved)
+
 
 logger = logging.getLogger(__name__)
 
@@ -19,13 +35,15 @@ class ProdLineBase(object):
         self._argv = argv
         self._opts, self._args = parse_args(self._argv)
 
+        with setlocale('pl_PL.UTF-8'):
+            #mydate = datetime.strptime('Thu, Jun', '%a, %b')        
+            self.year = datetime.strptime("01","%y")
+            
         # handle logging - set root logger level
         logging.root.setLevel(logging.INFO)
         logger = logging.getLogger(__name__.ljust(24)[:24])
         logger.setLevel(loglevel)
 
-        # init datetime.strptime so it is available in threads (http://www.mail-archive.com/python-list@python.org/msg248846.html)
-        year = datetime.strptime("01","%y")
 
         # parse config file
         logger.info("Using config file {cfg}.".format(cfg=self._opts.config))
