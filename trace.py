@@ -17,7 +17,8 @@ from traceability.prodline import ProdLine
 from traceability.util import file_name_with_size
 
 logger = logging.getLogger(__name__.ljust(12)[:12])
-
+import locale
+locale.setlocale(locale.LC_ALL, 'pl')
 
 class MainWindow(wx.App):
     ID_UPDATE_CTRL_STATUS = wx.NewId()

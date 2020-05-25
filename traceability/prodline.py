@@ -11,7 +11,6 @@ from time import sleep
 from .helpers import parse_config, parse_args
 from .database import Database
 import sqlalchemy
-
 from contextlib import contextmanager
 
 LOCALE_LOCK = threading.Lock()
@@ -35,8 +34,7 @@ class ProdLineBase(object):
         self._argv = argv
         self._opts, self._args = parse_args(self._argv)
 
-        with setlocale('pl_PL.UTF-8'):
-            #mydate = datetime.strptime('Thu, Jun', '%a, %b')        
+        with setlocale('pl'):
             self.year = datetime.strptime("01","%y")
             
         # handle logging - set root logger level
@@ -334,6 +332,7 @@ class ProdLine(ProdLineBase):
         plc.set_pollsleep(self.get_pollsleep())
         plc.set_polldbsleep(self.get_polldbsleep())
         plc.set_pc_ready_flag_on_poll(self.get_pc_ready_flag_on_poll())
+        locale.setlocale(locale.LC_ALL, "C")
 
         while True:
             # blink heartbeat
