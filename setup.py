@@ -132,6 +132,7 @@ hidden_imports = [
                 #"jinja2",
                 "flask_login",
                 "markdown",
+                "pkg_resources",
                 "bleach",
                 "itsdangerous",
                 "werkzeug.http",
