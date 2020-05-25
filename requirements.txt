@@ -12,7 +12,7 @@ pygtail==0.7.0
 cx_Freeze==6.1
 futures==3.1.1
 ConfigParser==5.0.0
-wxPython==7.1.2
+wxPython==4.1.0
 
 pymysql==0.8.0
 
