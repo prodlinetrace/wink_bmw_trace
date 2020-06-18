@@ -1,0 +1,218 @@
+﻿TYPE "Traceab_Logowanie"
+VERSION : 0.1
+   STRUCT
+      LOGIN : String[8];   // ustawiane przez PLC
+      PASSWORD : String[16];   // ustawiane przez PLC
+      rez_R1 : Real;
+      rez_R2 : Real;
+      STATUS : Int;   // PC: 0-not defined,1-zalogowany,2-wylogowany,3-zablokowany,4-nieprawidlowe haslo
+      DO_LOGIN : Bool;   // PLC - flaga podnoszona w celu zalogowania operatora - PC gasi flagę po wykonani
+      DO_LOGOUT : Bool;   // PLC - flaga podnoszona w celu wylogowania. PC gasi flagę po wykonaniu operacji.
+      IS_LOGIN : Bool;   // ustawiane przez PLC: 1 gdy OPERATOR_STATUS = 1
+      rez_BOOL1 : Bool;
+      rez_BOOL2 : Bool;
+      rez_BOOL3 : Bool;
+      rez_BOOL4 : Bool;
+      rez_BOOL5 : Bool;
+      rez_BOOL6 : Bool;
+      rez_BOOL7 : Bool;
+      rez_BOOL8 : Bool;
+      rez_BOOL9 : Bool;
+      rez_BOOL10 : Bool;
+      rez_BOOL11 : Bool;
+      rez_BOOL12 : Bool;
+      rez_BOOL13 : Bool;
+      rez_R : Real;
+      TimeStamp : Date_And_Time;
+   END_STRUCT;
+
+END_TYPE
+
+TYPE "Traceab_Status_Globalny"
+VERSION : 0.1
+   STRUCT
+      rez_R : Real;
+      PLC_Traceability_ON : Bool;   // 1-Zalaczony
+      PLC_Zyje : Bool;   // Plus duration 300ms
+      PC_Zyje : Bool;   // Plus duration 300ms
+      PLC_TraceabBezOdpytan_ON : Bool;   // 1-Baza zapisuje wyniki ale PLC nie sprawdza czy z poprzedniej stacji OK
+      PLC_PracaBezSkanerow_ON : Bool;   // 1-Praca bez skanowania ID detalu
+      PLC_PracaBezWeryfTypu_ON : Bool;   // 1-Praca bez weryfikacji typu // Rezerwa
+      PLC_WarianBezSkanerow_ON : Bool;   // 1-Wariant bez skanowania (mimo ze Praca ze skanowaniem ID detalu)
+      rez7 : Bool;
+      ZapisDoBazyDanych : Bool;
+      OdczytZBazyDanych : Bool;
+      ZadanieNadaniaIDDetalu : Bool;   // // Tylko dla lasera z St1
+      WynikZBazyDanychGotowy : Bool;
+      NadanieIDDetaluGotowe : Bool;   // // Tylko dla lasera z St1
+      rez13 : Bool;
+      rez14 : Bool;
+      rez15 : Bool;
+      station_number : Int;   // station_number - used to query station status. Result should be saved in status
+      TimeStamp : Date_And_Time;
+      WynikZeStanowiska : Int;   // 1-OK, 2-NOK,
+      WynikZBazyDanych : Int;   // 1-OK, 2-NOK,
+   END_STRUCT;
+
+END_TYPE
+
+TYPE "Traceab_Status_Lokalny"
+VERSION : 0.1
+   STRUCT
+      rez_R : Real;
+      OperacjaZalaczona : Bool;   // 1-Zalaczony, 0-Nie bierze udziału
+      rez1 : Bool;
+      rez2 : Bool;
+      rez3 : Bool;
+      rez4 : Bool;
+      rez5 : Bool;
+      rez6 : Bool;
+      rez7 : Bool;
+      ZapisDoBazyDanych : Bool;
+      rez9 : Bool;
+      rez10 : Bool;
+      rez11 : Bool;
+      rez12 : Bool;
+      rez13 : Bool;
+      rez14 : Bool;
+      rez15 : Bool;
+      rez16 : Int;
+      TimeStamp : Date_And_Time;
+      Wynik : Int;   // 1-OK, 2-NOK,
+      rez_I : Int;
+   END_STRUCT;
+
+END_TYPE
+
+TYPE "Traceab_12706"
+VERSION : 0.1
+   STRUCT
+      Operator : "Traceab_Logowanie";
+      Globalne : Struct
+         IDStanowiska : Int;
+         NrProgramu : Int;   // DB475.DBW452; WT_Nummer
+         NrGniazda : Int;   // DB475.DBW452; WT_Nummer
+         IDDetalu : String[30];
+         TypSzynyPaliwowej : Int;   // REZERWA
+         KierunekSzynyPaliwowej : Int;   // REZERWA
+         rez_R3 : Real;
+         rez_R4 : Real;
+         Status : "Traceab_Status_Globalny";
+      END_STRUCT;
+      OdczytanieID : Struct
+         IDDetalu : String[30];   // Oczytane ze skanera DMC
+         rez_R : Real;
+         Status : "Traceab_Status_Lokalny";
+      END_STRUCT;
+      Teilabfrage_REZ : Struct   // Teilabfrage //; FC1 NW12
+         Wykonane : Int;   // 0-NIE, 1-TAK
+         rez_R : Real;
+         Status : "Traceab_Status_Lokalny";
+      END_STRUCT;
+      Nadelpruefung_REZ : Struct   // Nadelpruefung //DB9.DBX4.2; OB1 NW4
+         Wykonane : Int;   // 0-NIE, 1-TAK
+         rez_R : Real;
+         Status : "Traceab_Status_Lokalny";
+      END_STRUCT;
+      SprawdzanieNakrętek : Struct   // Mutternabfrage //DB9.DBX3.7; FB310
+         Wykonane : Int;   // 0-NIE, 1-TAK
+         rez_R : Real;
+         Status : "Traceab_Status_Lokalny";
+      END_STRUCT;
+      DetalZaznaczono : Struct   // Kreismarkierer //DB9.DBX3.4; FB312; Znakowanie
+         Wykonane : Int;   // 0-NIE, 1-TAK
+         NrSilownika : Int;   // DB8.DBW658
+         CzasZnakowania : Real;   // DB8.DBD200
+         rez_R : Real;
+         Status : "Traceab_Status_Lokalny";
+      END_STRUCT;
+      Durchflusspruefung_REZ : Struct   // Durchflusspruefung //DB8.DBX656.7; Durchflussprüfung - Tego chyba nie ma na tej stacji
+         Wykonane : Int;   // 0-NIE, 1-TAK
+         rez_R : Real;
+         Status : "Traceab_Status_Lokalny";
+      END_STRUCT;
+      DrucksensorNachPruefling_REZ : Struct   // DrucksensorNachPruefling //DB8.DBX656.4; Drucksensor nach Prüfling
+         Wykonane : Int;   // 0-NIE, 1-TAK
+         rez_R : Real;
+         Status : "Traceab_Status_Lokalny";
+      END_STRUCT;
+      ParametryZeSchematu : Struct
+         CzujnikCisnieniaNapelnianiaDetaliHe : Real;   // P_He_vor_PT_REAL //DB475.DBD8; [bar] HMI_IW.Kammer1.P_He_vor_PT_REAL
+         CzujnikCisnieniaHelu : Real;   // P_He_Versorgung_REAL //DB475.DBD448; [bar] HMI_IW.Anlage.P_He_Versorgung_REAL
+         CzujnikProzniDetalu : Real;   // P_Vac_PT_REAL //DB475.DBD20; [mbar] HMI_IW.Kammer1.P_Vac_PT_REAL
+         CzujnikCisnieniaDetalu : Real;   // P_He_nach_PT_REAL //P_He_nach_PT_REALDB475.DBD14; [bar] HMI_IW.Kammer1.P_He_nach_PT_REAL
+         OdczytLDS : Real;   // Leckrate //DB9.DBD10; [mbar l/s] Prüf-Erg.Glocke.Kammer1.Leckrate
+         CzujnikCiśnieniaKomory : Real;   // P_Glocke_REAL //DB475.DBD2; [mbar] HMI_IW.Kammer1.P_Glocke_REAL
+         Rezerwa : Real;   // * Roh_Mittel_Mul_Faktor //DB20.DBD608; [mbar l/s] INFICON-DB.Leckratenscalierung.Roh_Mittel_Mul_Faktor
+         rez_REAL_1 : Real;
+         rez_REAL_2 : Real;
+         rez_REAL_3 : Real;
+         rez_R : Real;
+         Status : "Traceab_Status_Lokalny";
+      END_STRUCT;
+      ParametryZNastaw : Struct
+         ProzniaKloszaZgrobna : Real;   // GloVacGrob_Soll //DB8.DBD4; [bar] Glockenvakuum GROB
+         ProznieKloszaDokladna : Real;   // GloVacFein_Soll //DB8.DBD16; [bar] Glockenvakuum FEIN
+         CzasKontroliProzniKloszaZgrubny : Real;   // GloVacGrob //DB8.DBD160; [s] Überwachungszeit Glockenvakuum GROB
+         CzasKontroliProzniKloszaDokladny : Real;   // GloVacFein //DB8.DBD164; [s] Überwachungszeit Glockenvakuum FEIN
+         WartoscOdpowietrzaniaDetalu : Real;   // PtVac_Atmos_Soll_1 //DB8.DBD28; [mbar] Prüfteil-Vakkum ATMOSPHÄRE
+         WartoscOdpowietrzaniaDetaluHelu : Real;   // PtVac_He_Soll_1 //DB8.DBD56; [mbar] Prüfteil-Vakkum HELIUM
+         CzasOdpowietrzaniaDetalu : Real;   // PT_evakuieren_Atmos //DB8.DBD172; [s] Überwachungszeit Prüfteil evakuieren ATMOSPHÄRE
+         CzasOdpowietrzaniaDetaluHelu : Real;   // PT_evakuieren_Helium //DB8.DBD176; [s] Überwachungszeit Prüfteil evakuieren HELIUM
+         CzasZapowietrzaniaDetalu : Real;   // PT_fluten_1 //DB8.DBD180; [s] Prüfteil mit Atmosphäre fluten
+         CisnienieNapelnieniaHelemMinimalne : Real;   // Helium_Min_1 //DB8.DBD44; [bar] Helium -Fülldruck MIN
+         CisnienieNapelnieniaHelemZadane : Real;   // Helium_Soll_1 //DB8.DBD40; [bar] Helium -Fülldruck SOLL
+         CzasKontroliNapelnianiaHelem : Real;   // HeliumFuellen //DB8.DBD184; [s] Überwachungszeit Prüfteil mit Helium füllen
+         CzasKontroliRozprezaniaHelu : Real;   // Helium_entspannen_HD //DB8.DBD168; [s] Überwachungszeit Helium entspannen
+         "Rezerwa 1" : Real;   // * FrgHeliumEvakuieren //DB8.DBD48; [bar] Freigabe Prüfteil evakuieren ab
+         CzasZapowietrzaniaKomory : Real;   // * Nowy parametr [s]
+         CisnienieZapowietrzaniaKomory : Real;   // * Nowy parametr [mbar]
+         rez_REAL_3 : Real;
+         CzasBuzzera : Real;   // Hupzeit //DB8.DBD208; [s] Czas sygnału dzwiękowego zakończenia testu
+         AktywneKomory : Int;   // * Prueffreigabe //DB8.DBW480; 0 - Komora L i P, 1 - Komora L, 2 - Komora P
+         "Rezerwa 2" : Int;   // * Doppel_WT //DB8.DBX656.1; Doppel-WT; 0-NIE; 1-TAK
+         rez_R1 : Real;
+         rez_R2 : Real;
+         Status : "Traceab_Status_Lokalny";
+      END_STRUCT;
+      KontrolaSzczelnościKomory : Struct   // UeberwachGroblBeGlocEvak //DB9.DBX3.2; FB310; Überwachung Grobleck beim Glocke evakuieren
+         Wykonane : Int;   // 0-NIE, 1-TAK
+         rez_R : Real;
+         Status : "Traceab_Status_Lokalny";
+      END_STRUCT;
+      DuzyPrzeciek : Struct   // UeberwachGroblBeHeliumfu //DB9.DBX3.3; FB310; Überwachung Grobleck beim Heliumfüllen
+         Wykonane : Int;   // 0-NIE, 1-TAK
+         rez_R : Real;
+         Status : "Traceab_Status_Lokalny";
+      END_STRUCT;
+      NieszczelnoscKoncowa : Struct   // Leckrate //DB9.DBX1.1; FB310; Wyciek
+         OdczytLDS : Real;   // WynikLeckrate //DB9.DBD10; [mbar l/s]
+         WykrywanieDuzejNieszczelnosci : Real;   // Leckrate_Max //DB8.DBD328; [mbar l/s] Maximale Leckrate
+         WykrywanieDuzejNieszczelnosciPodstawa : Real;   // Leckrat_Max_Mantisse_REZ //DB8.DBD320; Maximal zulässige Leckrate Mantisse
+         WykrywanieDuzejNieszczelnosciPotega : Real;   // Leckrat_Max_Exponent_REZ //DB8.DBD324; Maximal zulässige Leckrate Exponent
+         MaksymalnaNieszczelnosc : Real;   // Leckrate_Grobleck //DB8.DBD340; [mbar l/s] Leckrate Grobleckerkennung
+         MaksymalnaNieszczelnoscPodstawa : Real;   // Leckra_Mantisse_Grob_REZ //DB8.DBD332; Maximal zulässige Leckrate Mantisse
+         MaksymalnaNieszczelnoscPotega : Real;   // Leckra_Exponent_Grob_REZ //DB8.DBD336; Maximal zulässige Leckrate Exponent
+         CzasPomiaruLDS : Real;   // UebernahmeLeckrate //DB8.DBD188; [s] Übernahme Leckrate nach
+         rez_R1 : Real;
+         rez_R2 : Real;
+         rez_R3 : Real;
+         rez_R4 : Real;
+         Status : "Traceab_Status_Lokalny";
+      END_STRUCT;
+   END_STRUCT;
+
+END_TYPE
+
+DATA_BLOCK "Traceability_Test_Hel_Le"
+{ S7_Optimized_Access := 'FALSE' }
+VERSION : 0.1
+   STRUCT 
+      Stacja_12706_LEWA : "Traceab_12706";
+   END_STRUCT;
+
+
+BEGIN
+
+END_DATA_BLOCK
+
