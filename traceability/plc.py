@@ -358,7 +358,7 @@ class PLC(PLCBase):
             return
 
         if ID_QUERY_FLAG in block.export():
-            if block.id_query_flag:  # ID_QUERY_FLAG is set - begin id generation processing
+            if block.__getitem__(ID_QUERY_FLAG):  # ID_QUERY_FLAG is set - begin id generation processing
                 block.set_id_ready_flag(False)  # set ID ready flag to False
                 
                 for field in [HEAD_DETAIL_ID]:
