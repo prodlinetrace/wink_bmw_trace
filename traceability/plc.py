@@ -338,6 +338,7 @@ class PLC(PLCBase):
             # reset pc_ready flag in case it get's accidentally changed.
             # unsafe - it may cause some race condition in special condition.
             block.set_pc_ready_flag(True)
+        self.process_id_query(dbid)
         self.save_operation(dbid)
         self.save_status(dbid)
         self.read_status(dbid)
@@ -346,6 +347,48 @@ class PLC(PLCBase):
 
         # sleep for configurable amount of time.
         sleep(self._polldbsleep)
+
+    def process_id_query(self, dbid):
+        """
+            gets the next_product_id from db and saves data in HEAD_DETAIL_ID.
+        """
+        block = self.get_db(dbid)
+        if block is None:
+            logger.warn("PLC: {plc} DB: {db} is missing on PLC. Skipping".format(plc=self.get_id(), db=dbid))
+            return
+
+        if ID_QUERY_FLAG in block.export():
+            if block.id_query_flag:  # ID_QUERY_FLAG is set - begin id generation processing
+                block.set_id_ready_flag(False)  # set ID ready flag to False
+                
+                for field in [HEAD_DETAIL_ID]:
+                    if field not in block.export():
+                        logger.warning("PLC: {plc} DB: {db} is missing field {field} in block body: {body}. Message skipped. Switching off PLC_Query bit.".format(plc=self.get_id(), db=block.get_db_number(), field=field, body=block.export()))
+                        block.set_id_query_flag(False)  # switch off ID_Query bit
+                        block.set_id_ready_flag(True)  # set ID ready flag back to true
+                        return
+
+                head_detail_id_initial = block[HEAD_DETAIL_ID]
+
+                next_product_id = self.database_engine.get_next_product_id()
+                logger.info(f'PLC: {self.get_id()} DB: {block.get_db_number()} calculated next_product_id: {next_product_id}')
+                
+                block.store_item(HEAD_DETAIL_ID, next_product_id)
+                
+                # read again to verify if saved correctly
+                try:
+                    head_detail_id_stored = block[HEAD_DETAIL_ID]
+                except ValueError as e:
+                    logger.error(f'PLC: {self.get_id()} DB: {block.get_db_number()} Data read error. Input: {head_detail_id_stored} Exception: {e}')
+
+               
+                if head_detail_id_stored != next_product_id:
+                    logger.error(f'PLC: {self.get_id()} DB: {block.get_db_number()} Data read error. head_detail_id from database: {next_product_id} is different than one stored on PLC: {head_detail_id_stored} (save on PLC failed.)')
+                logger.info(f'PLC: {self.get_id()} DB: {block.get_db_number()} next_product_id saved in PLC memory: {next_product_id}. Initial/Stored value: {head_detail_id_initial}/{head_detail_id_stored}')
+
+                block.set_id_query_flag(False)  # switch off ID_Query bit
+                block.set_id_ready_flag(True)  # set ID ready flag back to true
+                
 
     def read_status(self, dbid):
         block = self.get_db(dbid)

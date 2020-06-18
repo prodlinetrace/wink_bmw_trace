@@ -167,6 +167,13 @@ class Database(object):
             return False
         return True
 
+    def get_next_product_id(self):
+        """
+            returns next available product id.
+        """
+        
+        return Product.get_next_product_id()
+
     def add_product_if_required(self, product_id):
         #product_type = str(product_type)
         #serial_number = str(serial_number)

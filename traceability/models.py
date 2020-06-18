@@ -11,7 +11,7 @@ from flask_login import UserMixin
 from . import db
 logger = logging.getLogger(__name__)
 
-__version__ = '0.1.5'
+__version__ = '0.1.6'
 
 try:
     from . import login_manager
@@ -135,8 +135,28 @@ class Product(db.Model):
     def get_product_id(self, id):
         """
         returns product id.
+        The product id should have following format:
+        RRRRMMDDcccccccccc - 18 characters. 
+        
         """
         return Product.calculate_product_id(id=self.id)
+    
+    @staticmethod
+    def get_next_product_id(last_inserted_id=""):
+        """
+        returns product id in RRRRMMDDcccccccccc format
+        """
+        
+        last_inserted_product = Product.query.order_by(Product.id.desc()).first()
+        last_inserted_id = last_inserted_product.id
+        # sql = 'SELECT MAX(id) FROM product'
+        date_prefix = datetime.now().strftime("%Y%m%d")
+        n = 1  # reset counter if date_prefix has changed to new day
+        if last_inserted_id:
+            if last_inserted_id.startswith(date_prefix):
+                n = int(last_inserted_id[-10:]) + 1  # cast last 10 characters of id to integer and increment by one
+        
+        return f'{date_prefix}{n:010}'
 
     @property
     def serialize(self):

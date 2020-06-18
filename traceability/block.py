@@ -329,6 +329,12 @@ class DB(object):
         """
         return self[PLC_SAVE_FLAG]
 
+    def id_query_flag(self):
+        return self[ID_QUERY_FLAG]
+
+    def id_ready_flag(self):
+        return self[ID_READY_FLAG]
+
     def operator_query_flag(self):
         return self[OPERATOR_QUERY_FLAG]
 
@@ -353,6 +359,14 @@ class DB(object):
 
     def set_pc_ready_flag(self, value=True, check=True):
         flag = PC_READY_FLAG
+        return self.set_flag(flag, value, check)
+
+    def set_id_ready_flag(self, value=True, check=True):
+        flag = ID_READY_FLAG
+        return self.set_flag(flag, value, check)
+
+    def set_id_query_flag(self, value=True, check=True):
+        flag = ID_QUERY_FLAG
         return self.set_flag(flag, value, check)
 
     def set_pc_open_browser_flag(self, value=True, check=True):
