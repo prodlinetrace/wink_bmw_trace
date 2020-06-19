@@ -123,7 +123,7 @@ LaserMarking = """
 
 LaserMarkingVerification = """
 # LaserMarkingVerification Begin
-0.0     LaserMarkingVerification.read_id                     STRING[30]  # Odczytane id ze skanera DMC
+0.0     LaserMarkingVerification.id                         STRING[30]  # Odczytane id ze skanera DMC
 32.0    LaserMarkingVerification.res1                        REAL        # reserve
 """ + offset_spec_block(UDT81.replace("__UDT81_prefix__", "LaserMarkingVerification"), 36) + """
 # LaserMarkingVerification END - size of 56 bytes

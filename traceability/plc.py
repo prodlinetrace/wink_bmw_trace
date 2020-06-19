@@ -338,7 +338,7 @@ class PLC(PLCBase):
             # reset pc_ready flag in case it get's accidentally changed.
             # unsafe - it may cause some race condition in special condition.
             block.set_pc_ready_flag(True)
-        self.process_id_query(dbid)
+        #self.process_id_query(dbid)
         self.save_operation(dbid)
         self.save_status(dbid)
         self.read_status(dbid)
@@ -577,15 +577,96 @@ class PLC(PLCBase):
             self.process_UDT88(dbid) 
 
     def process_UDT83(self, dbid):
+        """
+        Laser marking station handling.
+        """
         logger.debug("UDT83 dbid: {dbid} type: {type}".format(dbid=dbid, type=type(dbid)))
         block = self.get_db(dbid)
+        if block is None:
+            logger.warn("PLC: {plc} DB: {db} is missing on PLC. Skipping".format(plc=self.get_id(), db=dbid))
+            return
 
+        if ID_QUERY_FLAG in block.export():
+            """
+                gets the next_product_id from db and saves data in HEAD_DETAIL_ID.
+            """
+            if block.__getitem__(ID_QUERY_FLAG):  # ID_QUERY_FLAG is set - begin id generation processing
+                block.set_id_ready_flag(False)  # set ID ready flag to False
+                
+                for field in [HEAD_DETAIL_ID]:
+                    if field not in block.export():
+                        logger.warning("PLC: {plc} DB: {db} is missing field {field} in block body: {body}. Message skipped. Switching off PLC_Query bit.".format(plc=self.get_id(), db=block.get_db_number(), field=field, body=block.export()))
+                        block.set_id_query_flag(False)  # switch off ID_Query bit
+                        block.set_id_ready_flag(True)  # set ID ready flag back to true
+                        return
+
+                head_detail_id_initial = block[HEAD_DETAIL_ID]
+
+                next_product_id = self.database_engine.get_next_product_id()
+                logger.info(f'PLC: {self.get_id()} DB: {block.get_db_number()} calculated next_product_id: {next_product_id}')
+                
+                block.store_item(HEAD_DETAIL_ID, next_product_id)
+                
+                # read again to verify if saved correctly
+                try:
+                    head_detail_id_stored = block[HEAD_DETAIL_ID]
+                except ValueError as e:
+                    logger.error(f'PLC: {self.get_id()} DB: {block.get_db_number()} Data read error. Input: {head_detail_id_stored} Exception: {e}')
+
+               
+                if head_detail_id_stored != next_product_id:
+                    logger.error(f'PLC: {self.get_id()} DB: {block.get_db_number()} Data read error. head_detail_id from database: {next_product_id} is different than one stored on PLC: {head_detail_id_stored} (save on PLC failed.)')
+                logger.info(f'PLC: {self.get_id()} DB: {block.get_db_number()} next_product_id saved in PLC memory: {next_product_id}. Initial/Stored value: {head_detail_id_initial}/{head_detail_id_stored}')
+
+                block.set_id_query_flag(False)  # switch off ID_Query bit
+                block.set_id_ready_flag(True)  # set ID ready flag back to true
+
+        """
+            check and verify what has been burned by DMC marking laser.
+        """
+        detail_id = block[HEAD_DETAIL_ID] 
+        station_id = int(block[HEAD_STATION_ID])
+        station_status = int(block[STATUS_STATION_RESULT])
+        program_number = int(block[HEAD_PROGRAM_NUMBER])
+        nest_number = int(block[HEAD_NEST_NUMBER])  
+        
         LaserMarking_LaserProgramName = block.get("LaserMarking.LaserProgramName")
-        LaserMarking_id = block.get("LaserMarking.id")
+        LaserMarking_id = block.get("LaserMarking.id")  # id to be burned by laser
         LaserMarking_status = Local_Status("LaserMarking", block)
 
-        LaserMarkingVerification_id = block.get("LaserMarkingVerification.id")
+        LaserMarkingVerification_id = block.get("LaserMarkingVerification.id")   # id read by DMC scanner after burning
         LaserMarkingVerification_status = Local_Status("LaserMarkingVerification", block)
+
+
+        if LaserMarking_status.active and LaserMarking_status.database_save:
+            local_status = LaserMarking_status
+            logger.info(f"PLC: {self.id} dbid: {dbid} block: {block} detail_id: {detail_id} LaserMarking active_flag: {local_status.active} database_save_flag: {local_status.database_save} date_time: {local_status.date_time} result: {local_status.result}")
+            
+            operation_type = 501  # hardcoded operation_id value 501 - scanner burn
+            if LaserMarking_id == head_detail_id:
+                operation_status = 1   # scanner read OK
+            else:
+                operation_status = 2   # scanner read NOK
+
+            # write status
+            self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, local_status.date_time)
+            # mark item as read
+            local_status.set_database_save(0)
+
+        if LaserMarkingVerification_status.active and LaserMarkingVerification_status.database_save: 
+            local_status = LaserMarking_status
+            logger.info(f"PLC: {self.id} dbid: {dbid} block: {block} detail_id: {detail_id} LaserMarkingVerification active_flag: {local_status.active} database_save_flag: {local_status.database_save} date_time: {local_status.date_time} result: {local_status.result}")
+            
+            operation_type = 502  # hardcoded operation_id value 502 - scanner burn verification
+            if LaserMarkingVerification_id == LaserMarking_id:
+                operation_status = 1   # scanner read OK
+            else:
+                operation_status = 2   # scanner read NOK
+
+            # write status
+            self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, local_status.date_time)
+            # mark item as read
+            local_status.set_database_save(0)
 
     def process_UDT84(self, dbid):
         logger.debug("UDT84 dbid: {dbid} type: {type}".format(dbid=dbid, type=type(dbid)))
@@ -594,8 +675,15 @@ class PLC(PLCBase):
         ReadID_status = Local_Status("ReadID", block)
         logger.debug("dbid: {dbid} block: {block} ReadID: {ReadID} ReadID_Status_Active: {ReadID_Status_Active} ReadID_Status_DatabaseSave: {ReadID_Status_DatabaseSave} ReadID_Status_date_time: {ReadID_Status_date_time} ReadID_Status_result: {ReadID_Status_result}".format(dbid=dbid, block=block, ReadID=ReadID_id, ReadID_Status_Active=ReadID_status.active, ReadID_Status_DatabaseSave=ReadID_status.database_save, ReadID_Status_date_time=ReadID_status.date_time, ReadID_Status_result=ReadID_status.result))
 
+        detail_id = block[HEAD_DETAIL_ID] 
+        station_id = int(block[HEAD_STATION_ID])
+        station_status = int(block[STATUS_STATION_RESULT])
+        program_number = int(block[HEAD_PROGRAM_NUMBER])
+        nest_number = int(block[HEAD_NEST_NUMBER])  
+
         if ReadID_status.active and ReadID_status.database_save: 
-            logger.info("PLC: {plc} dbid: {dbid} block: {block} ReadID: {ReadID} ReadID_Status_Active: {ReadID_Status_Active} ReadID_Status_DatabaseSave: {ReadID_Status_DatabaseSave} ReadID_Status_date_time: {ReadID_Status_date_time} ReadID_Status_result: {ReadID_Status_result}".format(plc=self.id, dbid=dbid, block=block, ReadID=ReadID_id, ReadID_Status_Active=ReadID_status.active, ReadID_Status_DatabaseSave=ReadID_status.database_save, ReadID_Status_date_time=ReadID_status.date_time, ReadID_Status_result=ReadID_status.result))
+            local_status = ReadID_status
+            logger.info(f"PLC: {self.id} dbid: {dbid} block: {block} detail_id: {detail_id} ReadID active_flag: {local_status.active} database_save_flag: {local_status.database_save} date_time: {local_status.date_time} result: {local_status.result}")
             
             operation_type = 101  # hardcoded operation_id value 101 - scanner read
             if ReadID_id == head_detail_id:
@@ -604,9 +692,9 @@ class PLC(PLCBase):
                 operation_status = 2   # scanner read NOK
 
             # write status
-            self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, ReadID_status.date_time)
+            self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, local_status.date_time)
             # mark item as read
-            ReadID_status.set_database_save(0)
+            local_status.set_database_save(0)
             
 
         SensorOiling_done = block.get("SensorOiling.done")
