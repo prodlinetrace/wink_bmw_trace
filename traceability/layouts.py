@@ -45,7 +45,7 @@ UDT81 = """
 4.5    __UDT81_prefix__.Status.res1_b5                       BOOL        # reserve
 4.6    __UDT81_prefix__.Status.res1_b6                       BOOL        # reserve
 4.7    __UDT81_prefix__.Status.res1_b7                       BOOL        # reserve
-5.0    __UDT81_prefix__.Status.DatabaseSave                  BOOL        # TODO: check if it's used?
+5.0    __UDT81_prefix__.Status.DatabaseSave                  BOOL        # 1 - set by PLC indicates that data should be collected. set to 0 by PC after data processing. 
 5.1    __UDT81_prefix__.Status.res2_b1                       BOOL        # reserve
 5.2    __UDT81_prefix__.Status.res2_b2                       BOOL        # reserve
 5.3    __UDT81_prefix__.Status.res2_b3                       BOOL        # reserve
