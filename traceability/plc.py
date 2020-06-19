@@ -649,8 +649,8 @@ class PLC(PLCBase):
 
             results = [
                 {
-                    'type_id': 4,
-                    'unit_id': 99,
+                    'type_id': 1,
+                    'unit_id': 0,
                     'desc_id': operation_type * 100 + 1,
                     'value': LaserMarking_id, 
                 }
@@ -672,8 +672,8 @@ class PLC(PLCBase):
 
             results = [
                 {
-                    'type_id': 4,
-                    'unit_id': 99,
+                    'type_id': 1,
+                    'unit_id': 0,
                     'desc_id': operation_type * 100 + 1,
                     'value': LaserMarkingVerification_id, 
                 }
@@ -708,8 +708,8 @@ class PLC(PLCBase):
 
             results = [
                 {
-                    'type_id': 4,
-                    'unit_id': 99,
+                    'type_id': 1,
+                    'unit_id': 0,
                     'desc_id': operation_type * 100 + 1,
                     'value': ReadID_id, 
                 }
@@ -915,8 +915,8 @@ class PLC(PLCBase):
                 operation_status = 2   # scanner read NOK
             results = [
                 {
-                    'type_id': 4,
-                    'unit_id': 99,
+                    'type_id': 1,
+                    'unit_id': 0,
                     'desc_id': operation_type * 100 + 1,
                     'value': ReadID_id, 
                 }
@@ -1108,6 +1108,9 @@ class PLC(PLCBase):
         PresetParams_HeliumFuellen = block.get("PresetParams.HeliumFuellen")
         PresetParams_Helium_entspannen_HD = block.get("PresetParams.Helium_entspannen_HD")
         PresetParams_FrgHeliumEvakuieren = block.get("PresetParams.FrgHeliumEvakuieren")
+        PresetParams_CzasZapowietrzaniaKomory = block.get("PresetParams.CzasZapowietrzaniaKomory")
+        PresetParams_CisnienieZapowietrzaniaKomory = block.get("PresetParams.CisnienieZapowietrzaniaKomory")
+        PresetParams_BuzzerTime = block.get("PresetParams.BuzzerTime")
         PresetParams_Prueffreigabe = block.get("PresetParams.Prueffreigabe")
         PresetParams_Doppel_WT = block.get("PresetParams.Doppel_WT")
         PresetParams_status = Local_Status("PresetParams", block)
@@ -1210,7 +1213,25 @@ class PLC(PLCBase):
                     'unit_id': 99,
                     'desc_id': operation_type * 100 + 16,
                     'value': PresetParams_Doppel_WT,
-                },                       
+                },
+                {
+                    'type_id': 3,
+                    'unit_id': 30,
+                    'desc_id': operation_type * 100 + 17,
+                    'value': PresetParams_CzasZapowietrzaniaKomory,
+                },
+                {
+                    'type_id': 3,
+                    'unit_id': 9,
+                    'desc_id': operation_type * 100 + 18,
+                    'value': PresetParams_CisnienieZapowietrzaniaKomory,
+                },
+                {
+                    'type_id': 3,
+                    'unit_id': 30,
+                    'desc_id': operation_type * 100 + 19,
+                    'value': PresetParams_BuzzerTime,
+                },                
            ]
             # write status
             self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, PresetParams_status.date_time, results)
@@ -1337,8 +1358,8 @@ class PLC(PLCBase):
                 operation_status = 2   # scanner read NOK
             results = [
                 {
-                    'type_id': 4,
-                    'unit_id': 99,
+                    'type_id': 1,
+                    'unit_id': 0,
                     'desc_id': operation_type * 100 + 1,
                     'value': ReadID_id, 
                 }

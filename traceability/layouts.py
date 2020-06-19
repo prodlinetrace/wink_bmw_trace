@@ -302,14 +302,14 @@ DrucksensorNachPruefling = """
 """
 
 SchemaParams = """
-# SchemaParams Begin                                         # Parametry z nastaw
-0.0    SchemaParams.P_He_vor_PT_REAL                         REAL        # DB475.DBD8; [bar] HMI_IW.Kammer1.P_He_vor_PT_REAL 
-4.0    SchemaParams.P_He_Versorgung_REAL                     REAL        # DB475.DBD448; [bar] HMI_IW.Anlage.P_He_Versorgung_REAL 
-8.0    SchemaParams.P_Vac_PT_REAL                            REAL        # DB475.DBD20; [mbar] HMI_IW.Kammer1.P_Vac_PT_REAL
-12.0   SchemaParams.P_He_nach_PT_REAL                        REAL        # DB475.DBD14; [bar] HMI_IW.Kammer1.P_He_nach_PT_REAL 
-16.0   SchemaParams.Leckrate                                 REAL        # DB9.DBD10; [mbar l/s] Pruef-Erg.Glocke.Kammer1.Leckrate 
-20.0   SchemaParams.P_Glocke_REAL                            REAL        # DB475.DBD2; [mbar] HMI_IW.Kammer1.P_Glocke_REAL 
-24.0   SchemaParams.Roh_Mittel_Mul_Faktor                    REAL        # DB20.DBD608; [mbar l/s] INFICON-DB.Leckratenscalierung .Roh_Mittel_Mul_Faktor
+# SchemaParams Begin                                         # Parametry ze schematu
+0.0    SchemaParams.P_He_vor_PT_REAL                         REAL        # DB475.DBD8; [bar] HMI_IW.Kammer1.P_He_vor_PT_REAL; CzujnikCisnieniaNapelnianiaDetaliHe 
+4.0    SchemaParams.P_He_Versorgung_REAL                     REAL        # DB475.DBD448; [bar] HMI_IW.Anlage.P_He_Versorgung_REAL; CzujnikCisnieniaHelu 
+8.0    SchemaParams.P_Vac_PT_REAL                            REAL        # DB475.DBD20; [mbar] HMI_IW.Kammer1.P_Vac_PT_REAL; CzujnikProzniHelu
+12.0   SchemaParams.P_He_nach_PT_REAL                        REAL        # DB475.DBD14; [bar] HMI_IW.Kammer1.P_He_nach_PT_REAL; CzujnikProzniDetalu
+16.0   SchemaParams.Leckrate                                 REAL        # DB9.DBD10; [mbar l/s] Pruef-Erg.Glocke.Kammer1.Leckrate; CzujnikCisnieniaDetalu 
+20.0   SchemaParams.P_Glocke_REAL                            REAL        # DB475.DBD2; [mbar] HMI_IW.Kammer1.P_Glocke_REAL; OdczytLDS 
+24.0   SchemaParams.Roh_Mittel_Mul_Faktor                    REAL        # DB20.DBD608; [mbar l/s] INFICON-DB.Leckratenscalierung .Roh_Mittel_Mul_Faktor; CzujnikCisnieniaKomory
 28.0   SchemaParams.res_r1                                   REAL        # reserve
 32.0   SchemaParams.res_r2                                   REAL        # reserve
 36.0   SchemaParams.res_r3                                   REAL        # reserve
@@ -320,24 +320,24 @@ SchemaParams = """
 
 PresetParams = """
 # PresetParams Begin                                         # Parametry z nastaw
-0.0    PresetParams.GloVacGrob_Soll                          REAL        # DB8.DBD4; [bar] Glockenvakuum GROB 
-4.0    PresetParams.GloVacFein_Soll                          REAL        # DB8.DBD16; [bar] Glockenvakuum FEIN
-8.0    PresetParams.GloVacGrob                               REAL        # DB8.DBD160; [s] Ueberwachungszeit Glockenvakuum GROB
-12.0   PresetParams.GloVacFein                               REAL        # DB8.DBD164; [s] Ueberwachungszeit Glockenvakuum FEIN
-16.0   PresetParams.PtVac_Atmos_Soll_1                       REAL        # DB8.DBD28; [mbar] Pruefteil-Vakkum ATMOSPHAERE
-20.0   PresetParams.PtVac_He_Soll_1                          REAL        # DB8.DBD56; [mbar] Pruefteil-Vakkum HELIUM
-24.0   PresetParams.PT_evakuieren_Atmos                      REAL        # DB8.DBD172; [s] Ueberwachungszeit Pruefteil evakuieren ATMOSPHAERE
-28.0   PresetParams.PT_evakuieren_Helium                     REAL        # DB8.DBD176; [s] Ueberwachungszeit Pruefteil evakuieren HELIUM
-32.0   PresetParams.PT_fluten_1                              REAL        # DB8.DBD180; [s] Pruefteil mit Atmosphaere fluten
-36.0   PresetParams.Helium_Min_1                             REAL        # DB8.DBD44; [bar] Helium -Fuelldruck MIN
-40.0   PresetParams.Helium_Soll_1                            REAL        # DB8.DBD40; [bar] Helium -Fuelldruck SOLL
-44.0   PresetParams.HeliumFuellen                            REAL        # DB8.DBD184; [s] Ueberwachungszeit Pruefteil mit Helium fuellen
-48.0   PresetParams.Helium_entspannen_HD                     REAL        # DB8.DBD168; [s] Ueberwachungszeit Helium entspannen
-52.0   PresetParams.FrgHeliumEvakuieren                      REAL        # DB8.DBD48; [bar] Freigabe Pruefteil evakuieren ab
-56.0   PresetParams.res_r1                                   REAL        # reserve
-60.0   PresetParams.res_r2                                   REAL        # reserve
+0.0    PresetParams.GloVacGrob_Soll                          REAL        # DB8.DBD4; [bar] Glockenvakuum GROB; ProzniaKloszaZgrobna
+4.0    PresetParams.GloVacFein_Soll                          REAL        # DB8.DBD16; [bar] Glockenvakuum FEIN; ProzniaKloszaDokladna
+8.0    PresetParams.GloVacGrob                               REAL        # DB8.DBD160; [s] Ueberwachungszeit Glockenvakuum GROB; CzasKontroliProzniaKloszaZgrobna
+12.0   PresetParams.GloVacFein                               REAL        # DB8.DBD164; [s] Ueberwachungszeit Glockenvakuum FEIN; CzasKontroliProzniaKloszaDokladna
+16.0   PresetParams.PtVac_Atmos_Soll_1                       REAL        # DB8.DBD28; [mbar] Pruefteil-Vakkum ATMOSPHAERE; WartoscOdpowietrzaniaDetalu
+20.0   PresetParams.PtVac_He_Soll_1                          REAL        # DB8.DBD56; [mbar] Pruefteil-Vakkum HELIUM; WartoscOdpowietrzaniaDetaluHelu
+24.0   PresetParams.PT_evakuieren_Atmos                      REAL        # DB8.DBD172; [s] Ueberwachungszeit Pruefteil evakuieren ATMOSPHAERE; CzasOdpowietrzaniaDetalu
+28.0   PresetParams.PT_evakuieren_Helium                     REAL        # DB8.DBD176; [s] Ueberwachungszeit Pruefteil evakuieren HELIUM; CzasOdpowietrzaniaDetaluHelu
+32.0   PresetParams.PT_fluten_1                              REAL        # DB8.DBD180; [s] Pruefteil mit Atmosphaere fluten; CzasZapowietrzaniaDetalu
+36.0   PresetParams.Helium_Min_1                             REAL        # DB8.DBD44; [bar] Helium -Fuelldruck MIN; CisnienieNapelnianiaHelemMinimalne
+40.0   PresetParams.Helium_Soll_1                            REAL        # DB8.DBD40; [bar] Helium -Fuelldruck SOLL; CisnienieNapelnianiaHelemZadane
+44.0   PresetParams.HeliumFuellen                            REAL        # DB8.DBD184; [s] Ueberwachungszeit Pruefteil mit Helium fuellen; CzasKontroliNapelnianiaHelem
+48.0   PresetParams.Helium_entspannen_HD                     REAL        # DB8.DBD168; [s] Ueberwachungszeit Helium entspannen; CzasKontroliRozprezaniaHelu
+52.0   PresetParams.FrgHeliumEvakuieren                      REAL        # DB8.DBD48; [bar] Freigabe Pruefteil evakuieren ab; 
+56.0   PresetParams.CzasZapowietrzaniaKomory                 REAL        # new; [s]
+60.0   PresetParams.CisnienieZapowietrzaniaKomory            REAL        # new; [mbar]
 64.0   PresetParams.res_r3                                   REAL        # reserve
-68.0   PresetParams.res_r4                                   REAL        # reserve
+68.0   PresetParams.BuzzerTime                               REAL        # new; [s]; Czas sygnalu dzwiekowego zakonczenia testu
 72.0   PresetParams.Prueffreigabe                            INT         # DB8.DBW480; 1-Tylko komora 1, 2-Tylko komora 2, 3-Obie komory
 74.0   PresetParams.Doppel_WT                                INT         # DB8.DBX656.1; Doppel-WT; 0-NIE; 1-TAK
 76.0   PresetParams.res_r1                                   REAL        # reserve
@@ -366,12 +366,12 @@ Leckrate = """
 # Leckrate Begin                                                         # DB9.DBX1.1; FB310; Wyciek
 0.0    Leckrate.leak_result                                  REAL        # DB9.DBD10; [mbar l/s]
 4.0    Leckrate.leak_max                                     REAL        # DB8.DBD328; [mbar l/s] Maximale Leckrate
-8.0    Leckrate.leak_Max_Mantisse_REZ                        REAL        # DB8.DBD320; Maximal zulaessige Leckrate Mantisse
-12.0   Leckrate.leak_Max_Exponent_REZ                        REAL        # DB8.DBD324; Maximal zulaessige Leckrate Exponent
-16.0   Leckrate.leak_Grobleck                                REAL        # DB8.DBD340; [mbar l/s] Leckrate Grobleckerkennung
-20.0   Leckrate.leak_Mantisse_Grob_REZ                       REAL        # DB8.DBD332; Maximal zulaessige Leckrate Mantisse
-24.0   Leckrate.leak_Exponent_Grob_REZ                       REAL        # DB8.DBD336; Maximal zulaessige Leckrate Exponent
-28.0   Leckrate.leak_UebernahmeLeckrate                      REAL        # DB8.DBD188; [s] uebernahme Leckrate nach
+8.0    Leckrate.leak_Max_Mantisse_REZ                        REAL        # DB8.DBD320; Maximal zulaessige Leckrate Mantisse; Wyciek duzej nieszczelnosci - podstawa
+12.0   Leckrate.leak_Max_Exponent_REZ                        REAL        # DB8.DBD324; Maximal zulaessige Leckrate Exponent; Wyciek duzej nieszczelnosci - potega
+16.0   Leckrate.leak_Grobleck                                REAL        # DB8.DBD340; [mbar l/s] Leckrate Grobleckerkennung; Maksymalna Nieszczelnosc
+20.0   Leckrate.leak_Mantisse_Grob_REZ                       REAL        # DB8.DBD332; Maximal zulaessige Leckrate Mantisse; Maksymalna Nieszczelnosc - podstawa
+24.0   Leckrate.leak_Exponent_Grob_REZ                       REAL        # DB8.DBD336; Maximal zulaessige Leckrate Exponent; Maksymalna Nieszczelnosc - potega
+28.0   Leckrate.leak_UebernahmeLeckrate                      REAL        # DB8.DBD188; [s] uebernahme Leckrate nach; Czas pomiaru LDS
 32.0   Leckrate.res_r1                                       REAL        # reserve
 36.0   Leckrate.res_r2                                       REAL        # reserve
 40.0   Leckrate.res_r3                                       REAL        # reserve
