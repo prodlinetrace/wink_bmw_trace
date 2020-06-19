@@ -11,7 +11,7 @@ from flask_login import UserMixin
 from . import db
 logger = logging.getLogger(__name__)
 
-__version__ = '0.1.6'
+__version__ = '0.1.7'
 
 try:
     from . import login_manager
@@ -441,7 +441,7 @@ class Operation_Status(db.Model):
     operations = db.relationship('Operation', lazy='dynamic', backref='operation_status',  foreign_keys='Operation.operation_status_id')
     status = db.relationship('Status', lazy='dynamic', backref='status_name', foreign_keys='Status.status')
 
-    def __init__(self, ident, name="Default Operation Status", description="Default Operation Status Description", unit_id=None):
+    def __init__(self, ident, name="Default Operation Status", description="", unit_id=None):
         self.id = ident
         self.name = name
         self.description = description
@@ -468,7 +468,7 @@ class Operation_Type(db.Model):
     description = db.Column(db.String(255))
     operations = db.relationship('Operation', lazy='dynamic', backref='operation_type')
 
-    def __init__(self, ident, name="Default Operation Name", description="Default Operation Description"):
+    def __init__(self, ident, name="Default Operation Name", description=""):
         self.id = ident
         self.name = name
         self.description = description
@@ -495,7 +495,7 @@ class Unit(db.Model):
     operation_status = db.relationship('Operation_Status', lazy='dynamic', backref='unit', foreign_keys='Operation_Status.unit_id')
     result = db.relationship('Result', lazy='dynamic', backref='unit')
 
-    def __init__(self, ident, name="Default Unit Name", symbol="Default Unit Symbol", description="Default Unit Description"):
+    def __init__(self, ident, name="Default Unit Name", symbol="Default Unit Symbol", description=""):
         self.id = ident
         self.name = name
         self.symbol = symbol
@@ -522,7 +522,7 @@ class Desc(db.Model):
     description = db.Column(db.String(255))
     result = db.relationship('Result', lazy='dynamic', backref='desc')
 
-    def __init__(self, ident, name="Default Desc Name", description="Default Desc Description"):
+    def __init__(self, ident, name="Default Desc Name", description=""):
         self.id = ident
         self.name = name
         self.description = description
@@ -549,7 +549,7 @@ class Type(db.Model):
     result = db.relationship('Result', lazy='dynamic', backref='type', foreign_keys='Result.type_id')
 
 
-    def __init__(self, ident, name="Default Type Name", symbol="Default Type Symbol", description="Default Type Description"):
+    def __init__(self, ident, name="Default Type Name", symbol="Default Type Symbol", description=""):
         self.id = ident
         self.name = name
         self.symbol = symbol
