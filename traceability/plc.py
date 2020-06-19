@@ -343,7 +343,6 @@ class PLC(PLCBase):
         self.save_status(dbid)
         self.read_status(dbid)
         self.show_product_details(dbid)
-        self.read_operator_status(dbid)
 
         # sleep for configurable amount of time.
         sleep(self._polldbsleep)
@@ -648,8 +647,16 @@ class PLC(PLCBase):
             else:
                 operation_status = 2   # scanner read NOK
 
+            results = [
+                {
+                    'type_id': 4,
+                    'unit_id': 99,
+                    'desc_id': operation_type * 100 + 1,
+                    'value': LaserMarking_id, 
+                }
+            ]
             # write status
-            self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, local_status.date_time)
+            self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, local_status.date_time, results)
             # mark item as read
             local_status.set_database_save(0)
 
@@ -663,8 +670,16 @@ class PLC(PLCBase):
             else:
                 operation_status = 2   # scanner read NOK
 
+            results = [
+                {
+                    'type_id': 4,
+                    'unit_id': 99,
+                    'desc_id': operation_type * 100 + 1,
+                    'value': LaserMarkingVerification_id, 
+                }
+            ]
             # write status
-            self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, local_status.date_time)
+            self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, local_status.date_time, results)
             # mark item as read
             local_status.set_database_save(0)
 
@@ -691,8 +706,16 @@ class PLC(PLCBase):
             else:
                 operation_status = 2   # scanner read NOK
 
+            results = [
+                {
+                    'type_id': 4,
+                    'unit_id': 99,
+                    'desc_id': operation_type * 100 + 1,
+                    'value': ReadID_id, 
+                }
+            ]
             # write status
-            self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, local_status.date_time)
+            self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, local_status.date_time, results)
             # mark item as read
             local_status.set_database_save(0)
             
@@ -890,9 +913,17 @@ class PLC(PLCBase):
                 operation_status = 1   # scanner read OK
             else:
                 operation_status = 2   # scanner read NOK
+            results = [
+                {
+                    'type_id': 4,
+                    'unit_id': 99,
+                    'desc_id': operation_type * 100 + 1,
+                    'value': ReadID_id, 
+                }
+            ]
 
             # write status
-            self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, ReadID_status.date_time)
+            self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, ReadID_status.date_time, results)
             # mark item as read
             ReadID_status.set_database_save(0)
             
@@ -1304,9 +1335,16 @@ class PLC(PLCBase):
                 operation_status = 1   # scanner read OK
             else:
                 operation_status = 2   # scanner read NOK
-
+            results = [
+                {
+                    'type_id': 4,
+                    'unit_id': 99,
+                    'desc_id': operation_type * 100 + 1,
+                    'value': ReadID_id, 
+                }
+            ]
             # write status
-            self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, ReadID_status.date_time)
+            self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, ReadID_status.date_time, results)
             # mark item as read
             ReadID_status.set_database_save(0)
 
@@ -1484,83 +1522,6 @@ class PLC(PLCBase):
             # mark item as read
             VendorDMCCodeClass_status.set_database_save(0)
 
-        """
-        if TRC_TMPL_COUNT in block.export():
-            template_count = block.__getitem__(TRC_TMPL_COUNT)
-            logger.debug("PLC: {plc} DB: {db} traceability template count: {count}".format(plc=self.get_id(), db=dbid, count=template_count))
-
-            for template_number in range(0, template_count):
-                pc_save_flag_name = TRC_TMPL_SAVE_FLAG.replace("__no__", str(template_number))
-                operation_status_name = "body.trc.tmpl.__no__.operation_status".replace("__no__", str(template_number))
-                operation_type_name = "body.trc.tmpl.__no__.operation_type".replace("__no__", str(template_number))
-                program_id_name = "body.trc.tmpl.__no__.program_id".replace("__no__", str(template_number))
-                date_time_name = "body.trc.tmpl.__no__.date_time".replace("__no__", str(template_number))
-
-                result_1_name = "body.trc.tmpl.__no__.1.result".replace("__no__", str(template_number))
-                result_1_max_name = "body.trc.tmpl.__no__.1.result_max".replace("__no__", str(template_number))
-                result_1_min_name = "body.trc.tmpl.__no__.1.result_min".replace("__no__", str(template_number))
-                result_1_status_name = "body.trc.tmpl.__no__.1.result_status".replace("__no__", str(template_number))
-                result_2_name = "body.trc.tmpl.__no__.2.result".replace("__no__", str(template_number))
-                result_2_max_name = "body.trc.tmpl.__no__.2.result_max".replace("__no__", str(template_number))
-                result_2_min_name = "body.trc.tmpl.__no__.2.result_min".replace("__no__", str(template_number))
-                result_2_status_name = "body.trc.tmpl.__no__.2.result_status".replace("__no__", str(template_number))
-
-                if block.__getitem__(pc_save_flag_name):  # process only if PLC_Save flag is set for given template
-                    # read basic data
-                    # make sure that basic data is set on PLC (skip otherwise)
-                    #for field in [HEAD_STATION_ID, HEAD_DETAIL_ID, NEST_NUMBER, PROGRAM_NUMBER]:
-                    for field in [HEAD_STATION_ID, HEAD_DETAIL_ID, NEST_NUMBER, PROGRAM_NUMBER]:  # TODO check if everything is given as input
-                        if field not in block.export():
-                            logger.warning("PLC: {plc} DB: {db} is missing field {field} in block body: {body}. Message skipped.".format(plc=self.get_id(), db=block.get_db_number(), field=field, body=block.export()))
-                            return
-                    # get some basic data from data block
-                    '''
-                    try:
-                        data = block[PRODUCT_TYPE]
-                        product_type = int(data)
-                    except ValueError as e:
-                        logger.error("PLC: {plc} DB: {db} Data read error. Input: {data} Exception: {e}, TB: {tb}".format(plc=self.id, db=dbid, data=data, e=e, tb=traceback.format_exc()))
-                        product_type = 0
-                    '''
-                    try:
-                        data = block[HEAD_DETAIL_ID]
-                        head_detail_id = data
-                    except ValueError as e:
-                        logger.error("PLC: {plc} DB: {db} Data read error. Input: {data} Exception: {e}, TB: {tb}".format(plc=self.id, db=dbid, data=data, e=e, tb=traceback.format_exc()))
-                        head_detail_id = ""
-                    try:
-                        data = block[HEAD_STATION_ID]
-                        head_station_id = int(data)
-                    except ValueError as e:
-                        logger.error("PLC: {plc} DB: {db} Data read error. Input: {data} Exception: {e}, TB: {tb}".format(plc=self.id, db=dbid, data=data, e=e, tb=traceback.format_exc()))
-                        head_station_id = 0
-                    try:
-                        data = block[program_id_name]
-                        program_id = str(data)
-                    except ValueError as e:
-                        logger.warning("PLC: {plc} DB: {db} wrong value for program name, returning ''. Exception: {e}".format(plc=self.id, db=block.get_db_number(), e=e))
-                        program_id = ""
-
-                    # read specific data
-                    operation_status = block.__getitem__(operation_status_name)
-                    operation_type = block.__getitem__(operation_type_name)
-                    date_time = block.__getitem__(date_time_name)
-
-                    result_1 = block.__getitem__(result_1_name)
-                    result_1_max = block.__getitem__(result_1_max_name)
-                    result_1_min = block.__getitem__(result_1_min_name)
-                    result_1_status = block.__getitem__(result_1_status_name)
-                    result_2 = block.__getitem__(result_2_name)
-                    result_2_max = block.__getitem__(result_2_max_name)
-                    result_2_min = block.__getitem__(result_2_min_name)
-                    result_2_status = block.__getitem__(result_2_status_name)
-
-                    logger.info("PLC: {plc} DB: {db} PID: {head_detail_id} ST: {station} TN: {template_number} FN: {flag}".format(plc=self.id, db=block.get_db_number(), head_detail_id=head_detail_id, station=head_station_id, template_number=template_number, flag=pc_save_flag_name))
-
-                    self.database_engine.write_operation(head_detail_id, head_station_id, operation_status, operation_type, program_id, date_time, result_1, result_1_max, result_1_min, result_1_status, result_2, result_2_max, result_2_min, result_2_status)
-                    self.counter_saved_operations += 1
-                    block.set_flag(pc_save_flag_name, False)  # cancel save flag:
-        """
 
     def show_product_details(self, dbid):
         block = self.get_db(dbid)
@@ -1614,64 +1575,3 @@ class PLC(PLCBase):
                 self.counter_show_product_details += 1
                 block.set_pc_open_browser_flag(False) # cancel PC_OPEN_BROWSER flag
                 block.set_pc_ready_flag(True)  # set PC ready flag back to true
-                
-    def read_operator_status(self, dbid):
-        block = self.get_db(dbid)
-        if block is None:
-            logger.warn("PLC: {plc} DB: {db} is missing on PLC. Skipping".format(plc=self.get_id(), db=dbid))
-            return
-
-        return  # TODO: remove this crap
-        if OPERATOR_QUERY_FLAG in block.export():
-            if block.operator_query_flag():  # get the operator query flag value from db
-                block.set_pc_ready_flag(False)  # set PC ready flag to False
-                # body
-
-                for field in [HEAD_STATION_ID, OPERATOR_LOGIN, OPERATOR_STATUS]:
-                    if field not in block.export():
-                        logger.warning("PLC: {plc} DB: {db} is missing field {field} in block body: {body}. Message skipped. Switching off PLC_Query bit.".format(plc=self.get_id(), db=block.get_db_number(), field=field, body=block.export()))
-                        block.set_plc_query_flag(False)  # switch off PLC_Query bit
-                        block.set_pc_ready_flag(True)  # set PC ready flag back to true
-                        return
-
-                try:
-                    data = block[HEAD_STATION_ID]
-                    head_station_id = int(data)
-                except ValueError as e:
-                    logger.error("PLC: {plc} DB: {db} Data read error. Input: {data} Exception: {e}, TB: {tb}".format(plc=self.id, db=dbid, data=data, e=e, tb=traceback.format_exc()))
-                    head_station_id = 0
-                try:
-                    data = block[OPERATOR_LOGIN]
-                    operator_login = int(data)
-                    operator_id = self.database_engine.get_operator_by_login(operator_login)
-                except ValueError as e:
-                    logger.error("PLC: {plc} DB: {db} Data read error. Input: {data} Exception: {e}, TB: {tb}".format(plc=self.id, db=dbid, data=data, e=e, tb=traceback.format_exc()))
-                    operator_id = 0
-                try:
-                    data = block[OPERATOR_STATUS]
-                    operator_status_initial = int(data)
-                except ValueError as e:
-                    logger.error("PLC: {plc} DB: {db} Data read error. Input: {data} Exception: {e}, TB: {tb}".format(plc=self.id, db=dbid, data=data, e=e, tb=traceback.format_exc()))
-                    operator_status_initial = 0
-
-                logger.debug("PLC: {plc} DB: {db} SID: {head_station_id} trying to check operator status for OPERATOR: {operator_id}".format(plc=self.get_id(), db=block.get_db_number(), head_station_id=head_station_id, operator_id=operator_id))
-                operator_status = self.database_engine.read_operator_status(int(operator_id))
-
-                block.store_item(OPERATOR_STATUS, operator_status)
-
-                # try to read data from PLC for a test
-                try:
-                    data = block[OPERATOR_STATUS]
-                    operator_status_stored = int(data)
-                except ValueError as e:
-                    logger.error("PLC: {plc} DB: {db} Data read error. Input: {data} Exception: {e}, TB: {tb}".format(plc=self.id, db=dbid, data=data, e=e, tb=traceback.format_exc()))
-                    operator_status_stored = 0
-
-                if operator_status != operator_status_stored:
-                    logger.error("PLC: {plc} DB: {db} SID: {head_station_id} OPERATOR: {operator_id} Operator Status from database {operator_status} if different than one stored on PLC {operator_status_stored} - save on PLC failed. (Initial was: {operator_status_initial})".format(plc=self.get_id(), db=block.get_db_number(), head_station_id=head_station_id, operator_id=operator_id, operator_status=operator_status, operator_status_initial=operator_status_initial, operator_status_stored=operator_status_stored))
-                logger.info("PLC: {plc} DB: {db} SID: {head_station_id} OPERATOR: {operator_id} Operator Status taken from database is: {operator_status}. Initial/Stored Status: {operator_status_initial}/{operator_status_stored} ".format(plc=self.get_id(), db=block.get_db_number(), head_station_id=head_station_id, operator_id=operator_id, operator_status=operator_status, operator_status_initial=operator_status_initial, operator_status_stored=operator_status_stored))
-
-                self.counter_operator_status_read += 1
-                block.set_operator_query_flag(False)
-                block.set_pc_ready_flag(True)  # set pc_ready flag back to true
-                
