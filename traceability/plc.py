@@ -582,12 +582,21 @@ class PLC(PLCBase):
         logger.debug("UDT83 dbid: {dbid} type: {type}".format(dbid=dbid, type=type(dbid)))
         block = self.get_db(dbid)
         if block is None:
-            logger.warn("PLC: {plc} DB: {db} is missing on PLC. Skipping".format(plc=self.get_id(), db=dbid))
+            logger.warn(f'PLC: {self.get_id()} DB: {dbid} is missing on PLC. Skipping')
             return
+
+        # Read some global data BEGIN
+        detail_id = block[HEAD_DETAIL_ID]
+        station_id = int(block[HEAD_STATION_ID])
+        station_status = int(block[STATUS_STATION_RESULT])
+        program_number = int(block[HEAD_PROGRAM_NUMBER])
+        nest_number = int(block[HEAD_NEST_NUMBER])
+        date_time = str(block[STATUS_DATE_TIME])
+        # Read some global data END       
 
         if ID_QUERY_FLAG in block.export():
             """
-                gets the next_product_id from db and saves data in HEAD_DETAIL_ID.
+            gets the next_product_id from db and saves data in HEAD_DETAIL_ID.
             """
             if block.__getitem__(ID_QUERY_FLAG):  # ID_QUERY_FLAG is set - begin id generation processing
                 block.set_id_ready_flag(False)  # set ID ready flag to False
@@ -621,14 +630,8 @@ class PLC(PLCBase):
                 block.set_id_ready_flag(True)  # set ID ready flag back to true
 
         """
-            check and verify what has been burned by DMC marking laser.
+        check and verify what has been burned by DMC marking laser.
         """
-        detail_id = block[HEAD_DETAIL_ID] 
-        station_id = int(block[HEAD_STATION_ID])
-        station_status = int(block[STATUS_STATION_RESULT])
-        program_number = int(block[HEAD_PROGRAM_NUMBER])
-        nest_number = int(block[HEAD_NEST_NUMBER])  
-        
         LaserMarking_LaserProgramName = block.get("LaserMarking.LaserProgramName")
         LaserMarking_id = block.get("LaserMarking.id")  # id to be burned by laser
         LaserMarking_status = Local_Status("LaserMarking", block)
@@ -684,17 +687,28 @@ class PLC(PLCBase):
             local_status.set_database_save(0)
 
     def process_UDT84(self, dbid):
-        logger.debug("UDT84 dbid: {dbid} type: {type}".format(dbid=dbid, type=type(dbid)))
+        logger.debug(f'Processing UDT84 PLC: {self.get_id()} DB: {dbid} type: {type(dbid)}')
         block = self.get_db(dbid)
+        if block is None:
+            logger.warn(f'PLC: {self.get_id()} DB: {dbid} is missing on PLC. Skipping')
+            return
+
+        # TODO remove once scanner is active
+        head_detail_id = block.get("head.detail_id")
+        block.store_item("ReadID.id", head_detail_id)  # overwrite value read by scanner. 
+
         ReadID_id = block.get("ReadID.id")
         ReadID_status = Local_Status("ReadID", block)
         logger.debug("dbid: {dbid} block: {block} ReadID: {ReadID} ReadID_Status_Active: {ReadID_Status_Active} ReadID_Status_DatabaseSave: {ReadID_Status_DatabaseSave} ReadID_Status_date_time: {ReadID_Status_date_time} ReadID_Status_result: {ReadID_Status_result}".format(dbid=dbid, block=block, ReadID=ReadID_id, ReadID_Status_Active=ReadID_status.active, ReadID_Status_DatabaseSave=ReadID_status.database_save, ReadID_Status_date_time=ReadID_status.date_time, ReadID_Status_result=ReadID_status.result))
 
-        detail_id = block[HEAD_DETAIL_ID] 
+        # Read some global data BEGIN
+        detail_id = block[HEAD_DETAIL_ID]
         station_id = int(block[HEAD_STATION_ID])
         station_status = int(block[STATUS_STATION_RESULT])
         program_number = int(block[HEAD_PROGRAM_NUMBER])
-        nest_number = int(block[HEAD_NEST_NUMBER])  
+        nest_number = int(block[HEAD_NEST_NUMBER])
+        date_time = str(block[STATUS_DATE_TIME])
+        # Read some global data END        
 
         if ReadID_status.active and ReadID_status.database_save: 
             local_status = ReadID_status
@@ -873,32 +887,23 @@ class PLC(PLCBase):
             AutomaticSensorMounting_status.set_database_save(0)
 
     def process_UDT85(self, dbid):
-        logger.debug("UDT85 dbid: {dbid} type: {type}".format(dbid=dbid, type=type(dbid)))
+        logger.debug(f'Processing UDT85 PLC: {self.get_id()} DB: {dbid} type: {type(dbid)}')
         block = self.get_db(dbid)
-        # logger.debug("dbid: {dbid} block: {block}".format(dbid=dbid, block=block))
-        #block.store_item("ReadID.id", "1125")
+        if block is None:
+            logger.warn(f'PLC: {self.get_id()} DB: {dbid} is missing on PLC. Skipping')
+            return
+
+        # TODO remove once scanner is active
         head_detail_id = block.get("head.detail_id")
         block.store_item("ReadID.id", head_detail_id)  # overwrite value read by scanner. 
         
         ReadID_id = block.get("ReadID.id")
         ReadID_status = Local_Status("ReadID", block)
         
-        #head_detail_id = block.get("head.detail_id")
-        #block.store_item("head.detail_id", "1125")
-        #detail_id = head_detail_id
-        
         # Read some global data BEGIN
-        #detail_id = block.get("head.detail_id")
-        #logger.info("head_detail_id: {head_detail_id} detail_id: {detail_id}".format(head_detail_id=head_detail_id, detail_id=detail_id))
-        
         detail_id = block[HEAD_DETAIL_ID]
         station_id = int(block[HEAD_STATION_ID])
         station_status = int(block[STATUS_STATION_RESULT])
-        #try:
-        #    status = STATION_STATUS_CODES[station_status]['result']
-        #except ValueError as e:
-        #    logger.warning("PLC: {plc} DB: {db} wrong value for status, returning undefined. Exception: {e}".format(plc=self.id, db=block.get_db_number(), e=e))
-        #    status = STATION_STATUS_CODES[99]['result']
         program_number = int(block[HEAD_PROGRAM_NUMBER])
         nest_number = int(block[HEAD_NEST_NUMBER])
         date_time = str(block[STATUS_DATE_TIME])
@@ -1342,8 +1347,24 @@ class PLC(PLCBase):
             Leckrate_status.set_database_save(0)
 
     def process_UDT88(self, dbid):
-        logger.debug("UDT88 dbid: {dbid} type: {type}".format(dbid=dbid, type=type(dbid)))
+        logger.debug(f'Processing UDT88 PLC: {self.get_id()} DB: {dbid} type: {type(dbid)}')
         block = self.get_db(dbid)
+        if block is None:
+            logger.warn(f'PLC: {self.get_id()} DB: {dbid} is missing on PLC. Skipping')
+            return        
+
+        # TODO remove once scanner is active
+        head_detail_id = block.get("head.detail_id")
+        block.store_item("ReadID.id", head_detail_id)  # overwrite value read by scanner. 
+
+        # Read some global data BEGIN
+        detail_id = block[HEAD_DETAIL_ID]
+        station_id = int(block[HEAD_STATION_ID])
+        station_status = int(block[STATUS_STATION_RESULT])
+        program_number = int(block[HEAD_PROGRAM_NUMBER])
+        nest_number = int(block[HEAD_NEST_NUMBER])
+        date_time = str(block[STATUS_DATE_TIME])
+        # Read some global data END        
 
         ReadID_id = block.get("ReadID.id")
         ReadID_status = Local_Status("ReadID", block)
