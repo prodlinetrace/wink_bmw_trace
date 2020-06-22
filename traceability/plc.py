@@ -1454,7 +1454,7 @@ class PLC(PLCBase):
                 },
             ]
             # write status
-            self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, Tool_statusVendorDMCCodeMarking_status.date_time, results)
+            self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, VendorDMCCodeMarking_status.date_time, results)
             # mark item as read
             VendorDMCCodeMarking_status.set_database_save(0)
 
