@@ -645,7 +645,7 @@ class PLC(PLCBase):
             logger.info(f"PLC: {self.id} dbid: {dbid} block: {block} detail_id: {detail_id} LaserMarking active_flag: {local_status.active} database_save_flag: {local_status.database_save} date_time: {local_status.date_time} result: {local_status.result}")
             
             operation_type = 501  # hardcoded operation_id value 501 - scanner burn
-            if LaserMarking_id == head_detail_id:
+            if LaserMarking_id == detail_id:
                 operation_status = 1   # scanner read OK
             else:
                 operation_status = 2   # scanner read NOK
@@ -1574,14 +1574,7 @@ class PLC(PLCBase):
         if PC_OPEN_BROWSER_FLAG in block.export():
             if block.__getitem__(PC_OPEN_BROWSER_FLAG):  # get the station status from db
                 block.set_pc_ready_flag(False)  # set PC ready flag to False
-                """
-                try:
-                    data = block[PRODUCT_TYPE]
-                    product_type = int(data)
-                except ValueError as e:
-                    logger.error("PLC: {plc} DB: {db} Data read error. Input: {data} Exception: {e}, TB: {tb}".format(plc=self.id, db=dbid, data=data, e=e, tb=traceback.format_exc()))
-                    product_type = 0
-                """
+
                 try:
                     data = block[HEAD_DETAIL_ID]
                     head_detail_id = data
@@ -1596,7 +1589,7 @@ class PLC(PLCBase):
                     head_station_id = 0
                 logger.info("PLC: {plc} ST: {station} PID: {head_detail_id} browser opening request - show product details.".format(plc=self.get_id(), station=head_station_id, head_detail_id=head_detail_id))
 
-                url = "/".join([self.get_baseurl(), 'product', str(Product.calculate_product_id(product_type, head_detail_id))])
+                url = "/".join([self.get_baseurl(), 'product', str(Product.calculate_product_id(head_detail_id))])
                 if self.get_popups():
                     """
                     In order to open product details in same tab please reconfigure your firefox:
@@ -1608,11 +1601,11 @@ class PLC(PLCBase):
                     """
 
                     if webbrowser.open(url):
-                        logger.info("PLC: {plc} ST: {station} URL: {url} product details window opened successfully.".format(plc=self.get_id(), station=head_station_id, type=product_type, head_detail_id=head_detail_id, url=url))
+                        logger.info("PLC: {plc} ST: {station} URL: {url} product details window opened successfully.".format(plc=self.get_id(), station=head_station_id, head_detail_id=head_detail_id, url=url))
                     else:
-                        logger.warning("PLC: {plc} ST: {station} URL: {url} failed to open product details window".format(plc=self.get_id(), station=head_station_id, type=product_type, head_detail_id=head_detail_id, url=url))
+                        logger.warning("PLC: {plc} ST: {station} URL: {url} failed to open product details window".format(plc=self.get_id(), station=head_station_id, head_detail_id=head_detail_id, url=url))
                 else:
-                    logger.warning("PLC: {plc} ST: {station} URL: {url} Popup event registered but popups are disabled by configuration.".format(plc=self.get_id(), station=head_station_id, type=product_type, head_detail_id=head_detail_id, url=url))
+                    logger.warning("PLC: {plc} ST: {station} URL: {url} Popup event registered but popups are disabled by configuration.".format(plc=self.get_id(), station=head_station_id, head_detail_id=head_detail_id, url=url))
 
                 self.counter_show_product_details += 1
                 block.set_pc_open_browser_flag(False) # cancel PC_OPEN_BROWSER flag
