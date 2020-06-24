@@ -1202,10 +1202,10 @@ class PLC(PLCBase):
                     'value': PresetParams_Helium_entspannen_HD,
                 },
                 {
-                    'type_id': 3,
-                    'unit_id': 8,
+                    'type_id': 4,
+                    'unit_id': 99,
                     'desc_id': operation_type * 100 + 14,
-                    'value': PresetParams_FrgHeliumEvakuieren,
+                    'value': PresetParams_FrgHeliumEvakuieren,   # Wykrywanie detalu - wartosc typu bool zakodowana w PLC na real. Zmiana na zyczenie Przemka Damczyka - email z dnia 2020-06-24.
                 },
                 {
                     'type_id': 2,
