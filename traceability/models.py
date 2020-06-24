@@ -1,6 +1,7 @@
 import hashlib
 import bleach
 import logging
+import ast
 import dateutil.parser
 from markdown import markdown
 from datetime import datetime
@@ -11,7 +12,7 @@ from flask_login import UserMixin
 from . import db
 logger = logging.getLogger(__name__)
 
-__version__ = '0.1.7'
+__version__ = '0.1.8'
 
 try:
     from . import login_manager
@@ -417,6 +418,76 @@ class Result(db.Model):
         return '<Assembly Result Id: {id} for: Product: {product} Station: {station} operation_id: {operation_id}>'.format(id=self.id, product=self.product_id, station=self.station_id, operation_id=self.operation_id)
 
     @property
+    def value_real_type(self):
+        if self.type_id == 1:
+            return str(self.value) 
+
+        if self.type_id == 2:
+            try:
+                ret = int(self.value) 
+            except ValueError as e:
+                ret = ast.literal_eval(self.value)
+            return ret
+
+        if self.type_id == 3:
+            try:
+                ret = float(self.value) 
+            except ValueError as e:
+                ret = ast.literal_eval(self.value)
+            return ret            
+
+        if self.type_id == 4:
+            try:
+                ret = bool(self.value) 
+            except ValueError as e:
+                ret = ast.literal_eval(self.value)
+            return ret            
+
+
+    @property
+    def value_formatted(self):
+        # apply formatting if defined
+        if self.desc.display_format:
+            if self.desc.display_format != "DESC_MAP":
+                try:
+                    result = f"{self.desc.display_format}".format(self.value_real_type)
+                except ValueError as e:
+                    msg = f"Unable to cast value: {self.value} of type: {self.type.name} using format: {self.desc.display_format}"
+                    logger.error(msg)
+                    logger.exception({e})
+                    result = msg
+                return result
+            else:
+                if self.desc.description != '':
+                    desc_map = eval(self.desc.description)
+                    index = int(self.value)
+                    if index in desc_map:
+                        return desc_map[index]
+
+
+        # do not format strings - just pass it as it is
+        if self.type_id == 1:
+            return self.value
+
+        # do not format integers - just pass it as it is
+        if self.type_id == 2:
+            return self.value
+
+        # by default try to format float with precision 5
+        if self.type_id == 3:
+            return "{:.5f}".format(self.value_real_type)
+
+        # format bool as true or false
+        if self.type_id == 4:
+            if self.value_real_type is True:
+                return "Yes"
+            else:
+                return "No"
+
+        return f"{self.value}"
+
+
+    @property
     def serialize(self):
         """Return object data in easily serializeable format"""
 
@@ -519,16 +590,18 @@ class Desc(db.Model):
     __tablename__ = 'desc'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
+    display_format = db.Column(db.String(32))
     description = db.Column(db.String(255))
     result = db.relationship('Result', lazy='dynamic', backref='desc')
 
-    def __init__(self, ident, name="Default Desc Name", description=""):
+    def __init__(self, ident, name="Default Desc Name", display_format=display_format, description=""):
         self.id = ident
         self.name = name
+        self.display_format = display_format
         self.description = description
 
     def __repr__(self):
-        return '<Desc Id: {id} Name: {name} Description: {desc}>'.format(id=self.id, name=self.name, desc=self.description)
+        return '<Desc Id: {id} Name: {name} Description: {desc}>'.format(id=self.id, name=self.name, display_format=self.display_format, desc=self.description)
 
     @property
     def serialize(self):
@@ -536,6 +609,7 @@ class Desc(db.Model):
         return {
             'id': self.id,
             'name': self.name,
+            'display_format': self.display_format,
             'description': self.description,
         }
 
