@@ -126,7 +126,8 @@ class Database(object):
     def write_result(self, detail_id, station_id, operation_id, unit_id, type_id, desc_id, value):
         self.add_unit_if_required(unit_id)
         self.add_desc_if_required(desc_id)
-        
+        self.add_type_if_required(type_id)
+
         try:
             new_result = Result(detail_id, station_id, operation_id, unit_id=unit_id, type_id=type_id, desc_id=desc_id, value=value)
             db.session.add(new_result)
@@ -273,7 +274,7 @@ class Database(object):
         desc = str(desc)
         try:
             _desc = Desc.query.filter_by(id=str(desc)).first()
-            if _desc is None:  # add new unit if required (should not happen often)
+            if _desc is None:  # add new desc if required (should not happen often)
                 new_desc = Desc(ident=desc, name="{id}".format(id=desc))
                 db.session.add(new_desc)
                 try:
@@ -281,6 +282,24 @@ class Database(object):
                 except sqlalchemy.exc.IntegrityError as e:
                     logger.error("CON: {dbcon} {rep} : {err}".format(dbcon=self.name, rep=repr(e), err=e.__str__()))
                 logger.info("CON: {dbcon} Adding new description to database: {desc}".format(dbcon=self.name, desc=str(desc)))
+
+        except sqlalchemy.exc.OperationalError as e:
+            logger.error("CON: {dbcon} Database: {dbfile} is locked. Error: {err}".format(dbcon=self.name, dbfile=db.get_app().config['SQLALCHEMY_DATABASE_URI'], err=e.__str__()))
+            return False
+        return True
+
+    def add_type_if_required(self, t):
+        t = str(t)
+        try:
+            _type = Type.query.filter_by(id=str(t)).first()
+            if _type is None:  # add new type if required (should not happen often)
+                new_type = Type(ident=t, name="{id}".format(id=t))
+                db.session.add(new_type)
+                try:
+                    db.session.commit()
+                except sqlalchemy.exc.IntegrityError as e:
+                    logger.error("CON: {dbcon} {rep} : {err}".format(dbcon=self.name, rep=repr(e), err=e.__str__()))
+                logger.info("CON: {dbcon} Adding new type to database: {desc}".format(dbcon=self.name, desc=str(t)))
 
         except sqlalchemy.exc.OperationalError as e:
             logger.error("CON: {dbcon} Database: {dbfile} is locked. Error: {err}".format(dbcon=self.name, dbfile=db.get_app().config['SQLALCHEMY_DATABASE_URI'], err=e.__str__()))

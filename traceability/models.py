@@ -12,7 +12,7 @@ from flask_login import UserMixin
 from . import db
 logger = logging.getLogger(__name__)
 
-__version__ = '0.1.8'
+__version__ = '0.1.9'
 
 try:
     from . import login_manager
@@ -594,7 +594,7 @@ class Desc(db.Model):
     description = db.Column(db.String(255))
     result = db.relationship('Result', lazy='dynamic', backref='desc')
 
-    def __init__(self, ident, name="Default Desc Name", display_format=display_format, description=""):
+    def __init__(self, ident, name="Default Desc Name", display_format="", description=""):
         self.id = ident
         self.name = name
         self.display_format = display_format
@@ -623,7 +623,7 @@ class Type(db.Model):
     result = db.relationship('Result', lazy='dynamic', backref='type', foreign_keys='Result.type_id')
 
 
-    def __init__(self, ident, name="Default Type Name", symbol="Default Type Symbol", description=""):
+    def __init__(self, ident, name="Default Type Name", symbol="", description=""):
         self.id = ident
         self.name = name
         self.symbol = symbol
