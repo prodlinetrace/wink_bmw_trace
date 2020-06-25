@@ -12,7 +12,7 @@ from flask_login import UserMixin
 from . import db
 logger = logging.getLogger(__name__)
 
-__version__ = '0.1.9'
+__version__ = '0.1.10'
 
 try:
     from . import login_manager
@@ -438,7 +438,7 @@ class Result(db.Model):
 
         if self.type_id == 4:
             try:
-                ret = bool(self.value) 
+                ret = bool(int(self.value)) 
             except ValueError as e:
                 ret = ast.literal_eval(self.value)
             return ret            
@@ -483,6 +483,7 @@ class Result(db.Model):
                 return "Yes"
             else:
                 return "No"
+            return self.value
 
         return f"{self.value}"
 

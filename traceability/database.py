@@ -1,5 +1,6 @@
 import sqlalchemy
 import logging
+import itertools
 from datetime import datetime
 from . import db
 from .models import *
@@ -19,6 +20,10 @@ class Database(object):
         #    #cursor.execute("PRAGMA foreign_keys=ON;")
         #    cursor.close()
         db.create_all()  # initialize empty database if required.
+
+        # remember last_productid index and consecutive counter
+        self.last_product_id_num = 0
+        self.product_id_counter = itertools.count()
 
     def read_status(self, product_id, station):
         # product_type = str(product_type)
@@ -170,14 +175,24 @@ class Database(object):
 
     def get_next_product_id(self):
         """
-            returns next available product id.
+            returns next available product id. 
+            gets last Product.id added to database and increment it by counter.
+            each call of get_next_product_id() will result in next id.
         """
-        
-        return Product.get_next_product_id()
+        next_product_id = Product.get_next_product_id()
+        date_prefix = next_product_id[:8]
+        next_product_id_num = int(next_product_id[8:])
+        if self.last_product_id_num != next_product_id_num:
+            # the new product has been added to database - save last_product_id_num and reset counter.
+            self.last_product_id_num = next_product_id_num
+            self.product_id_counter = itertools.count()
+
+        # next_id = get next counter number and proceed
+        next_id = next_product_id_num + next(self.product_id_counter)
+
+        return f'{date_prefix}{next_id:010}'
 
     def add_product_if_required(self, product_id):
-        #product_type = str(product_type)
-        #serial_number = str(serial_number)
         product_id = product_id
 
         try:
