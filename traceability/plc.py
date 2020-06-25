@@ -1112,12 +1112,12 @@ class PLC(PLCBase):
         PresetParams_Helium_Soll_1 = block.get("PresetParams.Helium_Soll_1")
         PresetParams_HeliumFuellen = block.get("PresetParams.HeliumFuellen")
         PresetParams_Helium_entspannen_HD = block.get("PresetParams.Helium_entspannen_HD")
-        PresetParams_FrgHeliumEvakuieren = block.get("PresetParams.FrgHeliumEvakuieren")
         PresetParams_CzasZapowietrzaniaKomory = block.get("PresetParams.CzasZapowietrzaniaKomory")
         PresetParams_CisnienieZapowietrzaniaKomory = block.get("PresetParams.CisnienieZapowietrzaniaKomory")
         PresetParams_BuzzerTime = block.get("PresetParams.BuzzerTime")
         PresetParams_Prueffreigabe = block.get("PresetParams.Prueffreigabe")
         PresetParams_Doppel_WT = block.get("PresetParams.Doppel_WT")
+        PresetParams_detail_detection = block.get("PresetParams.detail_detection")
         PresetParams_status = Local_Status("PresetParams", block)
         if PresetParams_status.active and PresetParams_status.database_save: 
             operation_type = 208  # hardcoded operation_id value 208 - PresetParams_status
@@ -1202,12 +1202,6 @@ class PLC(PLCBase):
                     'value': PresetParams_Helium_entspannen_HD,
                 },
                 {
-                    'type_id': 4,
-                    'unit_id': 99,
-                    'desc_id': operation_type * 100 + 14,
-                    'value': PresetParams_FrgHeliumEvakuieren,   # Wykrywanie detalu - wartosc typu bool zakodowana w PLC na real. Zmiana na zyczenie Przemka Damczyka - email z dnia 2020-06-24.
-                },
-                {
                     'type_id': 2,
                     'unit_id': 0,
                     'desc_id': operation_type * 100 + 15,
@@ -1236,7 +1230,13 @@ class PLC(PLCBase):
                     'unit_id': 30,
                     'desc_id': operation_type * 100 + 19,
                     'value': PresetParams_BuzzerTime,
-                },                
+                },
+                {
+                    'type_id': 4,
+                    'unit_id': 99,
+                    'desc_id': operation_type * 100 + 20,
+                    'value': PresetParams_detail_detection,   # Wykrywanie detalu - wartosc typu bool (w PLC iny). Dodane z nowym ID.  Request: Przemek Damczyk - email z dnia 2020-06-25.
+                },
            ]
             # write status
             self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, PresetParams_status.date_time, results)

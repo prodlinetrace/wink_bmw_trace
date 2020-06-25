@@ -333,14 +333,15 @@ PresetParams = """
 40.0   PresetParams.Helium_Soll_1                            REAL        # DB8.DBD40; [bar] Helium -Fuelldruck SOLL; CisnienieNapelnianiaHelemZadane
 44.0   PresetParams.HeliumFuellen                            REAL        # DB8.DBD184; [s] Ueberwachungszeit Pruefteil mit Helium fuellen; CzasKontroliNapelnianiaHelem
 48.0   PresetParams.Helium_entspannen_HD                     REAL        # DB8.DBD168; [s] Ueberwachungszeit Helium entspannen; CzasKontroliRozprezaniaHelu
-52.0   PresetParams.FrgHeliumEvakuieren                      REAL        # DB8.DBD48; [bool] Freigabe Pruefteil evakuieren ab; Wykrywanie detalu - wartosc typu bool zakodowana na real
+52.0   PresetParams.die_neue_reserve                         REAL        # new reserve; was: FrgHeliumEvakuieren
 56.0   PresetParams.CzasZapowietrzaniaKomory                 REAL        # new; [s]
 60.0   PresetParams.CisnienieZapowietrzaniaKomory            REAL        # new; [mbar]
-64.0   PresetParams.res_r3                                   REAL        # reserve
+64.0   PresetParams.res_r1                                   REAL        # reserve
 68.0   PresetParams.BuzzerTime                               REAL        # new; [s]; Czas sygnalu dzwiekowego zakonczenia testu
 72.0   PresetParams.Prueffreigabe                            INT         # DB8.DBW480; 0 - blad, 1-Tylko komora L, 2-Tylko komora P, 3-Obie komory L+P
 74.0   PresetParams.Doppel_WT                                INT         # DB8.DBX656.1; Doppel-WT; 0-NIE; 1-TAK
-76.0   PresetParams.res_r1                                   REAL        # reserve
+76.0   PresetParams.detail_detection                         INT         # new; [bool]; wykrywanie detalu; 0-NIE, 1-TAK
+78.0   PresetParams.res_i1                                   INT         # reserve 
 80.0   PresetParams.res_r2                                   REAL        # reserve
 """ + offset_spec_block(UDT81.replace("__UDT81_prefix__", "PresetParams"), 84) + """
 # PresetParams END - size of 104 bytes
