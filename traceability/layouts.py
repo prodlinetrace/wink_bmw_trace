@@ -473,7 +473,7 @@ UDT88 = """
 + offset_spec_block(VendorDMCCodeMarking, 122+56+56+46) \
 + offset_spec_block(VendorDMCCodeRead, 122+56+56+46+70) \
 + offset_spec_block(VendorDMCCodeClass, 122+56+56+46+70+112) \
-+ offset_spec_block(PresureSensor, 122+56+56+46+70+112+60) \
++ offset_spec_block(PresureSensor, 122+56+56+46+70+112+80) \
 + """
 # Tracedb_12707 END - size of 568 bytes
 """ 
