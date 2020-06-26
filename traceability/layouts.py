@@ -450,8 +450,9 @@ VendorDMCCodeClass = """
 40.0    VendorDMCCodeClass.MinimalClass_res                  STRING[2]   # DB559.DBB18; np. A
 44.0    VendorDMCCodeClass.AcceptableClass                   STRING[2]   # DB559.DBW22; np. A
 48.0    VendorDMCCodeClass.CurrentClass                      STRING[2]   # DB559.DBW20; np. A 
-52.0    VendorDMCCodeClass.res_r1                            REAL        # reserve
-56.0    VendorDMCCodeClass.res_r2                            REAL        # reserve # Jakosc odczytu. DB559.DBW4; 1-OK; 2-NOK
+52.0    VendorDMCCodeClass.DMCCodeClassVerification          INT         # Weryfikacja Klasy Kodu DMC; [bool] ; 0-NIE, 1-TAK
+54.0    VendorDMCCodeClass.res_i1                            INT         # 
+56.0    VendorDMCCodeClass.res_r1                            REAL        # reserve # Jakosc odczytu. DB559.DBW4; 1-OK; 2-NOK
 """ + offset_spec_block(UDT81.replace("__UDT81_prefix__", "VendorDMCCodeClass"), 60) + """
 # VendorDMCCodeClass END - size of 80 bytes
 """

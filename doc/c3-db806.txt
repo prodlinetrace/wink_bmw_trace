@@ -214,8 +214,9 @@
 502.0      VendorDMCCodeClass.MinimalClass_res                            STRING[2]  # DB559.DBB18; np. A
 506.0      VendorDMCCodeClass.AcceptableClass                             STRING[2]  # DB559.DBW22; np. A
 510.0      VendorDMCCodeClass.CurrentClass                                STRING[2]  # DB559.DBW20; np. A
-514.0      VendorDMCCodeClass.res_r1                                      REAL       # reserve
-518.0      VendorDMCCodeClass.res_r2                                      REAL       # reserve # Jakosc odczytu. DB559.DBW4; 1-OK; 2-NOK
+514.0      VendorDMCCodeClass.DMCCodeClassVerification                    INT        # Weryfikacja Klasy Kodu DMC; [bool] ; 0-NIE, 1-TAK
+516.0      VendorDMCCodeClass.res_i1                                      INT        # 
+518.0      VendorDMCCodeClass.res_r1                                      REAL       # reserve # Jakosc odczytu. DB559.DBW4; 1-OK; 2-NOK
 # # Tracedb_Status_lokalny - Begin
 522.0      VendorDMCCodeClass.Status.res_r1                               REAL       # reserve
 526.0      VendorDMCCodeClass.Status.OperationActive                      BOOL       # 0 - Not Active, 1 - Switched ON

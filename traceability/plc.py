@@ -1493,6 +1493,7 @@ class PLC(PLCBase):
         VendorDMCCodeClass_MinimalClass_res = block.get("VendorDMCCodeClass.MinimalClass_res")
         VendorDMCCodeClass_AcceptableClass = block.get("VendorDMCCodeClass.AcceptableClass")
         VendorDMCCodeClass_CurrentClass = block.get("VendorDMCCodeClass.CurrentClass")
+        VendorDMCCodeClass_DMCCodeClassVerification = block.get("VendorDMCCodeClass.DMCCodeClassVerification")
         VendorDMCCodeClass_status = Local_Status("VendorDMCCodeClass", block)
         if VendorDMCCodeClass_status.active and VendorDMCCodeClass_status.database_save: 
             operation_type = 306  # hardcoded operation_id value 306 - VendorDMCCodeClass_status
@@ -1557,6 +1558,12 @@ class PLC(PLCBase):
                     'unit_id': 0,
                     'desc_id': operation_type * 100 + 10,
                     'value': VendorDMCCodeClass_CurrentClass, 
+                },
+                {
+                    'type_id': 4,
+                    'unit_id': 99,
+                    'desc_id': operation_type * 100 + 11,
+                    'value': VendorDMCCodeClass_DMCCodeClassVerification, 
                 },
             ]
             # write status
