@@ -241,5 +241,32 @@
 540.0      VendorDMCCodeClass.Status.res_i2                               INT        # reserve
 # # Tracedb_Status_lokalny - END - size of 20 bytes.   
 # VendorDMCCodeClass END - size of 80 bytes
+# PresureSensor Begin
+522.0      PresureSensor.Done                                             INT        # Wykonane; [bool]; 0-NIE, 1-TAK
+524.0      PresureSensor.res_r1                                           REAL       # reserve
+# # Tracedb_Status_lokalny - Begin
+528.0      PresureSensor.Status.res_r1                                    REAL       # reserve
+532.0      PresureSensor.Status.OperationActive                           BOOL       # 0 - Not Active, 1 - Switched ON
+532.1      PresureSensor.Status.res1_b1                                   BOOL       # reserve
+532.2      PresureSensor.Status.res1_b2                                   BOOL       # reserve
+532.3      PresureSensor.Status.res1_b3                                   BOOL       # reserve
+532.4      PresureSensor.Status.res1_b4                                   BOOL       # reserve
+532.5      PresureSensor.Status.res1_b5                                   BOOL       # reserve
+532.6      PresureSensor.Status.res1_b6                                   BOOL       # reserve
+532.7      PresureSensor.Status.res1_b7                                   BOOL       # reserve
+533.0      PresureSensor.Status.DatabaseSave                              BOOL       # 1 - set by PLC indicates that data should be collected. set to 0 by PC after data processing.
+533.1      PresureSensor.Status.res2_b1                                   BOOL       # reserve
+533.2      PresureSensor.Status.res2_b2                                   BOOL       # reserve
+533.3      PresureSensor.Status.res2_b3                                   BOOL       # reserve
+533.4      PresureSensor.Status.res2_b4                                   BOOL       # reserve
+533.5      PresureSensor.Status.res2_b5                                   BOOL       # reserve
+533.6      PresureSensor.Status.res2_b6                                   BOOL       # reserve
+533.7      PresureSensor.Status.res2_b7                                   BOOL       # reserve
+534.0      PresureSensor.Status.res_i1                                    INT        # reserve
+536.0      PresureSensor.Status.date_time                                 DATETIME   # date and time
+544.0      PresureSensor.Status.result                                    INT        # 1 - OK 2 - NOK
+546.0      PresureSensor.Status.res_i2                                    INT        # reserve
+# # Tracedb_Status_lokalny - END - size of 20 bytes.   
+# PresureSensor END - size of 26 bytes
 
-# Tracedb_12707 END - size of 542 bytes
+# Tracedb_12707 END - size of 568 bytes

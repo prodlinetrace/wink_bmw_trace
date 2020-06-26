@@ -456,6 +456,13 @@ VendorDMCCodeClass = """
 """ + offset_spec_block(UDT81.replace("__UDT81_prefix__", "VendorDMCCodeClass"), 60) + """
 # VendorDMCCodeClass END - size of 80 bytes
 """
+PresureSensor = """
+# PresureSensor Begin
+0.0     PresureSensor.Done                                   INT         # Wykonane; [bool]; 0-NIE, 1-TAK
+2.0     PresureSensor.res_r1                                 REAL        # reserve 
+""" + offset_spec_block(UDT81.replace("__UDT81_prefix__", "PresureSensor"), 6) + """
+# PresureSensor END - size of 26 bytes
+"""
 
 UDT88 = """
 # Tracedb_12707 BEGIN
@@ -466,8 +473,9 @@ UDT88 = """
 + offset_spec_block(VendorDMCCodeMarking, 122+56+56+46) \
 + offset_spec_block(VendorDMCCodeRead, 122+56+56+46+70) \
 + offset_spec_block(VendorDMCCodeClass, 122+56+56+46+70+112) \
++ offset_spec_block(PresureSensor, 122+56+56+46+70+112+60) \
 + """
-# Tracedb_12707 END - size of 542 bytes
+# Tracedb_12707 END - size of 568 bytes
 """ 
 
 # create db map for given controller.

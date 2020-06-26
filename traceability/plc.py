@@ -1571,6 +1571,23 @@ class PLC(PLCBase):
             # mark item as read
             VendorDMCCodeClass_status.set_database_save(0)
 
+        PresureSensor_Done = block.get("PresureSensor.Done")
+        PresureSensor_status = Local_Status("PresureSensor", block)
+        if PresureSensor_status.active and PresureSensor_status.database_save: 
+            operation_type = 307  # hardcoded operation_id value 307 - PresureSensor_status
+            operation_status = int(PresureSensor_status.result)  # 1 OK, 0 NOK
+            results = [
+                {
+                    'type_id': 4,
+                    'unit_id': 99,
+                    'desc_id': operation_type * 100 + 1,
+                    'value': PresureSensor_Done, 
+                },
+            ]
+            # write status
+            self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, PresureSensor_status.date_time, results)
+            # mark item as read
+            PresureSensor_status.set_database_save(0)
 
     def show_product_details(self, dbid):
         block = self.get_db(dbid)
