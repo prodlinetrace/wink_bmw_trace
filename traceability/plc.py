@@ -752,8 +752,6 @@ class PLC(PLCBase):
             # mark item as read
             SensorOiling_status.set_database_save(0)
 
-
-
         ManualSensorMounting_done = block.get("ManualSensorMounting.done")
         ManualSensorMounting_status = Local_Status("ManualSensorMounting", block)
         if ManualSensorMounting_status.active and ManualSensorMounting_status.database_save: 
@@ -771,7 +769,6 @@ class PLC(PLCBase):
             self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, ManualSensorMounting_status.date_time, results)
             # mark item as read
             ManualSensorMounting_status.set_database_save(0)
-
 
         SensorDMC_reference = block.get("SensorDMC.reference")
         SensorDMC_read = block.get("SensorDMC.read")
@@ -885,6 +882,76 @@ class PLC(PLCBase):
             self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, AutomaticSensorMounting_status.date_time, results)
             # mark item as read
             AutomaticSensorMounting_status.set_database_save(0)
+
+        Marking_done = block.get("Marking.done")
+        Marking_status = Local_Status("Marking", block)
+        if Marking_status.active and Marking_status.database_save: 
+            operation_type = 106  # hardcoded operation_id value 106 - Marking_done
+            operation_status = int(Marking_status.result)  # 1 OK, 0 NOK
+            results = [
+                {
+                    'type_id': 4,
+                    'unit_id': 99,
+                    'desc_id': operation_type * 100 + 1,
+                    'value': Marking_done, 
+                }
+            ]
+            # write status
+            self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, Marking_status.date_time, results)
+            # mark item as read
+            Marking_status.set_database_save(0)
+
+        # process flowtest section with specific number.
+        def process_flowtest(flowtest_id=0):
+            FlowTest_Type = block.get("FlowTest.type".format(number=flowtest_id))
+            FlowTest_FlowResult = block.get("FlowTest.{number}.FlowResult".format(number=flowtest_id))
+            FlowTest_FlowMax = block.get("FlowTest.{number}.FlowMax".format(number=flowtest_id))
+            FlowTest_FlowMin = block.get("FlowTest.{number}.FlowMin".format(number=flowtest_id))
+            FlowTest_TimeElapsed = block.get("FlowTest.{number}.TimeElapsed".format(number=flowtest_id))
+            FlowTest_status = Local_Status("FlowTest.{number}".format(number=flowtest_id), block)
+
+            if FlowTest_status.active and FlowTest_status.database_save: 
+                operation_type = 110  + flowtest_id  # hardcoded operation_id value 110 + flowtest_id
+                operation_status = int(FlowTest_status.result)  # 1 OK, 0 NOK
+                results = [
+                    {
+                        'type_id': 2,   # integer
+                        'unit_id': 0,   # n
+                        'desc_id': operation_type * 100 + 1,
+                        'value': FlowTest_Type, 
+                    },
+                    {
+                        'type_id': 3,   # real
+                        'unit_id': 10,  # ln/min
+                        'desc_id': operation_type * 100 + 2,
+                        'value': FlowTest_FlowResult, 
+                    },
+                    {
+                        'type_id': 3,   # real
+                        'unit_id': 10,  # ln/min
+                        'desc_id': operation_type * 100 + 3,
+                        'value': FlowTest_FlowMax, 
+                    },
+                    {
+                        'type_id': 3,   # real
+                        'unit_id': 10,  # ln/min
+                        'desc_id': operation_type * 100 + 4,
+                        'value': FlowTest_FlowMin, 
+                    },
+                    {
+                        'type_id': 3,   # real
+                        'unit_id': 30,  # sec
+                        'desc_id': operation_type * 100 + 5,
+                        'value': FlowTest_TimeElapsed, 
+                    },
+                ]
+                # write status
+                self.database_engine.write_operation_result(detail_id, station_id, operation_status, operation_type, program_number, nest_number, FlowTest_status.date_time, results)
+                # mark item as read
+                FlowTest_status.set_database_save(0)
+
+        for i in range(0, 7):  # process eight FlowTest templates
+            process_flowtest(i)
 
     def process_UDT85(self, dbid):
         logger.debug(f'Processing UDT85 PLC: {self.get_id()} DB: {dbid} type: {type(dbid)}')
