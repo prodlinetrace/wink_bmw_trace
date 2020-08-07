@@ -645,10 +645,7 @@ class PLC(PLCBase):
             logger.info(f"PLC: {self.id} dbid: {dbid} block: {block} detail_id: {detail_id} LaserMarking active_flag: {local_status.active} database_save_flag: {local_status.database_save} date_time: {local_status.date_time} result: {local_status.result}")
             
             operation_type = 501  # hardcoded operation_id value 501 - scanner burn
-            if LaserMarking_id == detail_id:
-                operation_status = 1   # scanner read OK
-            else:
-                operation_status = 2   # scanner read NOK
+            operation_status = int(local_status.result)  # 1 OK, 0 NOK
 
             results = [
                 {
@@ -668,10 +665,7 @@ class PLC(PLCBase):
             logger.info(f"PLC: {self.id} dbid: {dbid} block: {block} detail_id: {detail_id} LaserMarkingVerification active_flag: {local_status.active} database_save_flag: {local_status.database_save} date_time: {local_status.date_time} result: {local_status.result}")
             
             operation_type = 502  # hardcoded operation_id value 502 - scanner burn verification
-            if LaserMarkingVerification_id == LaserMarking_id:
-                operation_status = 1   # scanner read OK
-            else:
-                operation_status = 2   # scanner read NOK
+            operation_status = int(local_status.result)  # 1 OK, 0 NOK
 
             results = [
                 {
@@ -715,10 +709,7 @@ class PLC(PLCBase):
             logger.info(f"PLC: {self.id} dbid: {dbid} block: {block} detail_id: {detail_id} ReadID active_flag: {local_status.active} database_save_flag: {local_status.database_save} date_time: {local_status.date_time} result: {local_status.result}")
             
             operation_type = 101  # hardcoded operation_id value 101 - scanner read
-            if ReadID_id == head_detail_id:
-                operation_status = 1   # scanner read OK
-            else:
-                operation_status = 2   # scanner read NOK
+            operation_status = int(ReadID_status.result)  # 1 OK, 0 NOK
 
             results = [
                 {
