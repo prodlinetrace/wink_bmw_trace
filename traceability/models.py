@@ -9,10 +9,11 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask import request, current_app
 from flask_login import UserMixin
+from sqlalchemy.sql.expression import func
 from . import db
 logger = logging.getLogger(__name__)
 
-__version__ = '0.1.10'
+__version__ = '0.1.11'
 
 try:
     from . import login_manager
@@ -147,12 +148,12 @@ class Product(db.Model):
         """
         returns product id in RRRRMMDDcccccccccc format
         """
-        
-        last_inserted_product = Product.query.order_by(Product.id.desc()).first()
+        last_inserted_product = Product.query.filter(func.length(Product.id) == 18).order_by(Product.id.desc()).first()  # limit query to products with 18 characters only.
         last_inserted_id = last_inserted_product.id
         # sql = 'SELECT MAX(id) FROM product'
         date_prefix = datetime.now().strftime("%Y%m%d")
-        n = 1  # reset counter if date_prefix has changed to new day
+        # reset counter if date_prefix has changed to new day
+        n = 1
         if last_inserted_id:
             if last_inserted_id.startswith(date_prefix):
                 n = int(last_inserted_id[-10:]) + 1  # cast last 10 characters of id to integer and increment by one
