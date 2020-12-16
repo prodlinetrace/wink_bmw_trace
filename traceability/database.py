@@ -24,7 +24,7 @@ class Database(object):
         # remember last_productid index and consecutive counter
         self.last_product_id_num = 0
         self.product_id_counter = itertools.count()
-
+        
     def read_status(self, product_id, station):
         # product_type = str(product_type)
         # serial_number = str(serial_number)
@@ -180,8 +180,12 @@ class Database(object):
             each call of get_next_product_id() will result in next id.
         """
         next_product_id = Product.get_next_product_id()
-        date_prefix = next_product_id[:8]
         next_product_id_num = int(next_product_id[8:])
+        date_prefix = next_product_id[:8]
+        # re-initialize self.last_product_id_num
+        if self.last_product_id_num == 0:
+            self.last_product_id_num = next_product_id_num
+
         if self.last_product_id_num != next_product_id_num:
             # the new product has been added to database - save last_product_id_num and reset counter.
             self.last_product_id_num = next_product_id_num
