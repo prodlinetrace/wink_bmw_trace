@@ -182,7 +182,7 @@ class Database(object):
         next_product_id = Product.get_next_product_id()
         next_product_id_num = int(next_product_id[8:])
         date_prefix = next_product_id[:8]
-        # re-initialize self.last_product_id_num
+        # re-initialize self.last_product_id_num - handle counter reset on application reset.
         if self.last_product_id_num == 0:
             self.last_product_id_num = next_product_id_num
 
