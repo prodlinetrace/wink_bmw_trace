@@ -4,6 +4,7 @@ Utility functions
 import sys
 import os
 import logging
+import time
 from .constants import PC_READY_FLAG
 logger = logging.getLogger(__name__.ljust(12)[:12])
 
@@ -86,3 +87,54 @@ def offset_spec_block(spec_block, offset=0):
             result.append("{index:10} {name:62} {type:10} # {comment}".format(index=shifted_index, name=_name, type=_type, comment=_comment))
 
     return "\n".join(result) + "\n"
+
+
+def retry_and_catch(exceptions, tries=5, logger=None, level=logging.ERROR, logger_attr=None, delay=0, backoff=0):
+    """
+    Retries function up to amount of tries.
+
+    Backoff disabled by default.
+
+    :param exceptions: List of exceptions to catch
+    :param tries: Number of attempts before raising any exceptions
+    :param logger: Logger to print out to.
+    :param level: Log level.
+    :param logger_attr: Attribute on decorated class to get the logger ie self._logger you would give "_logger"
+    :param delay: initial delay seconds
+    :param backoff: backoff multiplier
+    """
+    def deco_retry(f):
+        def f_retry(*args, **kwargs):
+            max_tries = tries
+            d = delay
+            exs = tuple(exceptions)
+            log = logger
+            while max_tries > 1:
+                try:
+                    return f(*args, **kwargs)
+                except exs as e:
+                    message = "Caught Exception: {}. Retrying {} more times.".format(e.__repr__(), max_tries)
+
+                    # Get logger from cls instance of function
+                    # Grabbing 'self'
+                    instance = args[0]
+                    if not log and logger_attr and hasattr(instance, logger_attr):
+                        log = getattr(instance, logger_attr, None)
+
+                    if log:
+                        log.log(level, message)
+                    else:
+                        print(message)
+
+                    # Sleep current delay
+                    if d:
+                        time.sleep(d)
+
+                        # Increment delay
+                        if backoff:
+                            d *= backoff
+                    max_tries -= 1
+
+            return f(*args, **kwargs)  # Final attempt will not catch any errors.
+        return f_retry
+    return deco_retry

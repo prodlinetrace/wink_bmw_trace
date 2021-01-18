@@ -12,6 +12,7 @@ from .blocks import DBs
 from .custom_exceptions import UnknownDB
 from .database import Database
 from .block import Local_Status
+from .util import retry_and_catch as retry
 logger = logging.getLogger(__name__)
 
 
@@ -46,7 +47,7 @@ class PLCBase(object):
 
     def _init_database(self, dburi=''):
         self.database_engine = Database("{plc}".format(plc=self.get_id()))
-        logger.info("PLC: {plc} connected to SQLite @ {dburi}. Status: {status}".format(plc=self.get_id(), dburi=dburi, status=self.database_engine.get_status()))
+        logger.info("PLC: {plc} connected to database: {dburi}. Status: {status}".format(plc=self.get_id(), dburi=dburi, status=self.database_engine.get_status()))
 
     def __repr__(self):
         return """<{module}.{name} {me}>""".format(module=self.__class__.__module__, name=self.__class__.__name__, me=str(self))
@@ -117,29 +118,18 @@ class PLCBase(object):
     def __str__(self):
         return "PLC Id: {id} Name: {name} @ {ip}:{port}".format(id=self.__id, name=self.__name, ip=self.__ip, port=self.__port)
 
-    def connect(self, attempt=0):
-        if attempt < self._reconnect:
-            attempt += 1  # increment connection attempts
-            logger.debug("PLC: {plc} Trying to connect to: {ip}:{port}. Attempt: {attempt}/{total}".format(plc=self.__id, ip=self.__ip, port=self.__port, attempt=attempt, total=self._reconnect))
-            try:
-                self.client.connect(self.__ip, self.__rack, self.__slot, self.__port)
-            except snap7.snap7exceptions.Snap7Exception:
-                logger.warning("PLC: {plc} connection to: {ip}:{port} Failed. Attempt: {attempt}/{total}".format(plc=self.__id, ip=self.__ip, port=self.__port, attempt=attempt, total=self._reconnect))
-                sleep(1)
-                self.client.disconnect()
-
-            if self.client.get_connected():
-                logger.info("PLC: {plc} connected to: {ip}:{port}".format(plc=self.id, ip=self.__ip, port=self.__port))
-                # clean pc_ready_flags
-                try:
-                    self.reset_pc_ready_flags()
-                except snap7.snap7exceptions.Snap7Exception:
-                    logger.error("PLC: {plc} connection to: {ip}:{port} Failed. Attempt {attempt}/{total}".format(plc=self.id, ip=self.__ip, port=self.__port, attempt=attempt, total=self._reconnect))
-                    self.connect(attempt)
-            else:
-                logger.error("PLC: {plc} connection to: {ip}:{port} Failed. Attempt {attempt}/{total}".format(plc=self.id, ip=self.__ip, port=self.__port, attempt=attempt, total=self._reconnect))
-                self.connect(attempt)
-                return
+    @retry([snap7.snap7exceptions.Snap7Exception], tries=1000, delay=3, backoff=1.2, logger=logger) 
+    def connect(self):
+        logger.debug("PLC: {plc} Trying to connect to: {ip}:{port}".format(plc=self.__id, ip=self.__ip, port=self.__port))
+        try:
+            self.client.connect(self.__ip, self.__rack, self.__slot, self.__port)
+        except snap7.snap7exceptions.Snap7Exception as e:
+            msg = "{ip}:{port} {msg}".format(ip=self.__ip, port=self.__port, msg=str(e).strip("b' "))
+            raise snap7.snap7exceptions.Snap7Exception(msg)
+        
+        if self.client.get_connected():
+            logger.info("PLC: {plc} connected to: {ip}:{port}".format(plc=self.id, ip=self.__ip, port=self.__port))
+            self.reset_pc_ready_flags()
 
     def disconnect(self):
         logger.info("PLC: {plc}. disconnection procedure started...".format(plc=self.id))
@@ -296,7 +286,10 @@ class PLCBase(object):
             if self.__database_keepalive_sent == False: 
                 self.database_engine.send_keepalive_query()
                 self.__database_keepalive_sent = True
-                logger.info("PLC: {plc} Dummy SQL keepalive query sent.".format(plc=self.id))
+                if datetime.now().minute == 20:  # log once an hour as info
+                    logger.info("PLC: {plc} Dummy SQL keepalive query sent.".format(plc=self.id))
+                else:
+                    logger.debug("PLC: {plc} Dummy SQL keepalive query sent.".format(plc=self.id))
         else:
             self.__database_keepalive_sent = False
 
