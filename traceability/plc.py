@@ -118,7 +118,7 @@ class PLCBase(object):
     def __str__(self):
         return "PLC Id: {id} Name: {name} @ {ip}:{port}".format(id=self.__id, name=self.__name, ip=self.__ip, port=self.__port)
 
-    @retry([snap7.snap7exceptions.Snap7Exception], tries=1000, delay=3, backoff=1.2, logger=logger) 
+    @retry([snap7.snap7exceptions.Snap7Exception], tries=1000, delay=1, max_delay=600, backoff=1.1, logger=logger) 
     def connect(self):
         logger.debug("PLC: {plc} Trying to connect to: {ip}:{port}".format(plc=self.__id, ip=self.__ip, port=self.__port))
         try:

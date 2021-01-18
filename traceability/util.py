@@ -89,7 +89,7 @@ def offset_spec_block(spec_block, offset=0):
     return "\n".join(result) + "\n"
 
 
-def retry_and_catch(exceptions, tries=5, logger=None, level=logging.ERROR, logger_attr=None, delay=0, backoff=0):
+def retry_and_catch(exceptions, tries=5, logger=None, level=logging.ERROR, logger_attr=None, delay=0, backoff=0, max_delay=0):
     """
     Retries function up to amount of tries.
 
@@ -102,6 +102,7 @@ def retry_and_catch(exceptions, tries=5, logger=None, level=logging.ERROR, logge
     :param logger_attr: Attribute on decorated class to get the logger ie self._logger you would give "_logger"
     :param delay: initial delay seconds
     :param backoff: backoff multiplier
+    :param max_delay: maximum possible delay
     """
     def deco_retry(f):
         def f_retry(*args, **kwargs):
@@ -109,11 +110,13 @@ def retry_and_catch(exceptions, tries=5, logger=None, level=logging.ERROR, logge
             d = delay
             exs = tuple(exceptions)
             log = logger
+            md = max_delay
             while max_tries > 1:
                 try:
                     return f(*args, **kwargs)
                 except exs as e:
-                    message = "Caught Exception: {}. Retrying {} more times.".format(e.__repr__(), max_tries)
+                    sleep_time = min(d, md) if max_delay else d
+                    message = "Caught Exception: {}. Retrying in {}[s] for {} more times.".format(e.__repr__(), round(sleep_time, 2), max_tries)
 
                     # Get logger from cls instance of function
                     # Grabbing 'self'
@@ -128,7 +131,7 @@ def retry_and_catch(exceptions, tries=5, logger=None, level=logging.ERROR, logge
 
                     # Sleep current delay
                     if d:
-                        time.sleep(d)
+                        time.sleep(sleep_time)
 
                         # Increment delay
                         if backoff:
