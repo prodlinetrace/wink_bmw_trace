@@ -5,8 +5,31 @@ import sys
 import os
 import logging
 import time
-from .constants import PC_READY_FLAG
+from .constants import PC_READY_FLAG, STATION_STATUS_CODES
 logger = logging.getLogger(__name__.ljust(12)[:12])
+
+
+def get_status_code(code, item=None):
+    if item is None:
+        if code in STATION_STATUS_CODES.keys():
+            return code
+        else:
+            return 99
+    try:
+        ret = STATION_STATUS_CODES[code][item]
+    except ValueError as e:
+        logger.warning("Wrong value for status code: {code}, returning undefined.".format(code))
+        ret = STATION_STATUS_CODES[99][item]
+
+    return ret
+
+
+def get_status_code_result(code):
+    return get_status_code(code, item='result')
+
+
+def get_status_code_desc(code):
+    return get_status_code(code, item='desc')
 
 
 def hex_dump(block):
