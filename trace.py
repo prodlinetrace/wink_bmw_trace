@@ -62,6 +62,8 @@ class MainWindow(wx.App):
         self.valueMainQueues = xrc.XRCCTRL(frame, "valueMainQueues")
         self.valueMainQueue1 = xrc.XRCCTRL(frame, "valueMainQueue1")
         self.valueMainQueue2 = xrc.XRCCTRL(frame, "valueMainQueue2")
+        self.valueMainQueue1Next = xrc.XRCCTRL(frame, "valueMainQueue1Next")
+        self.valueMainQueue2Next = xrc.XRCCTRL(frame, "valueMainQueue2Next")
 
         self.valueLogTextArea = xrc.XRCCTRL(frame, "valueLogTextArea")
         textAreaFont = wx.Font(10, wx.MODERN, wx.NORMAL, wx.NORMAL, False, u'Consolas')
@@ -196,8 +198,11 @@ class MainWindow(wx.App):
                 self.valueMainDBCommentCount.SetLabelText(str(self.application.get_comment_count()))
 
                 # update queues data
-                self.valueMainQueue1.SetLabelText(str(self.application.get_queue_dump('q1')))
-                self.valueMainQueue2.SetLabelText(str(self.application.get_queue_dump('q2')))
+                self.valueMainQueue1.SetLabelText(str(self.application.get_all_product_ids('q1')))
+                self.valueMainQueue2.SetLabelText(str(self.application.get_all_product_ids('q2')))
+
+                self.valueMainQueue1Next.SetLabelText(str(self.application.get_next_product_id('q1')))
+                self.valueMainQueue2Next.SetLabelText(str(self.application.get_next_product_id('q2')))
 
                 time.sleep(0.31234)
         except Exception as e:

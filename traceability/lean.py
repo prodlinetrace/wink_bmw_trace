@@ -32,6 +32,9 @@ class DBQ(object):
     def get_all(self):
         return Queue.query.filter_by(name=self.name).all()
 
+    def get_all_product_ids(self):
+        return [ p.product_id for p in Queue.query.filter_by(name=self.name).all() ]
+
     def remove(self, product_id):
         items = Queue.query.filter_by(name=self.name).filter_by(product_id=product_id).all()
         try:
@@ -49,6 +52,12 @@ class DBQ(object):
 
     def get_next_product(self):
         return Queue.query.filter_by(name=self.name).first()
+
+    def get_next_product_id(self):
+        next_product = Queue.query.filter_by(name=self.name).first()
+        if next_product is not None:
+            return next_product.product_id
+        return None
 
     def size(self):
         #return Queue.count(self.name)
@@ -100,7 +109,13 @@ class OnePieceFlow(object):
 
     def get_opf(self):
         return self.opf
-    
+
+    def get_next_product_id(self, id):
+        return self.get_queue(id).get_next_product_id()
+
+    def get_all_product_ids(self, id):
+        return self.get_queue(id).get_all_product_ids()
+
     def overflow_check(self, product_id, station_id, result):
         return
 

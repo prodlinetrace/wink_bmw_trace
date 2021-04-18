@@ -24,7 +24,6 @@ def setlocale(name):
         finally:
             locale.setlocale(locale.LC_ALL, saved)
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -253,9 +252,15 @@ class ProdLine(ProdLineBase):
     def get_comment_count(self):
         return self.database.get_comment_count()
 
-    def get_queue_dump(self, name='q1'):
+    def get_all_product_ids(self, name='q1'):
         if self.database.opf is not None:
-            return self.database.opf.dump_queue(name)
+            return self.database.opf.get_all_product_ids(name)
+        else:
+            return None
+
+    def get_next_product_id(self, name='q1'):
+        if self.database.opf is not None:
+            return self.database.opf.get_next_product_id(name)
         else:
             return None
 

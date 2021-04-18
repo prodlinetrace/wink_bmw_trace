@@ -242,7 +242,35 @@
                                         <object class="wxStaticText" name="valueMainQueues">
                                             <label>MyLabel</label>
                                         </object>
-                                    </object>                                    
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_LEFT|wxALL</flag>
+                                        <border>5</border>
+                                        <object class="wxStaticText" name="labelMainQueue1Next">
+                                            <label>Queue 1 Next Product</label>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_LEFT|wxALL</flag>
+                                        <border>5</border>
+                                        <object class="wxStaticText" name="valueMainQueue1Next">
+                                            <label>empty</label>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_LEFT|wxALL</flag>
+                                        <border>5</border>
+                                        <object class="wxStaticText" name="labelMainQueue2Next">
+                                            <label>Queue 2 Next Product</label>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_LEFT|wxALL</flag>
+                                        <border>5</border>
+                                        <object class="wxStaticText" name="valueMainQueue2Next">
+                                            <label>empty</label>
+                                        </object>
+                                    </object>
                                 </object>
                             </object>
                         </object>
@@ -472,7 +500,7 @@
 		                                        <object class="wxStaticText" name="valueMainQueue2">
 		                                            <label>Queue 2 value</label>
 		                                        </object>
-		                                    </object>                                              
+		                                    </object>
                                 		</object>
                                 	</object>
                                 </object>

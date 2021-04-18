@@ -31,3 +31,8 @@ print(opf.status_save( "123476", 'c2', 1))
 print(f'q1: {opf.dump_queue("q1")} q2: {opf.dump_queue("q2")}')
 print(opf.status_save( "123", 'c1', 1))
 print(f'q1: {opf.dump_queue("q1")} q2: {opf.dump_queue("q2")}')
+
+print("q1, Next Product ID", opf.get_next_product_id('q1'))
+print("q1, All products", opf.get_all_product_ids('q1'))
+print("q2, Next Product ID", opf.get_next_product_id('q2'))
+print("q2, All products", opf.get_all_product_ids('q2'))
