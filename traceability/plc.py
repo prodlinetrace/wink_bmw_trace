@@ -50,7 +50,7 @@ class PLCBase(object):
 
     def _init_database(self, dburi=''):
         self.database_engine = Database("{plc}".format(plc=self.get_id()))
-        self.init_opf_checker(self._config)
+        self.database_engine.opf_init(self._config)
         logger.info("PLC: {plc} connected to database: {dburi}. Status: {status}".format(plc=self.get_id(), dburi=dburi, status=self.database_engine.get_status()))
 
     def __repr__(self):

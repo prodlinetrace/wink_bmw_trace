@@ -28,7 +28,7 @@ class Database(object):
         self.product_id_counter = itertools.count()
         self.opf_checker = None
 
-    def init_opf_checker(self, config):
+    def opf_init(self, config):
         self.opf_checker = OnePieceFlow(config)
 
     def read_operator_status(self, operator):
