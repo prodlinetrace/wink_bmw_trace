@@ -13,7 +13,7 @@ from sqlalchemy.sql.expression import func
 from . import db
 logger = logging.getLogger(__name__)
 
-__version__ = '0.1.11'
+__version__ = '0.1.12'
 
 try:
     from . import login_manager
@@ -274,6 +274,38 @@ class Station(db.Model):
             'rack': self.rack,
             'slot': self.slot,
         }
+
+
+class Queue(db.Model):
+    __tablename__ = 'queue'
+    id = db.Column(db.Integer, primary_key=True)
+    product_id = db.Column(db.String(30), unique=False)
+    name = db.Column(db.String(16), unique=False)
+    date_added = db.Column(db.String(40), index=True)
+
+
+    def __init__(self, product_id, name="name"):
+        self.product_id = product_id
+        self.name = name
+        self.date_added = str(datetime.now())
+
+    def __repr__(self):
+        return f'<Queue: {self.name} id: {self.id} product_id: {self.product_id}>'
+
+    @property
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {
+            'id': self.id,
+            'product_id': self.product_id,
+            'name': self.name,
+            'date_added': self.date_added,
+        }
+
+    @staticmethod
+    def count(self, name):
+        """ Return number of good statuses """
+        return self.queue.filter(Queue.name==name).count()  
 
 
 class Status(db.Model):

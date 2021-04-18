@@ -66,6 +66,10 @@ STATION_STATUS_CODES = {
     9: {"result": "WAITING", "desc": "status reset - PLC set status to 'WAITING' and waiting for PC response"},
     10: {"result": "INTERRUPTED", "desc": "Test was interrupted"},
     11: {"result": "REPEATEDINTERRUPTED", "desc": "Repeated test was interrupted"},
+    13: {"result": "WRONG_ORDER", "desc": "Wrong processing order"},
+    14: {"result": "NOK_OUT", "desc": "item already marked as NOK on some station. Unable to process this item."},
+    15: {"result": "OK_BUT_DONE", "desc": "The item processing was OK, however it already had one OK before. This is a failure case. There could be ONLY ONE OK. If there was NOK on given station - there could be following OK."},
+    16: {"result": "BUFFER_FULL", "desc": "Failure status. The buffer is full - unable to process. Have to process in given order."},
     99: {"result": "VALUEERROR", "desc": "Faulty value was passed. Unable to process data."},
 }
 

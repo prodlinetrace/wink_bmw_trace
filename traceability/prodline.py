@@ -195,10 +195,12 @@ class ProdLineBase(object):
             c = self.__PLCClass(ip, rack, slot, port)
             c.set_name(name)
             c.set_id(iden)
+            c.set_config(self._config)
             logger.debug("PLC: {plc} configuring database engine connectivity".format(plc=plc))
             c._init_database(self.get_dburi())
             logger.debug("PLC: {plc} set active data blocks to: {dbs}".format(plc=plc, dbs=str(datablocks)))
             c.set_active_datablock_list(datablocks)
+            # updates PLC instance with config file content to make sure that OFP checker can use it.
             logger.debug("PLC: {plc} is configured now.".format(plc=plc))
 
             self.__plc_list.append(c)

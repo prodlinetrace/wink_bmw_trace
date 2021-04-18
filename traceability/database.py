@@ -4,6 +4,8 @@ import itertools
 from datetime import datetime
 from . import db
 from .models import *
+from .lean import OnePieceFlow
+from .util import get_status_code_result
 from builtins import str
 
 logger = logging.getLogger(__name__)
@@ -24,19 +26,10 @@ class Database(object):
         # remember last_productid index and consecutive counter
         self.last_product_id_num = 0
         self.product_id_counter = itertools.count()
-        
-    def read_status(self, product_id, station):
-        # product_type = str(product_type)
-        # serial_number = str(serial_number)
-        product_id = product_id
-        station = int(station)
-        res = Status.query.filter_by(product_id=product_id).filter_by(station_id=station).all()
-        if len(res) == 0:
-            logger.warn("CON: {dbcon} PID: {product_id} ST: {station} record not found in database - returning undefined".format(dbcon=self.name, product_id=product_id, station=station))
-            return 0  # Wabco statuses are not used anymore. Current statuses: (0 undefined, 1 OK, 2 NOK)
-        ret = res[-1].status
-        logger.info("CON: {dbcon} PID: {product_id} ST: {station} record has status: {status}".format(dbcon=self.name, product_id=product_id, station=station, status=ret))
-        return ret
+        self.opf_checker = None
+
+    def init_opf_checker(self, config):
+        self.opf_checker = OnePieceFlow(config)
 
     def read_operator_status(self, operator):
         result = User.query.filter_by(id=operator).all()
@@ -52,24 +45,57 @@ class Database(object):
         logger.error("CON: {dbcon} I should never get here...".format(dbcon=self.name))
         return 0
 
+    def read_status(self, product_id, station):
+        """
+            Reads the status from the Database for given station
+            The One Piece Flow checks could be possibly implemented here (or one level above).
+        """
+        station = int(station)
+        res = Status.query.filter_by(product_id=product_id).filter_by(station_id=station).all()  # will query all statuses stored in database and return the last one.
+        if len(res) == 0:
+            logger.warn("CON: {dbcon} PID: {product_id} ST: {station} record not found in database - returning undefined".format(dbcon=self.name, product_id=product_id, station=station))
+            db_status = 0  # Wabco statuses are not used anymore. Current statuses: (0 undefined, 1 OK, 2 NOK)
+        else:
+            db_status = res[-1].status
+
+        # do the One Piece Flow checks:
+        opf_status = self.opf_checker.status_read(product_id=product_id, station_id=station, db_status=db_status)
+        if db_status != opf_status:
+            # abnormal processing or - OPF status different than database status.
+            logger.warn("CON: {dbcon} PID: {product_id} ST: {station} STATUS: {opf_status} PROGRAM: {program} NEST: {nest} OPERATOR: {operator} DT: {date_time} db_status: {db_status} OPF: {opf}. abnormal processing or - OPF_status different than Database_status: {res}".format(dbcon=self.name, product_id=product_id, station=station, opf_status=opf_status, program=program, nest=nest, operator=operator, date_time=date_time, db_status=db_status, opf=self.opf_checker.get_opf(), res=get_status_code_result(opf_status)))
+
+        logger.info("CON: {dbcon} PID: {product_id} ST: {station} record has STATUS: {opf_status}  (db_status: {db_status} OPF: {opf})".format(dbcon=self.name, product_id=product_id, station=station, opf_status=opf_status, db_status=db_status, opf=self.opf_checker.get_opf()))
+
+        return opf_status
+
     def write_status(self, product_id, station, status, program, nest, operator=0, date_time=datetime.now()):
-        #product_type = str(product_type)
-        #serial_number = str(serial_number)
+        """
+            Writes the station status into the Database.
+            The status value is taken from PLC.
+            The One Piece Flow checks could be possibly implemented here (or one level above).
+        """
+
         product_id = str(product_id)
         station = int(station)
-        status = int(status)
+        plc_status = int(status)
         program = int(program)
         nest = int(nest)
         operator = int(operator)
         date_time = str(date_time)
-        logger.info("CON: {dbcon} PID: {product_id} ST: {station} STATUS: {status} PROGRAM: {program} NEST: {nest} OPERATOR: {operator} DT: {date_time}. Saving status record.".format(dbcon=self.name, product_id=product_id, station=station, status=status, program=program, nest=nest, operator=operator, date_time=date_time))
+
+        opf_status = self.opf_checker.status_save(product_id, station, plc_status)
+        if plc_status != opf_status:
+            # abnormal processing or - OPF status different than PLC status.
+            logger.warn("CON: {dbcon} PID: {product_id} ST: {station} STATUS: {opf_status} PROGRAM: {program} NEST: {nest} OPERATOR: {operator} DT: {date_time} plc_status: {plc_status} OPF: {opf}. abnormal processing or - OPF_status different than PLC_status: {res}".format(dbcon=self.name, product_id=product_id, station=station, opf_status=opf_status, program=program, nest=nest, operator=operator, date_time=date_time, plc_status=plc_status, opf=self.opf_checker.get_opf(), res=get_status_code_result(opf_status)))
+
+        logger.info("CON: {dbcon} PID: {product_id} ST: {station} STATUS: {opf_status} PROGRAM: {program} NEST: {nest} OPERATOR: {operator} DT: {date_time}. Saving status record. (plc_status: {plc_status} OPF: {opf})".format(dbcon=self.name, product_id=product_id, station=station, opf_status=opf_status, program=program, nest=nest, operator=operator, date_time=date_time, plc_status=plc_status, opf=self.opf_checker.get_opf()))
 
         #self.add_program_if_required(program_id)
         self.add_product_if_required(product_id)
         self.add_station_if_required(station)
-        self.add_operation_status_if_required(status)  # status and operation status names are kept in one and same table
+        self.add_operation_status_if_required(opf_status)  # status and operation status names are kept in one and same table
         self.add_operator_if_required(operator)  # add / operator / user if required.
-        self.add_status(status, product_id, program, nest, station, operator, date_time)
+        self.add_status(opf_status, product_id, program, nest, station, operator, date_time)
 
     def write_operation_result(self, product_id, station_id, operation_status, operation_type, program_number, nest_number, date_time, results=[]):
         operation_id = self.write_operation(product_id, station_id, operation_status, operation_type, program_number, nest_number, date_time)

@@ -13,6 +13,7 @@ from .custom_exceptions import UnknownDB
 from .database import Database
 from .block import Local_Status
 from .util import retry_and_catch as retry
+from .lean import OnePieceFlow
 logger = logging.getLogger(__name__)
 
 
@@ -44,9 +45,12 @@ class PLCBase(object):
         self._pollsleep = 0.1
         self._polldbsleep = 0.01
         self.__database_keepalive_sent = False
+        self._config = None
+        self.opf_checker = None  # OnePieceFlow()
 
     def _init_database(self, dburi=''):
         self.database_engine = Database("{plc}".format(plc=self.get_id()))
+        self.init_opf_checker(self._config)
         logger.info("PLC: {plc} connected to database: {dburi}. Status: {status}".format(plc=self.get_id(), dburi=dburi, status=self.database_engine.get_status()))
 
     def __repr__(self):
@@ -66,6 +70,10 @@ class PLCBase(object):
             if k in self._active_data_blocks:
                 ret[k] = v
         return ret
+
+    def set_config(self, config=None):
+        self._config = config
+        self.opf_checker = OnePieceFlow(config=self._config)
 
     def items(self):
         """
@@ -383,14 +391,18 @@ class PLC(PLCBase):
                 
 
     def read_status(self, dbid):
+        """
+            Reads station status from the Database and saves it into PLC. (PLC asks for overall station status).
+        """
+
         block = self.get_db(dbid)
         if block is None:
             logger.warn("PLC: {plc} DB: {db} is missing on PLC. Skipping".format(plc=self.get_id(), db=dbid))
             return
 
         if PLC_QUERY_FLAG in block.export():
-            if block.__getitem__(PLC_QUERY_FLAG):  # get the station status from db
-                block.set_pc_ready_flag(False)  # set PC ready flag to False
+            if block.__getitem__(PLC_QUERY_FLAG):  # check if PLC_QUERY_FLAG is raised.
+                block.set_pc_ready_flag(False)  # start processing - say I'm bussy - set PC ready flag to False
 
                 for field in [HEAD_STATION_ID, STATUS_STATION_NUMBER, STATUS_DATABASE_RESULT, HEAD_DETAIL_ID, HEAD_NEST_NUMBER]:
                     if field not in block.export():
@@ -437,6 +449,7 @@ class PLC(PLCBase):
                     logger.warning("PLC: {plc} DB: {db} wrong value for status, returning undefined. Exception: {e}".format(plc=self.id, db=block.get_db_number(), e=e))
                     status = STATION_STATUS_CODES[99]['result']
 
+                # TODO: optionally OnePieceFlow checks can be implemented here.
                 block.store_item(STATUS_DATABASE_RESULT, station_status)
                 #sleep(0.1)  # 100ms sleep requested by Marcin Kusnierz @ 24-09-2015
                 # try to read data from PLC as test
@@ -461,14 +474,24 @@ class PLC(PLCBase):
                 # logger.debug("PLC: %s block: %s flag '%s' idle" % (self.get_id(), block.get_db_number(), PLC_QUERY_FLAG))
 
     def save_status(self, dbid):
-        # save the status to
+        """
+        Reads station status from PLC and saves it into the Database. (PLC stores station status into Database)
+
+        One Piece Flow:
+
+            1.Pomiędzy maszyną 12705 a 12706 i 12706 a 12707 potrzebne są bufory 10 sztuk.
+            W buforze będą zapisywane ID sztuk z globalnym OK w kolejności, w jakiej schodzą z maszyny n.
+            Poprawne wykonanie sztuki na maszynie n+1 zdejmuje ją z bufora maszyny n, przesuwa bufor i robi miejsce na kolejną sztukę do wykonania na maszynie n.
+            Jeżeli bufor maszyny n jest pełen to wstrzymywana jest na niej praca do czasu aż zwolni się miejsce.
+            Będzie potrzebny pewnie globalny status: 16 – BUFFOR FULL zwracany kiedy bufor sie przepełni.
+        """
         block = self.get_db(dbid)
         if block is None:
             logger.warn("PLC: {plc} DB: {db} is missing on PLC. Skipping".format(plc=self.get_id(), db=dbid))
             return
 
         if PLC_SAVE_FLAG in block.export():
-            if block.__getitem__(PLC_SAVE_FLAG):  # get the station status from db
+            if block.__getitem__(PLC_SAVE_FLAG):  # starts processing if PLC_SAVE_FLAG flag is raised
                 block.set_pc_ready_flag(False)  # set PC ready flag to False
                 # query PLC for required fields... 
                 # head_head_station_id=HEAD_STATION_ID, head_program_number=HEAD_PROGRAM_NUMBER, head_nest_number=HEAD_NEST_NUMBER, head_detail_id=HEAD_DETAIL_ID
@@ -479,8 +502,6 @@ class PLC(PLCBase):
                         block.set_pc_ready_flag(True)  # set busy flag back to ready
                         return
                     
-                # TODO: Hack remove me once test PLC is fixed.
-                #block.store_item("head.detail_id", "1125")
                 try:
                     head_detail_id = data = block[HEAD_DETAIL_ID]
                 except ValueError as e:
@@ -493,8 +514,7 @@ class PLC(PLCBase):
                     logger.error("PLC: {plc} DB: {db} Data read error. Input: {data} Exception: {e}, TB: {tb}".format(plc=self.id, db=dbid, data=data, e=e, tb=traceback.format_exc()))
                     head_station_id = 0
                 try:
-                    data = block[STATUS_STATION_RESULT]
-                    station_status = int(data)
+                    station_status = int(block[STATUS_STATION_RESULT])
                 except ValueError as e:
                     logger.error("PLC: {plc} DB: {db} Data read error. Input: {data} Exception: {e}, TB: {tb}".format(plc=self.id, db=dbid, data=data, e=e, tb=traceback.format_exc()))
                     station_status = 0
@@ -680,7 +700,7 @@ class PLC(PLCBase):
             logger.warn(f'PLC: {self.get_id()} DB: {dbid} is missing on PLC. Skipping')
             return
 
-        # TODO remove once scanner is active
+        # TODO: remove once scanner is active
         head_detail_id = block.get("head.detail_id")
         block.store_item("ReadID.id", head_detail_id)  # overwrite value read by scanner. 
 
@@ -944,7 +964,7 @@ class PLC(PLCBase):
             logger.warn(f'PLC: {self.get_id()} DB: {dbid} is missing on PLC. Skipping')
             return
 
-        # TODO remove once scanner is active
+        # TODO: remove once scanner is active
         head_detail_id = block.get("head.detail_id")
         block.store_item("ReadID.id", head_detail_id)  # overwrite value read by scanner. 
         
@@ -1404,7 +1424,7 @@ class PLC(PLCBase):
             logger.warn(f'PLC: {self.get_id()} DB: {dbid} is missing on PLC. Skipping')
             return        
 
-        # TODO remove once scanner is active
+        # TODO: remove once scanner is active
         head_detail_id = block.get("head.detail_id")
         block.store_item("ReadID.id", head_detail_id)  # overwrite value read by scanner. 
 
