@@ -159,8 +159,6 @@
                                             <label>MyLabel</label>
                                         </object>
                                     </object>
-
-
                                     <object class="sizeritem">
                                         <flag>wxALIGN_LEFT|wxALL</flag>
                                         <border>5</border>
@@ -217,6 +215,34 @@
                                             <label>MyLabel</label>
                                         </object>
                                     </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_LEFT|wxALL</flag>
+                                        <border>5</border>
+                                        <object class="wxStaticText" name="labelMainOPF">
+                                            <label>One Piece Flow</label>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_LEFT|wxALL</flag>
+                                        <border>5</border>
+                                        <object class="wxStaticText" name="valueMainOPF">
+                                            <label>MyLabel</label>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_LEFT|wxALL</flag>
+                                        <border>5</border>
+                                        <object class="wxStaticText" name="labelMainQueues">
+                                            <label>Queues</label>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_LEFT|wxALL</flag>
+                                        <border>5</border>
+                                        <object class="wxStaticText" name="valueMainQueues">
+                                            <label>MyLabel</label>
+                                        </object>
+                                    </object>                                    
                                 </object>
                             </object>
                         </object>
@@ -418,6 +444,35 @@
 		                                            <label>DB Comment Count value</label>
 		                                        </object>
 		                                    </object>
+
+		                                    <object class="sizeritem">
+		                                        <flag>wxALIGN_LEFT|wxALL</flag>
+		                                        <border>5</border>
+		                                        <object class="wxStaticText" name="labelMainQueue1">
+		                                            <label>Queue 1</label>
+		                                        </object>
+		                                    </object>
+		                                    <object class="sizeritem">
+		                                        <flag>wxALIGN_LEFT|wxALL</flag>
+		                                        <border>5</border>
+		                                        <object class="wxStaticText" name="valueMainQueue1">
+		                                            <label>Queue 1 value</label>
+		                                        </object>
+		                                    </object>
+		                                    <object class="sizeritem">
+		                                        <flag>wxALIGN_LEFT|wxALL</flag>
+		                                        <border>5</border>
+		                                        <object class="wxStaticText" name="labelMainQueue2">
+		                                            <label>Queue 2</label>
+		                                        </object>
+		                                    </object>
+		                                    <object class="sizeritem">
+		                                        <flag>wxALIGN_LEFT|wxALL</flag>
+		                                        <border>5</border>
+		                                        <object class="wxStaticText" name="valueMainQueue2">
+		                                            <label>Queue 2 value</label>
+		                                        </object>
+		                                    </object>                                              
                                 		</object>
                                 	</object>
                                 </object>

@@ -58,6 +58,11 @@ class MainWindow(wx.App):
         self.valueMainDBStatusTypeCount = xrc.XRCCTRL(frame, "valueMainDBStatusTypeCount")
         self.valueMainDBCommentCount = xrc.XRCCTRL(frame, "valueMainDBCommentCount")
 
+        self.valueMainOPF = xrc.XRCCTRL(frame, "valueMainOPF")
+        self.valueMainQueues = xrc.XRCCTRL(frame, "valueMainQueues")
+        self.valueMainQueue1 = xrc.XRCCTRL(frame, "valueMainQueue1")
+        self.valueMainQueue2 = xrc.XRCCTRL(frame, "valueMainQueue2")
+
         self.valueLogTextArea = xrc.XRCCTRL(frame, "valueLogTextArea")
         textAreaFont = wx.Font(10, wx.MODERN, wx.NORMAL, wx.NORMAL, False, u'Consolas')
         self.valueLogTextArea.SetFont(textAreaFont)
@@ -90,6 +95,10 @@ class MainWindow(wx.App):
             self.pollDbSleep = self._config['main']['poll_db_sleep'][0]
         if 'pc_ready_flag_on_poll' in self._config['main']:
             self.pcReadyFlagOnPoll = self._config['main']['pc_ready_flag_on_poll'][0]
+        if 'opf' in self._config['main']:
+            self.opf = bool(int(self._config['main']['opf'][0]))
+        if 'queues' in self._config['main']:
+            self.mainQueues = self._config['main']['queues']
 
         # bind verbosity choice box with selector function
         self.Bind(wx.EVT_CHOICE, self.OnVerbositySelect, self.valueMainVerbosity)
@@ -117,7 +126,6 @@ class MainWindow(wx.App):
             popup = True
         logger.info("Changing Product Details Popup to: {popup}".format(popup=popup))
         self.application.set_popups(popup)
-
 
     def updateLogWindow(self):
         self._mode = self.ID_UPDATE_LOG
@@ -158,6 +166,9 @@ class MainWindow(wx.App):
             self.valueMainBaseUrl.SetLabelText(str(self.baseUrl))
             self.valueMainPollSleep.SetLabelText(str(self.pollSleep))
             self.valueMainPollDBSleep.SetLabelText(str(self.pollDbSleep))
+            self.valueMainOPF.SetLabelText(str(self.opf))
+            self.valueMainQueues.SetLabelText(str(self.mainQueues))
+
 
             while True:
                 self.valueMainLogFile.SetLabelText(file_name_with_size(self.logfile))
@@ -183,6 +194,10 @@ class MainWindow(wx.App):
                 self.valueMainDBOperationTypeCount.SetLabelText(str(self.application.get_operation_type_count()))
                 self.valueMainDBStatusTypeCount.SetLabelText(str(self.application.get_status_type_count()))
                 self.valueMainDBCommentCount.SetLabelText(str(self.application.get_comment_count()))
+
+                # update queues data
+                self.valueMainQueue1.SetLabelText(str(self.application.get_queue_dump('q1')))
+                self.valueMainQueue2.SetLabelText(str(self.application.get_queue_dump('q2')))
 
                 time.sleep(0.31234)
         except Exception as e:

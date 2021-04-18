@@ -42,7 +42,6 @@ class ProdLineBase(object):
         logger = logging.getLogger(__name__.ljust(24)[:24])
         logger.setLevel(loglevel)
 
-
         # parse config file
         logger.info("Using config file {cfg}.".format(cfg=self._opts.config))
         self._config = parse_config(self._opts.config)
@@ -211,7 +210,7 @@ class ProdLine(ProdLineBase):
 
     def __init__(self, argv, loglevel=logging.INFO):
         ProdLineBase.__init__(self, argv, loglevel)
-        self.database = Database(self.__class__.__name__)
+        self.database = Database(self.__class__.__name__, self.get_config())
         from .plc import PLC
         self.set_plc_class(PLC)
 
@@ -253,6 +252,12 @@ class ProdLine(ProdLineBase):
 
     def get_comment_count(self):
         return self.database.get_comment_count()
+
+    def get_queue_dump(self, name='q1'):
+        if self.database.opf is not None:
+            return self.database.opf.dump_queue(name)
+        else:
+            return None
 
     def test_messages(self):
         for plc in self.plcs:

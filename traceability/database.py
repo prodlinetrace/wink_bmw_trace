@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 class Database(object):
 
-    def __init__(self, name="DB connection"):
+    def __init__(self, name="DB connection", config=None):
         # force foreign keys constraints. to check the data integrity.
         self.name = name
         #@sqlalchemy.event.listens_for(db.engine, "connect")
@@ -26,10 +26,15 @@ class Database(object):
         # remember last_productid index and consecutive counter
         self.last_product_id_num = 0
         self.product_id_counter = itertools.count()
-        self.opf_checker = None
+
+        self.config = config
+        if self.config is None:
+            self.opf = None
+        else:
+            self.opf = OnePieceFlow(config)
 
     def opf_init(self, config):
-        self.opf_checker = OnePieceFlow(config)
+        self.opf = OnePieceFlow(config)
 
     def read_operator_status(self, operator):
         result = User.query.filter_by(id=operator).all()
@@ -59,12 +64,12 @@ class Database(object):
             db_status = res[-1].status
 
         # do the One Piece Flow checks:
-        opf_status = self.opf_checker.status_read(product_id=product_id, station_id=station, db_status=db_status)
+        opf_status = self.opf.status_read(product_id=product_id, station_id=station, db_status=db_status)
         if db_status != opf_status:
             # abnormal processing or - OPF status different than database status.
-            logger.warn("CON: {dbcon} PID: {product_id} ST: {station} STATUS: {opf_status} PROGRAM: {program} NEST: {nest} OPERATOR: {operator} DT: {date_time} db_status: {db_status} OPF: {opf}. abnormal processing or - OPF_status different than Database_status: {res}".format(dbcon=self.name, product_id=product_id, station=station, opf_status=opf_status, program=program, nest=nest, operator=operator, date_time=date_time, db_status=db_status, opf=self.opf_checker.get_opf(), res=get_status_code_result(opf_status)))
+            logger.warn("CON: {dbcon} PID: {product_id} ST: {station} STATUS: {opf_status} PROGRAM: {program} NEST: {nest} OPERATOR: {operator} DT: {date_time} db_status: {db_status} OPF: {opf}. abnormal processing or - OPF_status different than Database_status: {res}".format(dbcon=self.name, product_id=product_id, station=station, opf_status=opf_status, program=program, nest=nest, operator=operator, date_time=date_time, db_status=db_status, opf=self.opf.get_opf(), res=get_status_code_result(opf_status)))
 
-        logger.info("CON: {dbcon} PID: {product_id} ST: {station} record has STATUS: {opf_status}  (db_status: {db_status} OPF: {opf})".format(dbcon=self.name, product_id=product_id, station=station, opf_status=opf_status, db_status=db_status, opf=self.opf_checker.get_opf()))
+        logger.info("CON: {dbcon} PID: {product_id} ST: {station} record has STATUS: {opf_status}  (db_status: {db_status} OPF: {opf})".format(dbcon=self.name, product_id=product_id, station=station, opf_status=opf_status, db_status=db_status, opf=self.opf.get_opf()))
 
         return opf_status
 
@@ -83,12 +88,12 @@ class Database(object):
         operator = int(operator)
         date_time = str(date_time)
 
-        opf_status = self.opf_checker.status_save(product_id, station, plc_status)
+        opf_status = self.opf.status_save(product_id, station, plc_status)
         if plc_status != opf_status:
             # abnormal processing or - OPF status different than PLC status.
-            logger.warn("CON: {dbcon} PID: {product_id} ST: {station} STATUS: {opf_status} PROGRAM: {program} NEST: {nest} OPERATOR: {operator} DT: {date_time} plc_status: {plc_status} OPF: {opf}. abnormal processing or - OPF_status different than PLC_status: {res}".format(dbcon=self.name, product_id=product_id, station=station, opf_status=opf_status, program=program, nest=nest, operator=operator, date_time=date_time, plc_status=plc_status, opf=self.opf_checker.get_opf(), res=get_status_code_result(opf_status)))
+            logger.warn("CON: {dbcon} PID: {product_id} ST: {station} STATUS: {opf_status} PROGRAM: {program} NEST: {nest} OPERATOR: {operator} DT: {date_time} plc_status: {plc_status} OPF: {opf}. abnormal processing or - OPF_status different than PLC_status: {res}".format(dbcon=self.name, product_id=product_id, station=station, opf_status=opf_status, program=program, nest=nest, operator=operator, date_time=date_time, plc_status=plc_status, opf=self.opf.get_opf(), res=get_status_code_result(opf_status)))
 
-        logger.info("CON: {dbcon} PID: {product_id} ST: {station} STATUS: {opf_status} PROGRAM: {program} NEST: {nest} OPERATOR: {operator} DT: {date_time}. Saving status record. (plc_status: {plc_status} OPF: {opf})".format(dbcon=self.name, product_id=product_id, station=station, opf_status=opf_status, program=program, nest=nest, operator=operator, date_time=date_time, plc_status=plc_status, opf=self.opf_checker.get_opf()))
+        logger.info("CON: {dbcon} PID: {product_id} ST: {station} STATUS: {opf_status} PROGRAM: {program} NEST: {nest} OPERATOR: {operator} DT: {date_time}. Saving status record. (plc_status: {plc_status} OPF: {opf})".format(dbcon=self.name, product_id=product_id, station=station, opf_status=opf_status, program=program, nest=nest, operator=operator, date_time=date_time, plc_status=plc_status, opf=self.opf.get_opf()))
 
         #self.add_program_if_required(program_id)
         self.add_product_if_required(product_id)

@@ -46,10 +46,10 @@ class PLCBase(object):
         self._polldbsleep = 0.01
         self.__database_keepalive_sent = False
         self._config = None
-        self.opf_checker = None  # OnePieceFlow()
+        self.opf = None  # OnePieceFlow()
 
     def _init_database(self, dburi=''):
-        self.database_engine = Database("{plc}".format(plc=self.get_id()))
+        self.database_engine = Database(str(self.get_id()), config=self._config)
         self.database_engine.opf_init(self._config)
         logger.info("PLC: {plc} connected to database: {dburi}. Status: {status}".format(plc=self.get_id(), dburi=dburi, status=self.database_engine.get_status()))
 
@@ -73,7 +73,7 @@ class PLCBase(object):
 
     def set_config(self, config=None):
         self._config = config
-        self.opf_checker = OnePieceFlow(config=self._config)
+        self.opf = OnePieceFlow(config=self._config)
 
     def items(self):
         """
