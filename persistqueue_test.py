@@ -1,7 +1,7 @@
 #!/usr/bin/python3 
 
 import sys
-from persistqueue.queue import Queue, Empty, Full
+#from persistqueue.queue import Queue, Empty, Full
 from traceability.lean import OnePieceFlow
 from traceability.helpers import parse_config
 from traceability.database import Database
