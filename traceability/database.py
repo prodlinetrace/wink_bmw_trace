@@ -6,14 +6,13 @@ from . import db
 from .models import *
 from .lean import OnePieceFlow
 from .util import get_status_code_result
-from builtins import str
 
 logger = logging.getLogger(__name__)
 
 
 class Database(object):
 
-    def __init__(self, name="DB connection", config=None):
+    def __init__(self, name="DB connection", config=None, opf_status=True):
         # force foreign keys constraints. to check the data integrity.
         self.name = name
         #@sqlalchemy.event.listens_for(db.engine, "connect")
@@ -27,6 +26,7 @@ class Database(object):
         self.last_product_id_num = 0
         self.product_id_counter = itertools.count()
 
+        self.opf_status = opf_status
         self.config = config
         if self.config is None:
             self.opf = None
@@ -50,7 +50,7 @@ class Database(object):
         logger.error("CON: {dbcon} I should never get here...".format(dbcon=self.name))
         return 0
 
-    def read_status(self, product_id, station):
+    def read_status(self, product_id, station, opf=True):
         """
             Reads the status from the Database for given station
             The One Piece Flow checks could be possibly implemented here (or one level above).
@@ -64,7 +64,11 @@ class Database(object):
             db_status = res[-1].status
 
         # do the One Piece Flow checks:
-        opf_status = self.opf.status_read(product_id=product_id, station_id=station, db_status=db_status)
+        if self.opf_status is not True or opf is not True:
+            opf_status = db_status
+        else:
+            opf_status = self.opf.status_read(product_id=product_id, station_id=station, db_status=db_status)
+
         if db_status != opf_status:
             # abnormal processing or - OPF status different than database status.
             logger.warn("CON: {dbcon} PID: {product_id} ST: {station} STATUS: {opf_status} PROGRAM: {program} NEST: {nest} OPERATOR: {operator} DT: {date_time} db_status: {db_status} OPF: {opf}. abnormal processing or - OPF_status different than Database_status: {res}".format(dbcon=self.name, product_id=product_id, station=station, opf_status=opf_status, program=program, nest=nest, operator=operator, date_time=date_time, db_status=db_status, opf=self.opf.get_opf(), res=get_status_code_result(opf_status)))
@@ -73,7 +77,7 @@ class Database(object):
 
         return opf_status
 
-    def write_status(self, product_id, station, status, program, nest, operator=0, date_time=datetime.now()):
+    def write_status(self, product_id, station, status, program, nest, operator=0, date_time=datetime.now(), opf=True):
         """
             Writes the station status into the Database.
             The status value is taken from PLC.
@@ -88,7 +92,11 @@ class Database(object):
         operator = int(operator)
         date_time = str(date_time)
 
-        opf_status = self.opf.status_save(product_id, station, plc_status)
+        if self.opf_status is not True or opf is not True:
+            opf_status = plc_status
+        else:
+            opf_status = self.opf.status_save(product_id, station, plc_status)
+
         if plc_status != opf_status:
             # abnormal processing or - OPF status different than PLC status.
             logger.warn("CON: {dbcon} PID: {product_id} ST: {station} STATUS: {opf_status} PROGRAM: {program} NEST: {nest} OPERATOR: {operator} DT: {date_time} plc_status: {plc_status} OPF: {opf}. abnormal processing or - OPF_status different than PLC_status: {res}".format(dbcon=self.name, product_id=product_id, station=station, opf_status=opf_status, program=program, nest=nest, operator=operator, date_time=date_time, plc_status=plc_status, opf=self.opf.get_opf(), res=get_status_code_result(opf_status)))

@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 class PLCBase(object):
 
-    def __init__(self, ip='127.0.0.1', rack=0, slot=2, port=102, reconnect=10):
+    def __init__(self, ip='127.0.0.1', rack=0, slot=2, port=102, reconnect=10, opf_status=True):
         self.__ip = ip
         self.__rack = int(rack)
         self.__slot = int(slot)
@@ -36,6 +36,7 @@ class PLCBase(object):
         self.database_cursor = None
         self.counter_status_message_read = 0
         self.counter_status_message_write = 0
+        self.counter_status_wrong_order = 0
         self.counter_saved_operations = 0
         self.counter_show_product_details = 0
         self.counter_operator_status_read = 0
@@ -47,9 +48,10 @@ class PLCBase(object):
         self.__database_keepalive_sent = False
         self._config = None
         self.opf = None  # OnePieceFlow()
+        self.opf_status = opf_status
 
     def _init_database(self, dburi=''):
-        self.database_engine = Database(str(self.get_id()), config=self._config)
+        self.database_engine = Database(str(self.get_id()), config=self._config, opf_status=self.opf_status)
         self.database_engine.opf_init(self._config)
         logger.info("PLC: {plc} connected to database: {dburi}. Status: {status}".format(plc=self.get_id(), dburi=dburi, status=self.database_engine.get_status()))
 
@@ -390,7 +392,7 @@ class PLC(PLCBase):
                 block.set_id_ready_flag(True)  # set ID ready flag back to true
                 
 
-    def read_status(self, dbid):
+    def read_status(self, dbid, opf=True):
         """
             Reads station status from the Database and saves it into PLC. (PLC asks for overall station status).
         """
@@ -449,9 +451,19 @@ class PLC(PLCBase):
                     logger.warning("PLC: {plc} DB: {db} wrong value for status, returning undefined. Exception: {e}".format(plc=self.id, db=block.get_db_number(), e=e))
                     status = STATION_STATUS_CODES[99]['result']
 
-                # TODO: optionally OnePieceFlow checks can be implemented here.
                 block.store_item(STATUS_DATABASE_RESULT, station_status)
-                #sleep(0.1)  # 100ms sleep requested by Marcin Kusnierz @ 24-09-2015
+
+                # One Piece Flow. The expected product_id should be saved in case of station_status 13 only (WRONG ORDER)
+                if self.opf_status is True:
+                    if station_status == 13:
+                        if self.opf is None:
+                            expected_pid = 0
+                        else:
+                            expected_pid = self.opf.get_next_product_id_for_db(block.get_db_number())
+                        logger.warn("PLC: {plc} DB: {db} PID: {head_detail_id} SID: {head_station_id} ST: {station_number} WRONG_ORDER detected. Saving expected PID: {expected_pid}".format(plc=self.get_id(), db=block.get_db_number(), head_detail_id=head_detail_id, head_station_id=head_station_id, station_number=station_number, expected_pid=expected_pid))
+                        block.store_item(HEAD_DETAIL_ID, expected_pid)
+                        self.counter_status_wrong_order += 1
+
                 # try to read data from PLC as test
                 try:
                     data = block[STATUS_DATABASE_RESULT]
@@ -554,8 +566,11 @@ class PLC(PLCBase):
                 except ValueError as e:
                     logger.error("PLC: {plc} DB: {db} Data read error. Input: {data} Exception: {e}, TB: {tb}".format(plc=self.id, db=dbid, data=data, e=e, tb=traceback.format_exc()))
                     operator_id = 0
+
                 self.database_engine.write_status(head_detail_id, head_station_id, station_status, program_number, nest_number, operator_id, date_time)
                 self.counter_status_message_write += 1
+
+                # One Piece Flow. The expected detail_id should be saved in case of station_status 13 only (WRONG ORDER)
                 block.set_plc_save_flag(False)
                 block.set_pc_ready_flag(True)  # set PC ready flag back to true
             else:

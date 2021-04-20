@@ -97,8 +97,6 @@ class MainWindow(wx.App):
             self.pollDbSleep = self._config['main']['poll_db_sleep'][0]
         if 'pc_ready_flag_on_poll' in self._config['main']:
             self.pcReadyFlagOnPoll = self._config['main']['pc_ready_flag_on_poll'][0]
-        if 'opf' in self._config['main']:
-            self.opf = bool(int(self._config['main']['opf'][0]))
         if 'queues' in self._config['main']:
             self.mainQueues = self._config['main']['queues']
 
@@ -168,7 +166,7 @@ class MainWindow(wx.App):
             self.valueMainBaseUrl.SetLabelText(str(self.baseUrl))
             self.valueMainPollSleep.SetLabelText(str(self.pollSleep))
             self.valueMainPollDBSleep.SetLabelText(str(self.pollDbSleep))
-            self.valueMainOPF.SetLabelText(str(self.opf))
+            self.valueMainOPF.SetLabelText(str(self.application.get_opf_status()))
             self.valueMainQueues.SetLabelText(str(self.mainQueues))
 
 

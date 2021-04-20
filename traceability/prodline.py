@@ -76,6 +76,11 @@ class ProdLineBase(object):
         self.__plc_list = []
         self.plcs = []
 
+        self.opf_status = bool(int(self._config['main']['opf'][0]))
+
+    def get_opf_status(self):
+        return self.opf_status
+
     def get_popups(self):
         return self._popups
 
@@ -190,7 +195,7 @@ class ProdLineBase(object):
             if self._config[plc]['status'][0] != '1':
                 logger.warning("PLC: {plc} is in status: {status} (in configuration file). Skipped.".format(plc=plc, status=self._config[plc]['status']))
                 continue
-            c = self.__PLCClass(ip, rack, slot, port)
+            c = self.__PLCClass(ip, rack, slot, port, self.get_opf_status())
             c.set_name(name)
             c.set_id(iden)
             c.set_config(self._config)
@@ -209,7 +214,7 @@ class ProdLine(ProdLineBase):
 
     def __init__(self, argv, loglevel=logging.INFO):
         ProdLineBase.__init__(self, argv, loglevel)
-        self.database = Database(self.__class__.__name__, self.get_config())
+        self.database = Database(self.__class__.__name__, self.get_config(), opf_status=self.get_opf_status())
         from .plc import PLC
         self.set_plc_class(PLC)
 
@@ -231,6 +236,9 @@ class ProdLine(ProdLineBase):
     def get_counter_operator_status_read(self):
         return sum([ctrl.counter_operator_status_read for ctrl in self.plcs])
 
+    def get_counter_status_wrong_order(self):
+        return sum([ctrl.counter_status_wrong_order for ctrl in self.plcs])
+    
     def get_product_count(self):
         return self.database.get_product_count()
 
@@ -252,15 +260,21 @@ class ProdLine(ProdLineBase):
     def get_comment_count(self):
         return self.database.get_comment_count()
 
-    def get_all_product_ids(self, name='q1'):
-        if self.database.opf is not None:
-            return self.database.opf.get_all_product_ids(name)
+    def get_all_product_ids(self, qid='q1'):
+        if self.get_opf_status() is True:
+            if self.database.opf is not None:
+                return self.database.opf.get_all_product_ids(qid)
+            else:
+                return None
         else:
             return None
 
-    def get_next_product_id(self, name='q1'):
-        if self.database.opf is not None:
-            return self.database.opf.get_next_product_id(name)
+    def get_next_product_id(self, qid='q1'):
+        if self.get_opf_status() is True:
+            if self.database.opf is not None:
+                return self.database.opf.get_next_product_id(qid)
+            else:
+                return None
         else:
             return None
 

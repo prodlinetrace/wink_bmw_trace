@@ -1,9 +1,9 @@
-#import traceback
 import logging
 import sqlalchemy
 from . import db
 from .models import *
 
+logger = logging.getLogger(__name__)
 
 class DBQ(object):
 
@@ -109,6 +109,17 @@ class OnePieceFlow(object):
 
     def get_opf(self):
         return self.opf
+
+    def get_next_product_id_for_db(self, db):
+        qid = 'q0'
+        if db in [803, 804]:
+            qid = 'q1'
+        if db in [805, 806]:
+            qid = 'q2'
+
+        if qid == 'q0':
+            return 0  # unable to find queue id for given db
+        return self.get_queue(qid).get_next_product_id()
 
     def get_next_product_id(self, id):
         return self.get_queue(id).get_next_product_id()
