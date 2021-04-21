@@ -49,6 +49,7 @@ class MainWindow(wx.App):
         self.valueMainOperWrite = xrc.XRCCTRL(frame, "valueMainOperWrite")
         self.valueMainDetailsDisplay = xrc.XRCCTRL(frame, "valueMainDetailsDisplay")
         self.valueMainUserRead = xrc.XRCCTRL(frame, "valueMainUserRead")
+        self.valueMainStatusWrongOrder = xrc.XRCCTRL(frame, "valueMainStatusWrongOrder")
 
         self.valueMainDBProdCount = xrc.XRCCTRL(frame, "valueMainDBProdCount")
         self.valueMainDBStationCount = xrc.XRCCTRL(frame, "valueMainDBStationCount")
@@ -185,6 +186,7 @@ class MainWindow(wx.App):
                 self.valueMainOperWrite.SetLabelText(str(self.application.get_counter_saved_operations()))
                 self.valueMainDetailsDisplay.SetLabelText(str(self.application.get_counter_product_details_display()))
                 self.valueMainUserRead.SetLabelText(str(self.application.get_counter_operator_status_read()))
+                self.valueMainStatusWrongOrder.SetLabelText(str(self.application.get_counter_status_wrong_order()))
 
                 # update block statistics
                 self.valueMainDBProdCount.SetLabelText(str(self.application.get_product_count()))
