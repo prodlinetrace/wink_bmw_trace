@@ -81,8 +81,6 @@ class OnePieceFlow(object):
             q = q.strip()
             queue_config = {
                 'id': self._config[q]['id'][0],
-                'name': self._config[q]['name'][0],
-                'file': self._config[q]['file'][0],
                 'size': int(self._config[q]['size'][0]),
             }
             self._queues_config[q] = queue_config
