@@ -29,6 +29,12 @@ class DBQ(object):
             logger.error("Queue: {name} Database: {dbfile} is locked. Error: {err}".format(dbcon=self.name, dbfile=db.get_app().config['SQLALCHEMY_DATABASE_URI'], err=e.__str__()))
             return False
 
+    def get_name(self):
+        return self.name
+    
+    def get_max_size(self):
+        return self.max_size
+
     def get_all(self):
         return Queue.query.filter_by(name=self.name).all()
 
@@ -170,7 +176,7 @@ class OnePieceFlow(object):
         # check the order (how to check without reading from the queue) - possibly has to be implementaed as database
         """
 
-        logger.info("DEBUG: calling status_save() product_id: {product_id} station_id: {station_id} plc_status: {plc_status} opf: {opf}".format(product_id=product_id, station_id=station_id, plc_status=plc_status, opf=self.opf))
+        logger.info("OPF: status_save() product_id: {product_id} station_id: {station_id} plc_status: {plc_status} opf: {opf}".format(product_id=product_id, station_id=station_id, plc_status=plc_status, opf=self.opf))
 
         if self.opf is not True:
             return plc_status  # the OPF checks are disabled - do not modify status and return original one
@@ -182,8 +188,7 @@ class OnePieceFlow(object):
             return 14  # NOK_OUT
 
         # NOK_OUT - # return NOK_OUT - if there were NOK_OUT on any station for given product_id
-        res = Status.query.filter_by(product_id=product_id).filter_by(status=14).all()  
-        if len(res) > 0:
+        if Status.query.filter_by(product_id=product_id).filter_by(status=14).count() > 0:
             self.get_queue('q1').remove(product_id)
             self.get_queue('q2').remove(product_id)
             return 14  # NOK_OUT
@@ -204,7 +209,7 @@ class OnePieceFlow(object):
                 self.get_queue('q2').remove(product_id)
                 return 1  # OK
         
-        return plc_status  # success scenation - possibly will be used for saving status other than: 1 (OK)
+        return plc_status  # success scenario - possibly will be used for saving status other than: 1 (OK)
 
     def status_read(self, product_id, station_id, db_status):
         """
@@ -215,7 +220,7 @@ class OnePieceFlow(object):
         status_read() - station_id - id stacji o ktora pytamy (niezaleznie skad przychodzi zapytanie)
         """
 
-        logger.info("DEBUG: calling status_read() product_id: {product_id} station_id: {station_id} db_status: {db_status} opf: {opf}".format(product_id=product_id, station_id=station_id, db_status=db_status, opf=self.opf))
+        logger.info("OPF: status_read() product_id: {product_id} station_id: {station_id} db_status: {db_status} opf: {opf}".format(product_id=product_id, station_id=station_id, db_status=db_status, opf=self.opf))
 
         if self.opf is not True:
             return db_status  # the OPF checks are disabled - do not modify status and return original one
@@ -225,37 +230,41 @@ class OnePieceFlow(object):
             return 14  # NOK_OUT
         
         if station_id == 12705:
+            queue = self.get_queue('q1')
+            station_ids_to_check = [12706, 12707]
+
             # handle OK_BUT_DONE (15)
-            if self.ok_but_done_check([12706, 12707], product_id) == 15:
+            if self.ok_but_done_check(station_ids_to_check, product_id) == 15:
                 return 15  # OK_BUT_DONE
 
             # handle BUFFER_FULL (16)
-            queue = self.get_queue('q1')
-            if queue.size() >= self._queues_config['q1']['size']:
+            if queue.size() >= queue.get_max_size():
                 return 16  # BUFFER_FULL
             
             # handle WRONG_ORDER (13)
-            expected_product_id = self.get_queue('q1').get_next_product_id()
+            expected_product_id = queue.get_next_product_id()
             if expected_product_id is not None:
                 if product_id != expected_product_id:  # is not a first element on the list
-                    logger.warning(f"Q1 WRONG_ORDER PID: {product_id} SID: {station_id} EXPECTED_PID: {expected_product_id}")
+                    logger.warning(f"{queue.get_name().upper()}: WRONG_ORDER PID: {product_id} SID: {station_id} EXPECTED_PID: {expected_product_id}")
                     return 13  # WRONG_ORDER
 
         if station_id == 12706:
+            queue = self.get_queue('q2')
+            station_ids_to_check = [12707]
+
             # handle OK_BUT_DONE (15)
-            if self.ok_but_done_check([12707], product_id) == 15:
+            if self.ok_but_done_check(station_ids_to_check, product_id) == 15:
                 return 15  # OK_BUT_DONE
 
             # handle BUFFER_FULL (16)
-            queue = self.get_queue('q2')
-            if queue.size() >= self._queues_config['q2']['size']:
+            if queue.size() >=  queue.get_max_size():
                 return 16  # BUFFER_FULL
 
             # handle WRONG_ORDER (13)
-            expected_product_id = self.get_queue('q2').get_next_product_id()
+            expected_product_id = queue.get_next_product_id()
             if expected_product_id is not None:
                 if product_id != expected_product_id:  # is not a first element on the list
-                    logger.warning(f"Q2: WRONG_ORDER PID: {product_id} SID: {station_id} EXPECTED_PID: {expected_product_id}")
+                    logger.warning(f"{queue.get_name().upper()}: WRONG_ORDER PID: {product_id} SID: {station_id} EXPECTED_PID: {expected_product_id}")
                     return 13  # WRONG_ORDER
 
         return db_status  # success scenario
