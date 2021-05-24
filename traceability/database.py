@@ -71,7 +71,7 @@ class Database(object):
 
         if db_status != opf_status:
             # abnormal processing or - OPF status different than database status.
-            logger.warn("CON: {dbcon} PID: {product_id} ST: {station} STATUS: {opf_status} PROGRAM: {program} NEST: {nest} OPERATOR: {operator} DT: {date_time} db_status: {db_status} OPF: {opf}. abnormal processing or - OPF_status different than Database_status: {res}".format(dbcon=self.name, product_id=product_id, station=station, opf_status=opf_status, program=program, nest=nest, operator=operator, date_time=date_time, db_status=db_status, opf=self.opf.get_opf(), res=get_status_code_result(opf_status)))
+            logger.warn("CON: {dbcon} PID: {product_id} ST: {station} STATUS: {opf_status} db_status: {db_status} OPF: {opf}. abnormal processing or - OPF_status different than Database_status: {res}".format(dbcon=self.name, product_id=product_id, station=station, opf_status=opf_status, db_status=db_status, opf=self.opf.get_opf(), res=get_status_code_result(opf_status)))
 
         logger.info("CON: {dbcon} PID: {product_id} ST: {station} record has STATUS: {opf_status}  (db_status: {db_status} OPF: {opf})".format(dbcon=self.name, product_id=product_id, station=station, opf_status=opf_status, db_status=db_status, opf=self.opf.get_opf()))
 

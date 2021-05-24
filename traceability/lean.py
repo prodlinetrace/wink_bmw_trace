@@ -130,31 +130,31 @@ class OnePieceFlow(object):
 
     """
         Enforces one piece flow for the production line.
-        Chodzi o to, aby detale były robione w takiej kolejności, w jakiej wchodzą na poprzednią stację.
+        Chodzi o to, aby detale byly robione w takiej kolejnosci, w jakiej wchodza na poprzednia stacje.
 
     1.  
-        Pomiędzy maszyną 12705 a 12706 i 12706 a 12707 potrzebne są bufory 10 sztuk.
-        W buforze będą zapisywane ID sztuk z globalnym OK w kolejności, w jakiej schodzą z maszyny n.
-        Poprawne wykonanie sztuki na maszynie n+1 zdejmuje ją z bufora maszyny n, przesuwa bufor i robi miejsce na kolejną sztukę do wykonania na maszynie n.
-        Jeżeli bufor maszyny n jest pełen to wstrzymywana jest na niej praca do czasu aż zwolni się miejsce.
-        Będzie potrzebny pewnie globalny status 16 – BUFFER_FULL zwracany kiedy przepełni sie bufor.
+        Pomiedzy maszynami 12705 a 12706 i 12706 a 12707 potrzebne sa bufory 10 sztuk.
+        W buforze beda zapisywane ID sztuk z globalnym OK w kolejnosci, w jakiej schodza z maszyny n.
+        Poprawne wykonanie sztuki na maszynie n+1 zdejmuje ja z bufora maszyny n, przesuwa bufor i robi miejsce na kolejna sztuke do wykonania na maszynie n.
+        Jezeli bufor maszyny n jest pelen to wstrzymywana jest na niej praca do czasu az zwolni sie miejsce.
+        Bedzie potrzebny pewnie globalny status 16 - BUFFER_FULL zwracany kiedy przepelni sie bufor.
 
     2.  
         Maszyna n+1 skanuje detal i pyta o status globalny.
-        Jeżeli jest to status pierwszy z kolejki w buforze dla n to działa jak do tej pory.
-        Jeżeli nie jest pierwszy, to trejs zwraca zamiast 1-OK lub 2-NOK, np. 13 – WRONG_ORDER (dla dalszych potrzeb będzie jeszcze 14- NOK_OUT, 15 – OK_BUT_DONE, 16 – BUFFER_FULL
-        W przypadku WRONG_ORDER PC zwraca ID, jakie powinno trafić na maszynę w które PLC wyswietla operatorowi, aby wiedział, co włożyć na maszynę.
+        Jezeli jest to status pierwszy z kolejki w buforze dla n to dziala jak do tej pory.
+        Jezeli nie jest pierwszy, to trejs zwraca zamiast 1-OK lub 2-NOK, np. 13 - WRONG_ORDER (dla dalszych potrzeb bedzie jeszcze 14- NOK_OUT, 15 - OK_BUT_DONE, 16 - BUFFER_FULL
+        W przypadku WRONG_ORDER PC zwraca ID, jakie powinno trafic na maszyne w ktore PLC wyswietla operatorowi, aby wiedzial, co wlozyc na maszyne.
 
-        Operator albo wymienia sztukę na inna i sprawa zaczyna się na nowo od punktu 2 albo zatwierdza na panelu, że sztuka wypadła z procesu. 
-        Wówczas stanowisko wpisuje do trejsa globalny status NOK_OUT (id 14)
-        Będzie to status, który nie pozwoli na pracę na żadnym stanowisku. Czyli przy odpytaniach z innych stanowisk trzeba sprawdzać nie tylko poprzednią stację, ale również czy gdzieś indziej nie było 14 - NOK_OUT.
+        Operator albo wymienia sztuke na inna i sprawa zaczyna sie na nowo od punktu 2 albo zatwierdza na panelu, ze sztuka wypadla z procesu. 
+        Wowczas stanowisko wpisuje do trejsa globalny status NOK_OUT (id 14)
+        Bezie to status, ktory nie pozwoli na prace na zadnym stanowisku. Czyli przy odpytaniach z innych stanowisk trzeba sprawdzac nie tylko poprzednia stacje, ale rowniez czy gdzies indziej nie bylo 14 - NOK_OUT.
 
     3.  
-        Potrzeba będzie jeszcze blokada, żeby nie dało się zrobić na stanowisku n jak już była na nim wykonana i ma status globalny OK. Jak już była wykonana, ale ma NOK to można zrobić jeszcze raz. 
-        Czyli oprócz zapytania o OK. na poprzednim stanowisku i NOK_OUT na którymkolwiek to jeszcze nie może być OK. na danym stanowisku (wówczas trejs zwraca jak do tej pory 1 – OK.) .
+        Potrzeba bedzie jeszcze blokada, zeby nie dalo sie zrobic na stanowisku n jak juz byla na nim wykonana i ma status globalny OK. Jak juz byla wykonana, ale ma NOK to mozna zrobic jeszcze raz. 
+        Czyli oprocz zapytania o OK. na poprzednim stanowisku i NOK_OUT na ktorymkolwiek to jeszcze nie moze byc OK. na danym stanowisku (wlowczas trejs zwraca jak do tej pory 1 - OK.)
 
     4. 
-        Jak już była wykonana OK na pytającym stanowisku to trejs zwraca 15 – OK_BUT_DONE i PLC wyświetla to na stanowisku.
+        Jak juz byla wykonana OK na pytajacym stanowisku to trejs zwraca 15 - OK_BUT_DONE i PLC wyswietla to na stanowisku.
 
     """
 
@@ -169,6 +169,8 @@ class OnePieceFlow(object):
         """
         # check the order (how to check without reading from the queue) - possibly has to be implementaed as database
         """
+
+        logger.info("DEBUG: calling status_save() product_id: {product_id} station_id: {station_id} plc_status: {plc_status} opf: {opf}".format(product_id=product_id, station_id=station_id, plc_status=plc_status, opf=self.opf))
 
         if self.opf is not True:
             return plc_status  # the OPF checks are disabled - do not modify status and return original one
@@ -186,34 +188,18 @@ class OnePieceFlow(object):
             self.get_queue('q2').remove(product_id)
             return 14  # NOK_OUT
 
-        if station_id == 'c1':
-            queue = self.get_queue('q1') # just check if we reached the buffer limit already in first queue.
-            if queue.size() >= self._queues_config['q1']['size']:
-                return 16  # BUFFER_FULL
-
-            if self.ok_but_done_check(['c1', 'c2', 'c3'], product_id) == 15:
-                return 15  # OK_BUT_DONE
-
+        if station_id == 12705:
             if plc_status == 1:
                 self.get_queue('q1').append(product_id)
                 return 1  # OK
 
-        if station_id == 'c2':
-            queue = self.get_queue('q2') # just check if we reached the buffer limit already in second queue.
-            if queue.size() >= self._queues_config['q2']['size']:
-                return 16  # BUFFER_FULL
-            if self.ok_but_done_check(['c2', 'c3'], product_id) == 15:
-                return 15  # OK_BUT_DONE
-
+        if station_id == 12706:
             if plc_status == 1:
                 self.get_queue('q1').remove(product_id)
                 self.get_queue('q2').append(product_id)
                 return 1  # OK
 
-        if station_id == 'c3':
-            if self.ok_but_done_check(['c2', 'c3'], product_id) == 15:
-                return 15  # OK_BUT_DONE
-
+        if station_id == 12707:
             if plc_status == 1:
                 self.get_queue('q2').remove(product_id)
                 return 1  # OK
@@ -223,31 +209,53 @@ class OnePieceFlow(object):
     def status_read(self, product_id, station_id, db_status):
         """
         Maszyna n+1 skanuje detal i pyta o status globalny.
-        Jeżeli jest to status pierwszy z kolejki w buforze dla n to działa jak do tej pory.
-        Jeżeli nie jest pierwszy, to trejs zwraca zamiast 1-OK lub 2-NOK, np. 13 – WRONG_ORDER (dla dalszych potrzeb będzie jeszcze 14- NOK_OUT, 15 – OK_BUT_DONE, 16 – BUFFER_FULL
-        W przypadku WRONG_ORDER PC zwraca ID, jakie powinno trafić na maszynę w które PLC wyswietla operatorowi, aby wiedział, co włożyć na maszynę.       
+        Jezeli jest to status pierwszy z kolejki w buforze dla n to działa jak do tej pory.
+        Jezeli nie jest pierwszy, to trejs zwraca zamiast 1-OK lub 2-NOK, np. 13 - WRONG_ORDER (dla dalszych potrzeb bedzie jeszcze 14 - NOK_OUT, 15 - OK_BUT_DONE, 16 - BUFFER_FULL
+        W przypadku WRONG_ORDER PC zwraca ID, jakie powinno trafic na maszyne w ktore PLC wyswietla operatorowi, aby wiedzial, co wlozyc na maszyne.
+        status_read() - station_id - id stacji o ktora pytamy (niezaleznie skad przychodzi zapytanie)
         """
+
+        logger.info("DEBUG: calling status_read() product_id: {product_id} station_id: {station_id} db_status: {db_status} opf: {opf}".format(product_id=product_id, station_id=station_id, db_status=db_status, opf=self.opf))
+
         if self.opf is not True:
             return db_status  # the OPF checks are disabled - do not modify status and return original one
-        
-        if station_id == 'c1':
-            # not much to check on station c1 while reading
-            pass
 
-        if station_id == 'c2':
-            expected_product_id = self.get_queue('q1').get_next_product()
-            if product_id != expected_product_id:  # is not a first element on the list
-                # TODO: save expected_product_id at right address. Possibly have to return tuple
-                return 13  # WRONG_ORDER
-
-        if station_id == 'c3':
-            expected_product_id = self.get_queue('q2').get_next_product()
-            if product_id != expected_product_id:  # is not a first element on the list
-                # TODO: save expected_product_id at right address. Possibly have to return tuple
-                return 13  # WRONG_ORDER
-
-        # NOK_OUT - # return NOK_OUT - if there were NOK_OUT on any station for given product_id
+        # handle NOK_OUT - # return NOK_OUT - if there were NOK_OUT on any station for given product_id
         if Status.query.filter_by(product_id=product_id).filter_by(status=14).count() > 0:
             return 14  # NOK_OUT
+        
+        if station_id == 12705:
+            # handle OK_BUT_DONE (15)
+            if self.ok_but_done_check([12706, 12707], product_id) == 15:
+                return 15  # OK_BUT_DONE
+
+            # handle BUFFER_FULL (16)
+            queue = self.get_queue('q1')
+            if queue.size() >= self._queues_config['q1']['size']:
+                return 16  # BUFFER_FULL
+            
+            # handle WRONG_ORDER (13)
+            expected_product_id = self.get_queue('q1').get_next_product_id()
+            if expected_product_id is not None:
+                if product_id != expected_product_id:  # is not a first element on the list
+                    logger.warning(f"Q1 WRONG_ORDER PID: {product_id} SID: {station_id} EXPECTED_PID: {expected_product_id}")
+                    return 13  # WRONG_ORDER
+
+        if station_id == 12706:
+            # handle OK_BUT_DONE (15)
+            if self.ok_but_done_check([12707], product_id) == 15:
+                return 15  # OK_BUT_DONE
+
+            # handle BUFFER_FULL (16)
+            queue = self.get_queue('q2')
+            if queue.size() >= self._queues_config['q2']['size']:
+                return 16  # BUFFER_FULL
+
+            # handle WRONG_ORDER (13)
+            expected_product_id = self.get_queue('q2').get_next_product_id()
+            if expected_product_id is not None:
+                if product_id != expected_product_id:  # is not a first element on the list
+                    logger.warning(f"Q2: WRONG_ORDER PID: {product_id} SID: {station_id} EXPECTED_PID: {expected_product_id}")
+                    return 13  # WRONG_ORDER
 
         return db_status  # success scenario
