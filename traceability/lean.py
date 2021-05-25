@@ -228,43 +228,41 @@ class OnePieceFlow(object):
         # handle NOK_OUT - # return NOK_OUT - if there were NOK_OUT on any station for given product_id
         if Status.query.filter_by(product_id=product_id).filter_by(status=14).count() > 0:
             return 14  # NOK_OUT
+
+        if station_id == 12900:
+            # handle BUFFER_FULL (16)
+            if self.get_queue('q1').size() >=  self.get_queue('q1').get_max_size():
+                return 16  # BUFFER_FULL
         
         if station_id == 12705:
-            queue = self.get_queue('q1')
-            station_ids_to_check = [12706, 12707]
-
             # handle OK_BUT_DONE (15)
+            station_ids_to_check = [12706, 12707]
             if self.ok_but_done_check(station_ids_to_check, product_id) == 15:
                 return 15  # OK_BUT_DONE
 
             # handle BUFFER_FULL (16)
-            if queue.size() >= queue.get_max_size():
+            if self.get_queue('q2').size() >= self.get_queue('q2').get_max_size():
                 return 16  # BUFFER_FULL
             
             # handle WRONG_ORDER (13)
-            expected_product_id = queue.get_next_product_id()
+            expected_product_id = self.get_queue('q1').get_next_product_id()
             if expected_product_id is not None:
                 if product_id != expected_product_id:  # is not a first element on the list
-                    logger.warning(f"{queue.get_name().upper()}: WRONG_ORDER PID: {product_id} SID: {station_id} EXPECTED_PID: {expected_product_id}")
+                    logger.warning(f"{self.get_queue('q1').get_name().upper()}: WRONG_ORDER PID: {product_id} SID: {station_id} EXPECTED_PID: {expected_product_id}")
                     return 13  # WRONG_ORDER
 
         if station_id == 12706:
-            queue = self.get_queue('q2')
-            station_ids_to_check = [12707]
-
             # handle OK_BUT_DONE (15)
+            station_ids_to_check = [12707]
             if self.ok_but_done_check(station_ids_to_check, product_id) == 15:
                 return 15  # OK_BUT_DONE
 
-            # handle BUFFER_FULL (16)
-            if queue.size() >=  queue.get_max_size():
-                return 16  # BUFFER_FULL
 
             # handle WRONG_ORDER (13)
-            expected_product_id = queue.get_next_product_id()
+            expected_product_id = self.get_queue('q2').get_next_product_id()
             if expected_product_id is not None:
                 if product_id != expected_product_id:  # is not a first element on the list
-                    logger.warning(f"{queue.get_name().upper()}: WRONG_ORDER PID: {product_id} SID: {station_id} EXPECTED_PID: {expected_product_id}")
+                    logger.warning(f"{self.get_queue('q2').get_name().upper()}: WRONG_ORDER PID: {product_id} SID: {station_id} EXPECTED_PID: {expected_product_id}")
                     return 13  # WRONG_ORDER
 
         return db_status  # success scenario
